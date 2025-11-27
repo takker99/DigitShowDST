@@ -425,7 +425,7 @@ void CDigitShowBasicView::OnDestroy()
 	delete	m_pStaticBrush;	
 	delete	m_pDlgBrush;
 }
-void CDigitShowBasicView::OnTimer(UINT nIDEvent) 
+void CDigitShowBasicView::OnTimer(UINT_PTR nIDEvent) 
 {
 	// TODO: この位置にメッセージ ハンドラ用のコードを追加するかまたはデフォルトの処理を呼び出してください
 

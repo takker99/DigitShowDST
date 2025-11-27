@@ -147,7 +147,7 @@ protected:
 protected:
 	//{{AFX_MSG(CDigitShowBasicView)
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-	afx_msg void OnTimer(UINT nIDEvent);
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBUTTONCtrlOff();
 	afx_msg void OnBUTTONCtrlOn();
 	afx_msg void OnBUTTONStartSave();

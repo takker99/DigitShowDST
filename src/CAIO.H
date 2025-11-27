@@ -30,22 +30,23 @@
 #define	PM0025						12	//±0.025V
 #define	PM00125						13	//±0.0125V
 #define	PM001						14	//±0.01V
-#define	P10							50	//0〜10V
-#define	P5							51	//0〜5V
-#define	P4095						52	//0〜4.095V
-#define	P25							53	//0〜2.5V
-#define	P125						54	//0〜1.25V
-#define	P1							55	//0〜1V
-#define	P05							56	//0〜0.5V
-#define	P025						57	//0〜0.25V
-#define	P01							58	//0〜0.1V
-#define	P005						59	//0〜0.05V
-#define	P0025						60	//0〜0.025V
-#define	P00125						61	//0〜0.0125V
-#define	P001						62	//0〜0.01V
-#define	P20MA						100	//0〜20mA
-#define	P4TO20MA					101	//4〜20mA
-#define	P1TO5						150	//1〜5V
+#define	P10							50	//0～10V
+#define	P5							51	//0～5V
+#define	P4095						52	//0～4.095V
+#define	P25							53	//0～2.5V
+#define	P125						54	//0～1.25V
+#define	P1							55	//0～1V
+#define	P05							56	//0～0.5V
+#define	P025						57	//0～0.25V
+#define	P01							58	//0～0.1V
+#define	P005						59	//0～0.05V
+#define	P0025						60	//0～0.025V
+#define	P00125						61	//0～0.0125V
+#define	P001						62	//0～0.01V
+#define	P20MA						100	//0～20mA
+#define	P4TO20MA					101	//4～20mA
+#define PM20MA						102 //±20mA
+#define	P1TO5						150	//1～5V
 
 //----------------------------------------------------------------------------------------------
 //	アナログ入力イベント																		
@@ -183,7 +184,7 @@
 //----------------------------------------------------------------------------------------------
 //	イベントコントローラ接続元信号																
 //----------------------------------------------------------------------------------------------
-#define	AIOECU_SRC_OPEN				-1	//未接続
+#define	AIOECU_SRC_OPEN				0	//未接続
 #define	AIOECU_SRC_AI_CLK			4	//アナログ入力内部クロック信号
 #define	AIOECU_SRC_AI_EXTCLK		146	//アナログ入力外部クロック信号
 #define	AIOECU_SRC_AI_TRGSTART		144	//アナログ入力外部トリガ開始信号
@@ -209,13 +210,16 @@
 #define	AIOECU_SRC_STOP				385	//Ai, Ao, Cnt, Tmソフトウェア停止信号
 
 //----------------------------------------------------------------------------------------------
-// Mデバイス用カウンタメッセージ
+//	アナログ入力転送サイズ																
 //----------------------------------------------------------------------------------------------
-#define	AIOM_CNTM_COUNTUP_CH0		0x1070	// カウントアップ、チャネル番号0
-#define	AIOM_CNTM_COUNTUP_CH1		0x1071	//         "                   1
-#define	AIOM_CNTM_TIME_UP			0x1090	//タイムアップ
-#define	AIOM_CNTM_COUNTER_ERROR		0x1091	//カウンタエラー
-#define	AIOM_CNTM_CARRY_BORROW		0x1092	//キャリー／ボロー
+#define	AI_TRANSFERSIZE_MANUAL		0	//アナログ入力転送サイズ手動設定
+#define	AI_TRANSFERSIZE_AUTO		1	//アナログ入力転送サイズ自動設定
+
+//----------------------------------------------------------------------------------------------
+//	アナログ出力転送サイズ																
+//----------------------------------------------------------------------------------------------
+#define	AO_TRANSFERSIZE_MANUAL		0	//アナログ出力転送サイズ手動設定
+#define	AO_TRANSFERSIZE_AUTO		1	//アナログ出力転送サイズ自動設定
 
 //----------------------------------------------------------------------------------------------
 //	関数プロトタイプ																			
@@ -239,6 +243,10 @@ long WINAPI AioSingleAi(short Id, short AiChannel, long * AiData);
 long WINAPI AioSingleAiEx(short Id, short AiChannel, float * AiData);
 long WINAPI AioMultiAi(short Id, short AiChannels, long * AiData);
 long WINAPI AioMultiAiEx(short Id, short AiChannels, float * AiData);
+long WINAPI AioSingleAiSR(short Id, short AiChannel, long * AiData, unsigned short * Timestamp, BYTE Mode);
+long WINAPI AioSingleAiExSR(short Id, short AiChannel, float * AiData, unsigned short * Timestamp, BYTE Mode);
+long WINAPI AioMultiAiSR(short Id, short AiChannels, long * AiData, unsigned short * Timestamp, BYTE Mode);
+long WINAPI AioMultiAiExSR(short Id, short AiChannels, float * AiData, unsigned short * Timestamp, BYTE Mode);
 long WINAPI AioGetAiResolution(short Id, short * AiResolution);
 long WINAPI AioSetAiInputMethod(short Id, short AiInputMethod);
 long WINAPI AioGetAiInputMethod(short Id, short * AiInputMethod);
@@ -261,6 +269,8 @@ long WINAPI AioGetAiMemorySize(short Id, long *AiMemorySize);
 long WINAPI AioSetAiTransferData(short Id, long DataNumber, long *Buffer);
 long WINAPI AioSetAiAttachedData(short Id, long AttachedData);
 long WINAPI AioGetAiSamplingDataSize(short Id, short *DataSize);
+long WINAPI AioSetAiTransferSize(short Id, short AutoMode, long TransferSize);
+long WINAPI AioGetAiTransferSize(short Id, short *AutoMode, long *TransferSize);
 long WINAPI AioSetAiMemoryType(short Id, short AiMemoryType);
 long WINAPI AioGetAiMemoryType(short Id, short * AiMemoryType);
 long WINAPI AioSetAiRepeatTimes(short Id, long AiRepeatTimes);
@@ -327,6 +337,8 @@ long WINAPI AioGetAiSamplingData(short Id, long * AiSamplingTimes, long * AiData
 long WINAPI AioGetAiSamplingDataEx(short Id, long * AiSamplingTimes, float * AiData);
 long WINAPI AioResetAiStatus(short Id);
 long WINAPI AioResetAiMemory(short Id);
+long WINAPI AioSetAiDigitalFilter(short Id, short AiChannel, short FilterType, short FilterValue);
+long WINAPI AioGetAiDigitalFilter(short Id, short AiChannel, short *FilterType, short *FilterValue);
 
 //アナログ出力関数
 long WINAPI AioSingleAo(short Id, short AoChannel, long AoData);
@@ -348,6 +360,8 @@ long WINAPI AioSetAoMemorySize(short Id, long AoMemorySize);
 long WINAPI AioGetAoMemorySize(short Id, long *AoMemorySize);
 long WINAPI AioSetAoTransferData(short Id, long DataNumber, long *Buffer);
 long WINAPI AioGetAoSamplingDataSize(short Id, short *DataSize);
+long WINAPI AioSetAoTransferSize(short Id, short AutoMode, long TransferSize);
+long WINAPI AioGetAoTransferSize(short Id, short *AutoMode, long *TransferSize);
 long WINAPI AioSetAoMemoryType(short Id, short AoMemoryType);
 long WINAPI AioGetAoMemoryType(short Id, short * AoMemoryType);
 long WINAPI AioSetAoRepeatTimes(short Id, long AoRepeatTimes);
@@ -432,54 +446,6 @@ long WINAPI AioTmWait(short Id, short TimerId, long Wait);
 //イベントコントローラ
 long WINAPI AioSetEcuSignal(short Id, short Destination, short Source);
 long WINAPI AioGetEcuSignal(short Id, short Destination, short *Source);
-
-// Setting function (set)
-long WINAPI AioGetCntmMaxChannels(short Id, short *CntmMaxChannels);
-long WINAPI AioSetCntmZMode(short Id, short ChNo, short Mode);
-long WINAPI AioSetCntmZLogic(short Id, short ChNo, short ZLogic);
-long WINAPI AioSelectCntmChannelSignal(short Id, short ChNo, short SigType);
-long WINAPI AioSetCntmCountDirection(short Id, short ChNo, short Dir);
-long WINAPI AioSetCntmOperationMode(short Id, short ChNo, short Phase, short Mul, short SyncClr);
-long WINAPI AioSetCntmDigitalFilter(short Id, short ChNo, short FilterValue);
-long WINAPI AioSetCntmPulseWidth(short Id, short ChNo, short PlsWidth);
-long WINAPI AioSetCntmDIType(short Id, short ChNo, short InputType);
-long WINAPI AioSetCntmOutputHardwareEvent(short Id, short ChNo, short OutputLogic, unsigned long EventType, short PulseWidth);
-long WINAPI AioSetCntmInputHardwareEvent(short Id, short ChNo, unsigned long EventType, short RF0, short RF1, short Reserved);
-long WINAPI AioSetCntmCountMatchHardwareEvent(short Id, short ChNo, short RegisterNo, unsigned long EventType, short Reserved);
-long WINAPI AioSetCntmPresetRegister(short Id, short ChNo, unsigned long PresetData, short Reserved);
-long WINAPI AioSetCntmTestPulse(short Id, short CntmInternal, short CntmOut, short CntmReserved);
-// Setting function (get)
-long WINAPI AioGetCntmZMode(short Id, short ChNo, short *Mode);
-long WINAPI AioGetCntmZLogic(short Id, short ChNo, short *ZLogic);
-long WINAPI AioGetCntmChannelSignal(short Id, short CntmChNo, short *CntmSigType);
-long WINAPI AioGetCntmCountDirection(short Id, short ChNo, short *Dir);
-long WINAPI AioGetCntmOperationMode(short Id, short ChNo, short *Phase, short *Mul, short *SyncClr);
-long WINAPI AioGetCntmDigitalFilter(short Id, short ChNo, short *FilterValue);
-long WINAPI AioGetCntmPulseWidth(short Id, short ChNo, short *PlsWidth);
-// Counter function
-long WINAPI AioCntmStartCount(short Id, short *ChNo, short ChNum);
-long WINAPI AioCntmStopCount(short Id, short *ChNo, short ChNum);
-long WINAPI AioCntmPreset(short Id, short *ChNo, short ChNum, unsigned long *PresetData);
-long WINAPI AioCntmZeroClearCount(short Id, short *ChNo, short ChNum);
-long WINAPI AioCntmReadCount(short Id, short *ChNo, short ChNum, unsigned long *CntDat);
-long WINAPI AioCntmReadStatus(short Id, short ChNo, short *Sts);
-long WINAPI AioCntmReadStatusEx(short Id, short ChNo, unsigned long *Sts);
-// Notify function
-long WINAPI AioCntmNotifyCountUp(short Id, short ChNo, short RegNo, unsigned long Count, HANDLE hWnd);
-long WINAPI AioCntmStopNotifyCountUp(short Id, short ChNo, short RegNo);
-long WINAPI AioCntmCountUpCallbackProc(short Id , void *CallBackProc , void *Param);
-long WINAPI AioCntmNotifyCounterError(short Id, HANDLE hWnd);
-long WINAPI AioCntmStopNotifyCounterError(short Id);
-long WINAPI AioCntmCounterErrorCallbackProc(short Id , void *CallBackProc , void *Param);
-long WINAPI AioCntmNotifyCarryBorrow(short Id, HANDLE hWnd);
-long WINAPI AioCntmStopNotifyCarryBorrow(short Id);
-long WINAPI AioCntmCarryBorrowCallbackProc(short Id, void *CallBackProc, void *Param);
-long WINAPI AioCntmNotifyTimer(short Id, unsigned long TimeValue, HANDLE hWnd);
-long WINAPI AioCntmStopNotifyTimer(short Id);
-long WINAPI AioCntmTimerCallbackProc(short Id , void *CallBackProc , void *Param);
-// General purpose input function
-long WINAPI AioCntmInputDIByte(short Id, short Reserved, BYTE *bData);
-long WINAPI AioCntmOutputDOBit(short Id, short AiomChNo, short Reserved, BYTE OutData);
 
 #ifdef __cplusplus
 };
