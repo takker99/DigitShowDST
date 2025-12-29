@@ -18,7 +18,7 @@
 
 #include "stdafx.h"
 #include "DigitShowBasic.h"
-#include "Control_Sensitivity.h"
+#include "Control_Consolidation.h"
 #include "DigitShowBasicDoc.h"
 #include "DigitShowContext.h"
 
@@ -28,34 +28,35 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-CControl_Sensitivity::CControl_Sensitivity(CWnd* pParent)
-    : CDialog(CControl_Sensitivity::IDD, pParent)
+CControl_Consolidation::CControl_Consolidation(CWnd* pParent)
+    : CDialog(CControl_Consolidation::IDD, pParent)
 {
     DigitShowContext* ctx = GetContext();
-    m_ERR_StressA = ctx->errTol.StressA;
-    m_ERR_StressCom = ctx->errTol.StressCom;
-    m_ERR_StressExt = ctx->errTol.StressExt;
+    m_MotorK0 = ctx->control[2].K0;
+    m_MotorSpeed = ctx->control[2].MotorSpeed;
+    m_MotorSrRate = ctx->control[2].sigmaRate[2];
+    m_MotorESa = ctx->control[2].e_sigma[0];
 }
 
-void CControl_Sensitivity::DoDataExchange(CDataExchange* pDX)
+void CControl_Consolidation::DoDataExchange(CDataExchange* pDX)
 {
     CDialog::DoDataExchange(pDX);
-    DDX_Text(pDX, IDC_EDIT_ERR_StressA, m_ERR_StressA);
-    DDX_Text(pDX, IDC_EDIT_ERR_StressCom, m_ERR_StressCom);
-    DDV_MinMaxDouble(pDX, m_ERR_StressCom, 0., 50.);
-    DDX_Text(pDX, IDC_EDIT_ERR_StressExt, m_ERR_StressExt);
-    DDV_MinMaxDouble(pDX, m_ERR_StressExt, -50., 0.);
+    DDX_Text(pDX, IDC_EDIT_Motor_K0, m_MotorK0);
+    DDX_Text(pDX, IDC_EDIT_Motor_speed, m_MotorSpeed);
+    DDX_Text(pDX, IDC_EDIT_Motor_sr_rate, m_MotorSrRate);
+    DDX_Text(pDX, IDC_EDIT_Motor_e_sa, m_MotorESa);
 }
 
-BEGIN_MESSAGE_MAP(CControl_Sensitivity, CDialog)
+BEGIN_MESSAGE_MAP(CControl_Consolidation, CDialog)
+    ON_BN_CLICKED(IDC_BUTTON_Update, OnBUTTONUpdate)
 END_MESSAGE_MAP()
 
-void CControl_Sensitivity::OnOK()
+void CControl_Consolidation::OnBUTTONUpdate()
 {
     UpdateData(TRUE);
     DigitShowContext* ctx = GetContext();
-    ctx->errTol.StressA = m_ERR_StressA;
-    ctx->errTol.StressCom = m_ERR_StressCom;
-    ctx->errTol.StressExt = m_ERR_StressExt;
-    CDialog::OnOK();
+    ctx->control[2].e_sigma[0] = m_MotorESa;
+    ctx->control[2].K0 = m_MotorK0;
+    ctx->control[2].sigmaRate[2] = m_MotorSrRate;
+    ctx->control[2].MotorSpeed = m_MotorSpeed;
 }

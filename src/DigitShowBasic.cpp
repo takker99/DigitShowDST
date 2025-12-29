@@ -1,151 +1,109 @@
-﻿/**
- * @file DigitShowBasic.cpp
- * @brief Implementation of CDigitShowBasicApp application class
+﻿/*
+ * DigitShowBasic - Triaxial Test Machine Control Software
+ * Copyright (C) 2025 Makoto KUNO
  *
- * Implements application initialization and main message loop.
- * アプリケーション用クラスの機能定義を行います。
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
+// DigitShowBasic.cpp : アプリケーション用クラスの機能定義を行います。
 
+#include "stdafx.h"
 #include "DigitShowBasic.h"
+
+#include "MainFrm.h"
 #include "DigitShowBasicDoc.h"
 #include "DigitShowBasicView.h"
-#include "Logging.hpp"
-#include "Variables.hpp"
-#include "resource.h"
-
-#include "ControlConfig.h"
-#include "MainFrm.h"
-#include "generated/git_version.hpp"
-#include <Windows.h>
-#include <format>
-#include <iostream>
-#include <spdlog/spdlog.h>
-#include <string>
-#include <vector>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
-static constexpr const char *THIS_FILE = __FILE__;
+static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
 // CDigitShowBasicApp
 
-BEGIN_MESSAGE_MAP_IGNORE_UNUSED_LOCAL_TYPEDEF(CDigitShowBasicApp, CWinApp)
-//{{AFX_MSG_MAP(CDigitShowBasicApp)
-// メモ - ClassWizard はこの位置にマッピング用のマクロを追加または削除します。
-//        この位置に生成されるコードを編集しないでください。
-//}}AFX_MSG_MAP
-// 標準のファイル基本ドキュメント コマンド
-ON_COMMAND(ID_FILE_NEW, &CWinApp::OnFileNew)
-ON_COMMAND(ID_FILE_OPEN, &CWinApp::OnFileOpen)
-END_MESSAGE_MAP_IGNORE_UNUSED_LOCAL_TYPEDEF()
+BEGIN_MESSAGE_MAP(CDigitShowBasicApp, CWinApp)
+    //{{AFX_MSG_MAP(CDigitShowBasicApp)
+    ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
+        // メモ - ClassWizard はこの位置にマッピング用のマクロを追加または削除します。
+        //        この位置に生成されるコードを編集しないでください。
+    //}}AFX_MSG_MAP
+    // 標準のファイル基本ドキュメント コマンド
+    ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
+    ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CDigitShowBasicApp クラスの構築
+
+CDigitShowBasicApp::CDigitShowBasicApp()
+{
+
+    // ここに InitInstance 中の重要な初期化処理をすべて記述してください。
+
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // 唯一の CDigitShowBasicApp オブジェクト
 
 CDigitShowBasicApp theApp;
 
+
 /////////////////////////////////////////////////////////////////////////////
 // CDigitShowBasicApp クラスの初期化
 
 BOOL CDigitShowBasicApp::InitInstance()
 {
-    // Initialize logging first
-    logging::initialize();
-    spdlog::info("DigitShowBasic application starting");
-
-    // CLI hook: --validate-config <path> to validate YAML and exit
-    {
-        int argc = 0;
-        LPWSTR *wargv = ::CommandLineToArgvW(::GetCommandLineW(), &argc);
-        if (wargv && argc >= 2)
-        {
-            std::vector<std::wstring> args;
-            args.reserve(static_cast<size_t>(argc));
-            for (int i = 0; i < argc; ++i)
-                args.emplace_back(wargv[i]);
-
-            auto to_narrow = [](const std::wstring &ws) -> std::string {
-                int len = ::WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), -1, nullptr, 0, nullptr, nullptr);
-                std::string s;
-                if (len > 0)
-                {
-                    s.resize(static_cast<size_t>(len - 1));
-                    ::WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), -1, s.data(), len, nullptr, nullptr);
-                }
-                return s;
-            };
-
-            for (size_t i = 1; i < static_cast<size_t>(argc); ++i)
-            {
-                std::wstring a = args[i];
-                if (a == L"--validate-config" || a == L"/validate-config")
-                {
-                    if (i + 1 >= static_cast<size_t>(argc))
-                    {
-                        spdlog::error("Missing config file argument for --validate-config");
-                        std::cerr << "Usage: DigitShowBasic --validate-config <file.yaml>" << std::endl;
-                        ::ExitProcess(2);
-                    }
-                    std::string path = to_narrow(args[i + 1]);
-                    spdlog::info("Validating config file: {}", path);
-                    auto result = ControlConfig::ConfigLoader::LoadFromFile(path);
-                    if (result.has_value())
-                    {
-                        spdlog::info("Config validation successful: {}", path);
-                        std::cout << "OK: " << path << std::endl;
-                        ::ExitProcess(0);
-                    }
-                    else
-                    {
-                        spdlog::error("Config validation failed: {}", path);
-                        const auto &errs = result.error();
-                        for (const auto &e : errs)
-                        {
-                            spdlog::error("  {}", e.format());
-                            std::cerr << e.format() << std::endl;
-                        }
-                        ::ExitProcess(1);
-                    }
-                }
-            }
-        }
-        if (wargv)
-            ::LocalFree(wargv);
-    }
-
     AfxEnableControlContainer();
-
-    spdlog::debug("MFC initialization starting");
 
     // 標準的な初期化処理
     // もしこれらの機能を使用せず、実行ファイルのサイズを小さく
     // したければ以下の特定の初期化ルーチンの中から不必要なもの
     // を削除してください。
 
-    // MFC の最新バージョンでは 3D コントロールの明示的な有効化は不要。
+#if _MSC_VER <= 1200 // MFC 6.0 or earlier
+
+    #ifdef _AFXDLL
+        Enable3dControls();
+        // 共有 DLL の中で MFC を使用する場合にはここを呼び出してください。
+    #else
+        Enable3dControlsStatic();
+        // MFC と静的にリンクしている場合にはここを呼び出してください。
+    #endif
+
+#endif
+
 
     // 設定が保存される下のレジストリ キーを変更します。
-    // TODO: この文字列を、会社名または所属など適切なものに
+
     // 変更してください。
     SetRegistryKey(_T("Local AppWizard-Generated Applications"));
 
-    LoadStdProfileSettings(); // 標準の INI ファイルのオプションをローﾄﾞします (MRU を含む)
-    spdlog::debug("Profile settings loaded");
+    LoadStdProfileSettings();
+    // 標準の INI ファイルのオプションをロードします (MRU を含む)
 
     // アプリケーション用のドキュメント テンプレートを登録します。ドキュメント テンプレート
     //  はドキュメント、フレーム ウィンドウとビューを結合するために機能します。
 
-    CSingleDocTemplate *pDocTemplate = nullptr;
-    pDocTemplate = new CSingleDocTemplate(IDR_MAINFRAME, RUNTIME_CLASS(CDigitShowBasicDoc),
-                                          RUNTIME_CLASS(CMainFrame), // メイン SDI フレーム ウィンドウ
-                                          RUNTIME_CLASS(CDigitShowBasicView));
+    CSingleDocTemplate* pDocTemplate;
+    pDocTemplate = new CSingleDocTemplate(
+        IDR_MAINFRAME,
+        RUNTIME_CLASS(CDigitShowBasicDoc),
+        RUNTIME_CLASS(CMainFrame),       // メイン SDI フレーム ウィンドウ
+        RUNTIME_CLASS(CDigitShowBasicView));
     AddDocTemplate(pDocTemplate);
-    spdlog::debug("Document template registered");
 
     // DDE、file open など標準のシェル コマンドのコマンドラインを解析します。
     CCommandLineInfo cmdInfo;
@@ -153,21 +111,69 @@ BOOL CDigitShowBasicApp::InitInstance()
 
     // コマンドラインでディスパッチ コマンドを指定します。
     if (!ProcessShellCommand(cmdInfo))
-    {
-        spdlog::error("ProcessShellCommand failed");
         return FALSE;
-    }
 
-    spdlog::info("Main window initialized");
     // メイン ウィンドウが初期化されたので、表示と更新を行います。
     m_pMainWnd->ShowWindow(SW_SHOW);
     m_pMainWnd->UpdateWindow();
 
-    // Set window title with version information
-    std::string titleStr = std::format("DigitShowBasic v{} [{}]{}", git_version::VERSION.data(),
-                                       git_version::COMMIT_SHORT.data(), git_version::DIRTY ? " dirty" : "");
-    CString title(titleStr.c_str());
-    m_pMainWnd->SetWindowText(title);
-
     return TRUE;
 }
+
+
+/////////////////////////////////////////////////////////////////////////////
+// アプリケーションのバージョン情報で使われる CAboutDlg ダイアログ
+
+class CAboutDlg : public CDialog
+{
+public:
+    CAboutDlg();
+
+// ダイアログ データ
+    //{{AFX_DATA(CAboutDlg)
+    enum { IDD = IDD_ABOUTBOX };
+    //}}AFX_DATA
+
+    // ClassWizard 仮想関数のオーバーライドを生成します。
+    //{{AFX_VIRTUAL(CAboutDlg)
+    protected:
+    virtual void DoDataExchange(CDataExchange* pDX);
+    // DDX/DDV のサポート
+    //}}AFX_VIRTUAL
+
+// インプリメンテーション
+protected:
+    //{{AFX_MSG(CAboutDlg)
+        // メッセージ ハンドラはありません。
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
+};
+
+CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
+{
+    //{{AFX_DATA_INIT(CAboutDlg)
+    //}}AFX_DATA_INIT
+}
+
+void CAboutDlg::DoDataExchange(CDataExchange* pDX)
+{
+    CDialog::DoDataExchange(pDX);
+    //{{AFX_DATA_MAP(CAboutDlg)
+    //}}AFX_DATA_MAP
+}
+
+BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
+    //{{AFX_MSG_MAP(CAboutDlg)
+        // メッセージ ハンドラはありません。
+    //}}AFX_MSG_MAP
+END_MESSAGE_MAP()
+
+// ダイアログを実行するためのアプリケーション コマンド
+void CDigitShowBasicApp::OnAppAbout()
+{
+    CAboutDlg aboutDlg;
+    aboutDlg.DoModal();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CDigitShowBasicApp メッセージ ハンドラ

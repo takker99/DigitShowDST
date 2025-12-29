@@ -16,34 +16,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __CALIBRATIONAMP_H_INCLUDE__
-#define __CALIBRATIONAMP_H_INCLUDE__
+#ifndef __CONTROL_PRECONSOLIDATION_H_INCLUDE__
+#define __CONTROL_PRECONSOLIDATION_H_INCLUDE__
 
 #pragma once
 
-#include "DigitShowBasicDoc.h"
-
-class CCalibrationAmp : public CDialog
+class CControl_PreConsolidation : public CDialog
 {
 public:
-    CCalibrationAmp(CWnd* pParent = NULL);
+    CControl_PreConsolidation(CWnd* pParent = NULL);
 
-    enum { IDD = IDD_CalibrationAmp };
+    enum { IDD = IDD_Control_PreConsolidation };
 
-    int   m_AmpNo;
-    float m_AmpPB;
-    float m_AmpVB;
-    float m_AmpVO;
-    float m_AmpPO;
+    double m_q;
+    double m_MotorSpeed;
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);
-
-    afx_msg void OnBUTTONAmpBase();
-    afx_msg void OnBUTTONAmpOffset();
-    afx_msg void OnBUTTONAmpUpdate();
+    virtual void OnOK();
 
     DECLARE_MESSAGE_MAP()
 };
 
-#endif // __CALIBRATIONAMP_H_INCLUDE__
+#endif // __CONTROL_PRECONSOLIDATION_H_INCLUDE__

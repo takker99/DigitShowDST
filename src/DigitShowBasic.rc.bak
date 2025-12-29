@@ -1,6 +1,5 @@
-// Microsoft Visual C++ generated resource script.
+﻿// Microsoft Visual C++ generated resource script.
 //
-#include "resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -13,7 +12,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// ���{�� (���{) resources
+// 日本語 (日本) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
 LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
@@ -48,8 +47,8 @@ BEGIN
     "LANGUAGE 17, 1\r\n"
     "#pragma code_page(932)\r\n"
     "#endif //_WIN32\r\n"
-    "#include ""res\\DigitShowBasic.rc2""  // Microsoft Visual C++ �ȊO�̃c�[���ŕҏW���ꂽ���\�[�X\r\n"
-    "#include ""l.jpn\\afxres.rc""          // �W���̃R���|�[�l���g\r\n"
+    "#include ""res\\DigitShowBasic.rc2""  // Microsoft Visual C++ 以外のツールで編集されたリソース\r\n"
+    "#include ""l.jpn\\afxres.rc""          // 標準のコンポーネント\r\n"
     "#endif\r\n"
     "\0"
 END
@@ -149,8 +148,8 @@ END
 
 IDD_ABOUTBOX DIALOGEX 0, 0, 235, 55
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "DigitShowBasic���ް�ޮݏ��"
-FONT 9, "�l�r �o�S�V�b�N", 0, 0, 0x0
+CAPTION "DigitShowBasicのﾊﾞｰｼﾞｮﾝ情報"
+FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x0
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
     LTEXT           "DigitShowBasic Version 2.0, 2014/02/28",IDC_STATIC,40,10,119,8,SS_NOPREFIX
@@ -160,7 +159,7 @@ END
 
 IDD_DIGITSHOWBASIC_FORM DIALOG 0, 0, 579, 455
 STYLE DS_SETFONT | WS_CHILD
-FONT 9, "�l�r �o�S�V�b�N"
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     GROUPBOX        "Voltage OutPut",IDC_STATIC,15,7,548,121
     EDITTEXT        IDC_EDIT_Vout01,93,27,56,15,ES_RIGHT | ES_AUTOHSCROLL
@@ -373,7 +372,7 @@ END
 IDD_BoardSettings DIALOG 0, 0, 299, 103
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Sampling Condition"
-FONT 9, "�l�r �o�S�V�b�N"
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,242,74,50,14
     LTEXT           "Input method",IDC_STATIC,12,22,39,8
@@ -404,7 +403,7 @@ END
 IDD_Calibration_Factor DIALOG 0, 0, 362, 315
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Get Calibration Factors."
-FONT 9, "�l�r �o�S�V�b�N"
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,307,294,50,14
     LTEXT           "Statics",IDC_STATIC_C01,8,71,64,8
@@ -531,7 +530,7 @@ END
 IDD_CalibrationAmp DIALOG 0, 0, 179, 99
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Get Amp. Condition"
-FONT 9, "�l�r �o�S�V�b�N"
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,123,78,50,14
     LTEXT           "Amp. No. :",IDC_STATIC,26,15,30,8
@@ -550,7 +549,7 @@ END
 IDD_SpecimenData DIALOG 0, 0, 331, 341
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Specimen Data"
-FONT 9, "�l�r �o�S�V�b�N"
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,269,319,55,14
     LTEXT           "Diameter(mm)",IDC_STATIC,14,99,42,8
@@ -632,7 +631,7 @@ END
 IDD_DA_Vout DIALOG 0, 0, 186, 155
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Voltage Output on D/A Board"
-FONT 9, "�l�r �o�S�V�b�N"
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,128,134,50,14
     LTEXT           "CH0 (Motor: On/Off)",IDC_STATIC,11,24,61,8
@@ -659,7 +658,7 @@ END
 IDD_Control_ID DIALOG 0, 0, 319, 349
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Set Up Control Parameters"
-FONT 9, "�l�r �o�S�V�b�N"
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,262,302,50,14
     LTEXT           "Control ID:",IDC_STATIC,13,15,32,8
@@ -735,7 +734,7 @@ END
 IDD_DA_Pout DIALOG 0, 0, 386, 197
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Voltage Output from Physical Value"
-FONT 9, "�l�r �o�S�V�b�N"
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,330,176,50,14
     LTEXT           "CH.0 (Motor)",IDC_STATIC,10,29,38,8
@@ -799,7 +798,7 @@ END
 IDD_DA_Channel DIALOG 0, 0, 255, 181
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "D/A Channel"
-FONT 9, "�l�r �o�S�V�b�N"
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,145,161,50,14
     LTEXT           "CH.0 (Motor)",IDC_STATIC,12,26,38,8
@@ -851,7 +850,7 @@ END
 IDD_Control_Consolidation DIALOG 0, 0, 199, 109
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Control Data in Consolidation"
-FONT 9, "�l�r �o�S�V�b�N"
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,141,87,50,14
     GROUPBOX        "Motor Control",IDC_STATIC,7,2,186,83
@@ -872,7 +871,7 @@ END
 IDD_Control_MLoading DIALOG 0, 0, 235, 137
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Control Data in Monotonic Loading"
-FONT 9, "�l�r �o�S�V�b�N"
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,177,116,50,14
     EDITTEXT        IDC_EDIT_Motor_Cruch,59,20,40,14,ES_RIGHT | ES_AUTOHSCROLL
@@ -896,7 +895,7 @@ END
 IDD_Control_Sensitivity DIALOG 0, 0, 213, 95
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Sensitivity of Stress Control"
-FONT 9, "�l�r �o�S�V�b�N"
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,7,73,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,156,73,50,14
@@ -914,7 +913,7 @@ END
 IDD_Control_Cloading DIALOG 0, 0, 263, 137
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Control Parameters in Cyclic Loading"
-FONT 9, "�l�r �o�S�V�b�N"
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,206,116,50,14
     LTEXT           "Flag",IDC_STATIC,15,22,14,8
@@ -943,7 +942,7 @@ END
 IDD_Control_File DIALOG 0, 0, 455, 293
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Control Parameters from a file"
-FONT 9, "�l�r �o�S�V�b�N"
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,378,13,50,14
     LTEXT           "Current Step No.",IDC_STATIC,13,19,50,8
@@ -998,7 +997,7 @@ END
 IDD_SamplingSettings DIALOG 0, 0, 227, 261
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Sampling Conditions with FIFO"
-FONT 9, "�l�r �o�S�V�b�N"
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,109,240,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,170,240,50,14
@@ -1033,7 +1032,7 @@ END
 IDD_Control_PreConsolidation DIALOG 0, 0, 155, 71
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Control in Pre-Consolidation"
-FONT 9, "�l�r �o�S�V�b�N"
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,7,49,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,98,49,50,14
@@ -1046,7 +1045,7 @@ END
 IDD_TransAdjustment DIALOG 0, 0, 165, 167
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Adjustment of Transducers"
-FONT 9, "�l�r �o�S�V�b�N"
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     PUSHBUTTON      "Close",IDCANCEL,107,146,50,14
     PUSHBUTTON      "Initial",IDC_BUTTON_InitialBullet,127,91,28,14
@@ -1070,7 +1069,7 @@ END
 IDD_Control_LinearStressPathLoading DIALOG 0, 0, 263, 201
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Control Parameters of Linear Effectve Stress Path Loading"
-FONT 9, "�l�r �o�S�V�b�N"
+FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     PUSHBUTTON      "Close",IDCANCEL,206,180,50,14
     PUSHBUTTON      "Update",IDC_BUTTON_Update,149,180,50,14
@@ -1116,12 +1115,12 @@ BEGIN
     BEGIN
         BLOCK "041104b0"
         BEGIN
-            VALUE "FileDescription", "DigitShowBasic MFC ���ع����"
+            VALUE "FileDescription", "DigitShowBasic MFC ｱﾌﾟﾘｹｰｼｮﾝ"
             VALUE "FileVersion", "1, 0, 0, 1"
             VALUE "InternalName", "DigitShowBasic"
             VALUE "LegalCopyright", "Copyright (C) 2001"
             VALUE "OriginalFilename", "DigitShowBasic.EXE"
-            VALUE "ProductName", "DigitShowBasic ���ع����"
+            VALUE "ProductName", "DigitShowBasic ｱﾌﾟﾘｹｰｼｮﾝ"
             VALUE "ProductVersion", "1, 0, 0, 1"
         END
     END
@@ -1308,7 +1307,7 @@ END
 STRINGTABLE
 BEGIN
     AFX_IDS_APP_TITLE       "DigitShowBasic"
-    AFX_IDS_IDLEMESSAGE     "��ި"
+    AFX_IDS_IDLEMESSAGE     "ﾚﾃﾞｨ"
 END
 
 STRINGTABLE
@@ -1317,90 +1316,90 @@ BEGIN
     ID_INDICATOR_CAPS       "CAP"
     ID_INDICATOR_NUM        "NUM"
     ID_INDICATOR_SCRL       "SCRL"
-    ID_INDICATOR_OVR        "�㏑"
-    ID_INDICATOR_REC        "�L�^"
-    ID_INDICATOR_KANA       "��"
+    ID_INDICATOR_OVR        "上書"
+    ID_INDICATOR_REC        "記録"
+    ID_INDICATOR_KANA       "ｶﾅ"
 END
 
 STRINGTABLE
 BEGIN
-    ID_FILE_NEW             "�V�K��̧�ق��쐬\n�V�Ķ��"
-    ID_FILE_OPEN            "������̧�ق��J��\n�J��"
-    ID_FILE_CLOSE           "��ƒ���̧�ق����\n����"
-    ID_FILE_SAVE            "��ƒ���̧�ق��㏑�����ĕۑ�\n�ۑ�"
-    ID_FILE_SAVE_AS         "��ƒ���̧�ق�V�������O�ŕۑ�\n���O�����ĕۑ�"
+    ID_FILE_NEW             "新規にﾌｧｲﾙを作成\n新規ﾌｧｲﾙ"
+    ID_FILE_OPEN            "既存のﾌｧｲﾙを開く\n開く"
+    ID_FILE_CLOSE           "作業中のﾌｧｲﾙを閉じる\n閉じる"
+    ID_FILE_SAVE            "作業中のﾌｧｲﾙを上書きして保存\n保存"
+    ID_FILE_SAVE_AS         "作業中のﾌｧｲﾙを新しい名前で保存\n名前をつけて保存"
 END
 
 STRINGTABLE
 BEGIN
-    ID_APP_ABOUT            "��۸��т̏��A�ް�ޮ݂����Ē��쌠��\��\n�ް�ޮݏ��"
-    ID_APP_EXIT             "���ع���݂��I�����A̧�ق̕ۑ����w��\n�I��"
+    ID_APP_ABOUT            "ﾌﾟﾛｸﾞﾗﾑの情報、ﾊﾞｰｼﾞｮﾝそして著作権を表示\nﾊﾞｰｼﾞｮﾝ情報"
+    ID_APP_EXIT             "ｱﾌﾟﾘｹｰｼｮﾝを終了し、ﾌｧｲﾙの保存を指示\n終了"
 END
 
 STRINGTABLE
 BEGIN
-    ID_FILE_MRU_FILE1       "�w���̧�ق��J��"
-    ID_FILE_MRU_FILE2       "�w���̧�ق��J��"
-    ID_FILE_MRU_FILE3       "�w���̧�ق��J��"
-    ID_FILE_MRU_FILE4       "�w���̧�ق��J��"
-    ID_FILE_MRU_FILE5       "�w���̧�ق��J��"
-    ID_FILE_MRU_FILE6       "�w���̧�ق��J��"
-    ID_FILE_MRU_FILE7       "�w���̧�ق��J��"
-    ID_FILE_MRU_FILE8       "�w���̧�ق��J��"
-    ID_FILE_MRU_FILE9       "�w���̧�ق��J��"
-    ID_FILE_MRU_FILE10      "�w���̧�ق��J��"
-    ID_FILE_MRU_FILE11      "�w���̧�ق��J��"
-    ID_FILE_MRU_FILE12      "�w���̧�ق��J��"
-    ID_FILE_MRU_FILE13      "�w���̧�ق��J��"
-    ID_FILE_MRU_FILE14      "�w���̧�ق��J��"
-    ID_FILE_MRU_FILE15      "�w���̧�ق��J��"
-    ID_FILE_MRU_FILE16      "�w���̧�ق��J��"
+    ID_FILE_MRU_FILE1       "指定のﾌｧｲﾙを開く"
+    ID_FILE_MRU_FILE2       "指定のﾌｧｲﾙを開く"
+    ID_FILE_MRU_FILE3       "指定のﾌｧｲﾙを開く"
+    ID_FILE_MRU_FILE4       "指定のﾌｧｲﾙを開く"
+    ID_FILE_MRU_FILE5       "指定のﾌｧｲﾙを開く"
+    ID_FILE_MRU_FILE6       "指定のﾌｧｲﾙを開く"
+    ID_FILE_MRU_FILE7       "指定のﾌｧｲﾙを開く"
+    ID_FILE_MRU_FILE8       "指定のﾌｧｲﾙを開く"
+    ID_FILE_MRU_FILE9       "指定のﾌｧｲﾙを開く"
+    ID_FILE_MRU_FILE10      "指定のﾌｧｲﾙを開く"
+    ID_FILE_MRU_FILE11      "指定のﾌｧｲﾙを開く"
+    ID_FILE_MRU_FILE12      "指定のﾌｧｲﾙを開く"
+    ID_FILE_MRU_FILE13      "指定のﾌｧｲﾙを開く"
+    ID_FILE_MRU_FILE14      "指定のﾌｧｲﾙを開く"
+    ID_FILE_MRU_FILE15      "指定のﾌｧｲﾙを開く"
+    ID_FILE_MRU_FILE16      "指定のﾌｧｲﾙを開く"
 END
 
 STRINGTABLE
 BEGIN
-    ID_NEXT_PANE            "���̳���޳�ɐ؂�ւ���\n�����߲�"
-    ID_PREV_PANE            "�O�̳���޳�ɐ؂�ւ���\n�O���߲�"
+    ID_NEXT_PANE            "次のｳｨﾝﾄﾞｳに切り替える\n次のﾍﾟｲﾝ"
+    ID_PREV_PANE            "前のｳｨﾝﾄﾞｳに切り替える\n前のﾍﾟｲﾝ"
 END
 
 STRINGTABLE
 BEGIN
-    ID_WINDOW_SPLIT         "��ƒ��̳���޳�𕪊�\n����"
+    ID_WINDOW_SPLIT         "作業中のｳｨﾝﾄﾞｳを分割\n分割"
 END
 
 STRINGTABLE
 BEGIN
-    ID_EDIT_CLEAR           "�I��͈͂�����\n����"
-    ID_EDIT_CLEAR_ALL       "���ׂď���\n���ׂď���"
-    ID_EDIT_COPY            "�I��͈͂��߰���ĸد���ް�ނɕۑ�\n��߰"
-    ID_EDIT_CUT             "�I��͈͂�؂����ĸد���ް�ނɕۑ�\n�؂���"
-    ID_EDIT_FIND            "�w�肵��������̌���\n����"
-    ID_EDIT_PASTE           "�د���ް�ނ̓��e��\��t��\n�\��t��"
-    ID_EDIT_REPEAT          "���O�ɍs����������J��Ԃ�\n�J��Ԃ�"
-    ID_EDIT_REPLACE         "�w�肵��������𑼂̕�����Œu��\n�u��"
-    ID_EDIT_SELECT_ALL      "̧�ٓ��̂��ׂĂ�I��\n���ׂđI��"
-    ID_EDIT_UNDO            "���O�ɍs������������ɖ߂�\n���ɖ߂�"
-    ID_EDIT_REDO            "���O�ɍs����������J��Ԃ�\n�J��Ԃ�"
+    ID_EDIT_CLEAR           "選択範囲を消去\n消去"
+    ID_EDIT_CLEAR_ALL       "すべて消去\nすべて消去"
+    ID_EDIT_COPY            "選択範囲をｺﾋﾟｰしてｸﾘｯﾌﾟﾎﾞｰﾄﾞに保存\nｺﾋﾟｰ"
+    ID_EDIT_CUT             "選択範囲を切り取ってｸﾘｯﾌﾟﾎﾞｰﾄﾞに保存\n切り取り"
+    ID_EDIT_FIND            "指定した文字列の検索\n検索"
+    ID_EDIT_PASTE           "ｸﾘｯﾌﾟﾎﾞｰﾄﾞの内容を貼り付け\n貼り付け"
+    ID_EDIT_REPEAT          "直前に行った動作を繰り返す\n繰り返し"
+    ID_EDIT_REPLACE         "指定した文字列を他の文字列で置換\n置換"
+    ID_EDIT_SELECT_ALL      "ﾌｧｲﾙ内のすべてを選択\nすべて選択"
+    ID_EDIT_UNDO            "直前に行った動作を元に戻す\n元に戻す"
+    ID_EDIT_REDO            "直前に行った動作を繰り返す\n繰り返す"
 END
 
 STRINGTABLE
 BEGIN
-    AFX_IDS_SCSIZE          "����޳�̻��ނ�ύX"
-    AFX_IDS_SCMOVE          "����޳�̈ʒu��ύX"
-    AFX_IDS_SCMINIMIZE      "����޳���ŏ�������"
-    AFX_IDS_SCMAXIMIZE      "����޳���ő剻����"
-    AFX_IDS_SCNEXTWINDOW    "���̳���޳�ɐ؂�ւ���"
-    AFX_IDS_SCPREVWINDOW    "�O�̳���޳�ɐ؂�ւ���"
-    AFX_IDS_SCCLOSE         "��ƒ��̳���޳����A�ύX����̧�ق̕ۑ����w��"
+    AFX_IDS_SCSIZE          "ｳｨﾝﾄﾞｳのｻｲｽﾞを変更"
+    AFX_IDS_SCMOVE          "ｳｨﾝﾄﾞｳの位置を変更"
+    AFX_IDS_SCMINIMIZE      "ｳｨﾝﾄﾞｳを最小化する"
+    AFX_IDS_SCMAXIMIZE      "ｳｨﾝﾄﾞｳを最大化する"
+    AFX_IDS_SCNEXTWINDOW    "次のｳｨﾝﾄﾞｳに切り替える"
+    AFX_IDS_SCPREVWINDOW    "前のｳｨﾝﾄﾞｳに切り替える"
+    AFX_IDS_SCCLOSE         "作業中のｳｨﾝﾄﾞｳを閉じ、変更したﾌｧｲﾙの保存を指示"
 END
 
 STRINGTABLE
 BEGIN
-    AFX_IDS_SCRESTORE       "����޳��ʏ�̻��ނɖ߂�"
-    AFX_IDS_SCTASKLIST      "���ع���݂̐؂�ւ�"
+    AFX_IDS_SCRESTORE       "ｳｨﾝﾄﾞｳを通常のｻｲｽﾞに戻す"
+    AFX_IDS_SCTASKLIST      "ｱﾌﾟﾘｹｰｼｮﾝの切り替え"
 END
 
-#endif    // ���{�� (���{) resources
+#endif    // 日本語 (日本) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -1420,8 +1419,8 @@ END
 LANGUAGE 17, 1
 #pragma code_page(932)
 #endif //_WIN32
-#include "res\DigitShowBasic.rc2"  // Microsoft Visual C++ �ȊO�̃c�[���ŕҏW���ꂽ���\�[�X
-#include "l.jpn\afxres.rc"          // �W���̃R���|�[�l���g
+#include "res\DigitShowBasic.rc2"  // Microsoft Visual C++ 以外のツールで編集されたリソース
+#include "l.jpn\afxres.rc"          // 標準のコンポーネント
 #endif
 
 /////////////////////////////////////////////////////////////////////////////

@@ -18,7 +18,7 @@
 
 #include "stdafx.h"
 #include "DigitShowBasic.h"
-#include "Control_Sensitivity.h"
+#include "Control_PreConsolidation.h"
 #include "DigitShowBasicDoc.h"
 #include "DigitShowContext.h"
 
@@ -28,34 +28,30 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-CControl_Sensitivity::CControl_Sensitivity(CWnd* pParent)
-    : CDialog(CControl_Sensitivity::IDD, pParent)
+CControl_PreConsolidation::CControl_PreConsolidation(CWnd* pParent)
+    : CDialog(CControl_PreConsolidation::IDD, pParent)
 {
     DigitShowContext* ctx = GetContext();
-    m_ERR_StressA = ctx->errTol.StressA;
-    m_ERR_StressCom = ctx->errTol.StressCom;
-    m_ERR_StressExt = ctx->errTol.StressExt;
+    m_q = ctx->control[1].q;
+    m_MotorSpeed = ctx->control[1].MotorSpeed;
 }
 
-void CControl_Sensitivity::DoDataExchange(CDataExchange* pDX)
+void CControl_PreConsolidation::DoDataExchange(CDataExchange* pDX)
 {
     CDialog::DoDataExchange(pDX);
-    DDX_Text(pDX, IDC_EDIT_ERR_StressA, m_ERR_StressA);
-    DDX_Text(pDX, IDC_EDIT_ERR_StressCom, m_ERR_StressCom);
-    DDV_MinMaxDouble(pDX, m_ERR_StressCom, 0., 50.);
-    DDX_Text(pDX, IDC_EDIT_ERR_StressExt, m_ERR_StressExt);
-    DDV_MinMaxDouble(pDX, m_ERR_StressExt, -50., 0.);
+    DDX_Text(pDX, IDC_EDIT_q, m_q);
+    DDX_Text(pDX, IDC_EDIT_MotorSpeed, m_MotorSpeed);
+    DDV_MinMaxDouble(pDX, m_MotorSpeed, 0., 3000.);
 }
 
-BEGIN_MESSAGE_MAP(CControl_Sensitivity, CDialog)
+BEGIN_MESSAGE_MAP(CControl_PreConsolidation, CDialog)
 END_MESSAGE_MAP()
 
-void CControl_Sensitivity::OnOK()
+void CControl_PreConsolidation::OnOK()
 {
     UpdateData(TRUE);
     DigitShowContext* ctx = GetContext();
-    ctx->errTol.StressA = m_ERR_StressA;
-    ctx->errTol.StressCom = m_ERR_StressCom;
-    ctx->errTol.StressExt = m_ERR_StressExt;
+    ctx->control[1].q = m_q;
+    ctx->control[1].MotorSpeed = m_MotorSpeed;
     CDialog::OnOK();
 }

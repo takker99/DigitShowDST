@@ -16,34 +16,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __CALIBRATIONAMP_H_INCLUDE__
-#define __CALIBRATIONAMP_H_INCLUDE__
+#ifndef __CONTROL_CLOADING_H_INCLUDE__
+#define __CONTROL_CLOADING_H_INCLUDE__
 
 #pragma once
 
-#include "DigitShowBasicDoc.h"
-
-class CCalibrationAmp : public CDialog
+class CControl_CLoading : public CDialog
 {
 public:
-    CCalibrationAmp(CWnd* pParent = NULL);
+    CControl_CLoading(CWnd* pParent = NULL);
 
-    enum { IDD = IDD_CalibrationAmp };
+    enum { IDD = IDD_Control_Cloading };
 
-    int   m_AmpNo;
-    float m_AmpPB;
-    float m_AmpVB;
-    float m_AmpVO;
-    float m_AmpPO;
+    int    m_flag0;
+    double m_MotorSpeed;
+    double m_q_lower;
+    double m_q_upper;
+    int    m_time0;
+    int    m_time1;
+    int    m_time2;
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);
 
-    afx_msg void OnBUTTONAmpBase();
-    afx_msg void OnBUTTONAmpOffset();
-    afx_msg void OnBUTTONAmpUpdate();
+    afx_msg void OnBUTTONUpdate();
+    afx_msg void OnBUTTONReflesh();
 
     DECLARE_MESSAGE_MAP()
 };
 
-#endif // __CALIBRATIONAMP_H_INCLUDE__
+#endif // __CONTROL_CLOADING_H_INCLUDE__

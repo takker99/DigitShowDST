@@ -1,107 +1,61 @@
-﻿/**
- * @file Control_File.h
- * @brief Header file for file-based control script dialog
+﻿/*
+ * DigitShowBasic - Triaxial Test Machine Control Software
+ * Copyright (C) 2025 Makoto KUNO
  *
- * ヘッダー ファイル
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#ifndef __CONTROL_FILE_H_INCLUDE__
+#define __CONTROL_FILE_H_INCLUDE__
 
 #pragma once
-#if !defined(AFX_CONTROL_FILE_H__EF6A40AB_D157_4D17_BCC0_884EC690BC71__INCLUDED_)
-#define AFX_CONTROL_FILE_H__EF6A40AB_D157_4D17_BCC0_884EC690BC71__INCLUDED_
 
-#include "resource.h"
-#include <array>
-
-/////////////////////////////////////////////////////////////////////////////
-/**
- * @class CControl_File
- * @brief Dialog class for control script file management
- *
- * Manages loading, editing, and executing .ctl control script files.
- * CControl_File ダイアログ
- */
 class CControl_File : public CDialog
 {
-    // コンストラクション
-  public:
-    /**
-     * @brief Standard constructor
-     * @param pParent Pointer to parent window (default NULL)
-     */
-    CControl_File(CWnd *pParent = NULL);
+public:
+    CControl_File(CWnd* pParent = NULL);
 
-    // ダイアログ データ
-    //{{AFX_DATA(CControl_File)
-    enum
-    {
-        IDD = IDD_Control_File /**< Dialog resource ID */
-    };
+    enum { IDD = IDD_Control_File };
 
-    // Array size for control file parameters - now includes all ControlParams fields
-    static constexpr size_t CFPARA_COUNT = 25; /**< Number of control file parameters (0-25) */
+    double m_CFPARA0;
+    double m_CFPARA1;
+    double m_CFPARA2;
+    double m_CFPARA3;
+    double m_CFPARA4;
+    double m_CFPARA5;
+    double m_CFPARA6;
+    double m_CFPARA7;
+    double m_CFPARA8;
+    double m_CFPARA9;
+    int    m_StepNum;
+    int    m_SCFNum;
+    int    m_CurNum;
+    int    m_CFNum;
 
-    // Control file parameters consolidated into array
-    std::array<double, CFPARA_COUNT> m_CFPARA{}; /**< Control file parameters 0-25 */
+protected:
+    virtual void DoDataExchange(CDataExchange* pDX);
+    virtual BOOL OnInitDialog();
 
-    size_t m_StepNum{};       /**< Total number of steps in script */
-    size_t m_SCFNum{};        /**< Selected control file number (CFNUM) */
-    size_t m_CurNum{};        /**< Current step number */
-    size_t m_CFNum{};         /**< Control function number (CFNUM) */
-    CStringW m_CFLabel;       /**< Control pattern label (use field) */
-    CStringW m_CurLabel;      /**< Current control pattern label */
-    CStringW m_PatternDesc;   /**< Description of selected control pattern */
-    CStringW m_Description;   /**< Description field from ControlParams */
-    CComboBox m_ComboPattern; /**< Combo box for pattern selection */
-                              //}}AFX_DATA
-
-    // オーバーライド
-    // ClassWizard は仮想関数のオーバーライドを生成します。
-    //{{AFX_VIRTUAL(CControl_File)
-  protected:
-    /**
-     * @brief Data exchange function for DDX/DDV support
-     * @param pDX Pointer to CDataExchange object
-     */
-    void DoDataExchange(CDataExchange *pDX) override;
-    //}}AFX_VIRTUAL
-
-    // インプリメンテーション
-  protected:
-    // 生成されたメッセージ マップ関数
-    //{{AFX_MSG(CControl_File)
-    /** @brief Update document with current step parameters */
     afx_msg void OnBUTTONUpdate();
-    /** @brief Load current step from arrays into UI */
+    afx_msg void OnBUTTONReadFile();
+    afx_msg void OnBUTTONSaveFile();
     afx_msg void OnBUTTONLoad();
-    /** @brief Read control script from JSON */
-    afx_msg void OnBUTTONReadJSON();
-    /** @brief Save control script to JSON */
-    afx_msg void OnBUTTONSaveJSON();
     afx_msg void OnCHECKChangeNo();
-
-    /** @brief Decrement current step number */
     afx_msg void OnBUTTONStepDec();
-
-    /** @brief Increment current step number */
     afx_msg void OnBUTTONStepInc();
 
-    /** @brief Handle control pattern selection change */
-    afx_msg void OnSelChangeControlPattern();
-
-    /**
-     * @brief Initialize dialog
-     * @return TRUE if initialization succeeds
-     */
-    BOOL OnInitDialog() override;
-    //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
-
-  private:
-    /** @brief Update pattern description based on current combo box selection */
-    void UpdatePatternDescription();
 };
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ は前行の直前に追加の宣言を挿入します。
-
-#endif // !defined(AFX_CONTROL_FILE_H__EF6A40AB_D157_4D17_BCC0_884EC690BC71__INCLUDED_)
+#endif // __CONTROL_FILE_H_INCLUDE__
