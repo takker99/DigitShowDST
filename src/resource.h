@@ -1,10 +1,10 @@
 ﻿//{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ で生成されたインクルード ファイル。
-// DigitShowBasic.rc で使用
+// DigitShowDST.rc で使用
 //
 // NOLINTBEGIN(cppcoreguidelines-macro-usage, cppcoreguidelines-macro-to-enum)
 #define IDD_ABOUTBOX 100
-#define IDD_DIGITSHOWBASIC_FORM 101
+#define IDD_DigitShowDST_FORM 101
 #define IDR_MAINFRAME 128
 #define IDR_DIGITSTYPE 129
 #define IDD_BoardSettings 132

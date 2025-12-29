@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <SccProjectName />
     <SccLocalPath />
-    <ProjectName>DigitShowBasic</ProjectName>
+    <ProjectName>DigitShowDST</ProjectName>
     <Keyword>MFCProj</Keyword>
     <ProjectGuid>{1AD0A0AF-D066-4208-AA36-80ED2F2C99F6}</ProjectGuid>
   </PropertyGroup>
@@ -182,9 +182,9 @@
     <ClCompile Include="src/DA_Pout.cpp" />
     <ClCompile Include="src/DA_Vout.cpp" />
     <ClCompile Include="src/AppInfoDlg.cpp" />
-    <ClCompile Include="src/DigitShowBasic.cpp" />
-    <ClCompile Include="src/DigitShowBasicDoc.cpp" />
-    <ClCompile Include="src/DigitShowBasicView.cpp" />
+    <ClCompile Include="src/DigitShowDST.cpp" />
+    <ClCompile Include="src/DigitShowDSTDoc.cpp" />
+    <ClCompile Include="src/DigitShowDSTView.cpp" />
     <ClCompile Include="src/MainFrm.cpp" />
     <ClCompile Include="src/SamplingSettings.cpp" />
     <ClCompile Include="src/StdAfx.cpp">
@@ -200,7 +200,7 @@
     <ClCompile Include="src/TransAdjustment.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="src/DigitShowBasic.rc" />
+    <ResourceCompile Include="src/DigitShowDST.rc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="board_control.hpp" />
@@ -215,9 +215,9 @@
     <ClInclude Include="src/DA_Pout.h" />
     <ClInclude Include="src/DA_Vout.h" />
     <ClInclude Include="src/AppInfoDlg.h" />
-    <ClInclude Include="src/DigitShowBasic.h" />
-    <ClInclude Include="src/DigitShowBasicDoc.h" />
-    <ClInclude Include="src/DigitShowBasicView.h" />
+    <ClInclude Include="src/DigitShowDST.h" />
+    <ClInclude Include="src/DigitShowDSTDoc.h" />
+    <ClInclude Include="src/DigitShowDSTView.h" />
     <ClInclude Include="src/MainFrm.h" />
     <ClInclude Include="src/Resource.h" />
     <ClInclude Include="src/SamplingSettings.h" />
@@ -225,11 +225,11 @@
     <ClInclude Include="src/TransAdjustment.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\DigitShowBasic.ico" />
-    <Image Include="res\DigitShowBasicDoc.ico" />
+    <Image Include="res\DigitShowDST.ico" />
+    <Image Include="res\DigitShowDSTDoc.ico" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="res\DigitShowBasic.rc2" />
+    <CustomBuild Include="res\DigitShowDST.rc2" />
   </ItemGroup>
   <Target Name="BootstrapVcpkg" BeforeTargets="InitializeBuildStatus" Condition="!Exists('$(VcpkgRoot)vcpkg.exe')">
     <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(VcpkgRoot)scripts\bootstrap.ps1&quot; -disableMetrics" />

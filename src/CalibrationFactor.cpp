@@ -26,7 +26,7 @@ using namespace variables;
 
 /////////////////////////////////////////////////////////////////////////////
 // CCalibrationFactor ダイアログ
-// CDigitShowBasicView
+// CDigitShowDSTView
 
 CCalibrationFactor::CCalibrationFactor(CWnd *pParent /*=NULL*/)
     : CDialog(CCalibrationFactor::IDD, pParent), m_CFP{}, m_C{}

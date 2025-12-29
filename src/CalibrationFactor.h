@@ -9,7 +9,7 @@
 #if !defined(AFX_CALIBRATIONFACTOR_H__180C3E2C_AEA3_469C_B493_87EF9EE3B75D__INCLUDED_)
 #define AFX_CALIBRATIONFACTOR_H__180C3E2C_AEA3_469C_B493_87EF9EE3B75D__INCLUDED_
 
-#include "DigitShowBasicDoc.h"
+#include "DigitShowDSTDoc.h"
 #include "resource.h"
 #include <array>
 
@@ -36,7 +36,7 @@ class CCalibrationFactor : public CDialog
      */
     CCalibrationFactor(CWnd *pParent = NULL);
 
-    CDigitShowBasicDoc *pDoc{}; /**< Pointer to document */
+    CDigitShowDSTDoc *pDoc{}; /**< Pointer to document */
     // ダイアログ データ
     //{{AFX_DATA(CCalibrationFactor)
     enum

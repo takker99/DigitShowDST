@@ -10,7 +10,7 @@ This PR introduces the `ControlParams` struct as a replacement for the legacy CF
   - Primary parameters: loading_dir, motor_rpm, target_tau_kpa, target_sigma_kpa, duration_min, cycles
   - Sensitivity overrides: err_stress_kpa, err_disp_mm, amp_v_per_kpa_m2, amp2_f_v_per_mm, amp2_r_v_per_mm, dmax_v
   - Documentation field: description (std::string)
-  
+
 - **Conversion functions**:
   - `FromCFPARA()`: Converts legacy CFPARA[18] array to ControlParams
   - `ToCFPARA()`: Converts ControlParams back to CFPARA array
@@ -35,14 +35,14 @@ This PR introduces the `ControlParams` struct as a replacement for the legacy CF
   - `test_default_values()`: Validates default initialization
 - All tests pass successfully
 
-### 5. UI Updates (`DigitShowBasic.rc`)
+### 5. UI Updates (`DigitShowDST.rc`)
 Updated Control dialog parameter labels from array indices to meaningful names:
 - Before: CFPARA[0], CFPARA[1], etc.
 - After: loading_dir, motor_rpm, target_tau, target_sigma, etc.
 
 ### 6. Project Integration
-- Added `control\params.hpp` to DigitShowBasic.vcxproj
-- Added `control\params.hpp` to DigitShowBasic.vcxproj.filters
+- Added `control\params.hpp` to DigitShowDST.vcxproj
+- Added `control\params.hpp` to DigitShowDST.vcxproj.filters
 - Created control/ directory for future control-related code
 
 ## Technical Decisions
@@ -138,9 +138,9 @@ Follows project C++ guidelines:
 - `control/params_validation.cpp` - Test runner
 
 ### Modified Files (3)
-- `DigitShowBasic.rc` - Updated UI labels
-- `DigitShowBasic.vcxproj` - Added new header
-- `DigitShowBasic.vcxproj.filters` - Added new header
+- `DigitShowDST.rc` - Updated UI labels
+- `DigitShowDST.vcxproj` - Added new header
+- `DigitShowDST.vcxproj.filters` - Added new header
 
 ## Impact Assessment
 

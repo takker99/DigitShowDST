@@ -1,18 +1,18 @@
 ﻿/**
- * @file DigitShowBasicView.cpp
- * @brief Implementation of CDigitShowBasicView class
+ * @file DigitShowDSTView.cpp
+ * @brief Implementation of CDigitShowDSTView class
  *
  * Implements view functionality including UI updates, timer management,
  * and user interaction handling.
- * CDigitShowBasicView クラスの動作の定義を行います。
+ * CDigitShowDSTView クラスの動作の定義を行います。
  */
 
 #include "StdAfx.h"
 
 #include "Board.hpp"
 #include "Constants.h"
-#include "DigitShowBasicDoc.h"
-#include "DigitShowBasicView.h"
+#include "DigitShowDSTDoc.h"
+#include "DigitShowDSTView.h"
 #include "File.hpp"
 #include "Logging.hpp"
 #include "SamplingSettings.h"
@@ -49,24 +49,24 @@ using namespace variables;
 using std::chrono::microseconds;
 
 /////////////////////////////////////////////////////////////////////////////
-// CDigitShowBasicView
+// CDigitShowDSTView
 
-IMPLEMENT_DYNCREATE(CDigitShowBasicView, CFormView)
+IMPLEMENT_DYNCREATE(CDigitShowDSTView, CFormView)
 
-BEGIN_MESSAGE_MAP_IGNORE_UNUSED_LOCAL_TYPEDEF(CDigitShowBasicView, CFormView)
-//{{AFX_MSG_MAP(CDigitShowBasicView)
+BEGIN_MESSAGE_MAP_IGNORE_UNUSED_LOCAL_TYPEDEF(CDigitShowDSTView, CFormView)
+//{{AFX_MSG_MAP(CDigitShowDSTView)
 ON_WM_CTLCOLOR()
 ON_WM_TIMER()
-ON_BN_CLICKED(IDC_BUTTON_CtrlOff, &CDigitShowBasicView::OnBUTTONCtrlOff)
-ON_BN_CLICKED(IDC_BUTTON_CtrlOn, &CDigitShowBasicView::OnBUTTONCtrlOn)
+ON_BN_CLICKED(IDC_BUTTON_CtrlOff, &CDigitShowDSTView::OnBUTTONCtrlOff)
+ON_BN_CLICKED(IDC_BUTTON_CtrlOn, &CDigitShowDSTView::OnBUTTONCtrlOn)
 ON_WM_DESTROY()
-ON_BN_CLICKED(IDC_BUTTON_InterceptSave, &CDigitShowBasicView::OnBUTTONInterceptSave)
-ON_BN_CLICKED(IDC_BUTTON_SetTimeInterval, &CDigitShowBasicView::OnBUTTONSetTimeInterval)
+ON_BN_CLICKED(IDC_BUTTON_InterceptSave, &CDigitShowDSTView::OnBUTTONInterceptSave)
+ON_BN_CLICKED(IDC_BUTTON_SetTimeInterval, &CDigitShowDSTView::OnBUTTONSetTimeInterval)
 //}}AFX_MSG_MAP
 END_MESSAGE_MAP_IGNORE_UNUSED_LOCAL_TYPEDEF()
 
 /////////////////////////////////////////////////////////////////////////////
-// CDigitShowBasicView クラスの構築/消滅
+// CDigitShowDSTView クラスの構築/消滅
 
 // from
 // https://github.com/mkt-kuno/DigitShowModbus/blob/666bca04462105e56504dc45f78ce3ad0737fdc3/src/DigitShowModbus.h#L128-L130
@@ -74,22 +74,22 @@ static constexpr auto BG_COLOR_MOTOR_RGB = (RGB(0, 128, 128));        // Motor M
 static constexpr auto BG_COLOR_DIRTY_OR_FORKED_RGB = (RGB(48, 0, 0)); // DirtyGit/ForkedRepo  #300000
 static constexpr auto BG_COLOR = git_version::DIRTY ? BG_COLOR_DIRTY_OR_FORKED_RGB : BG_COLOR_MOTOR_RGB;
 
-CDigitShowBasicView::CDigitShowBasicView()
-    : CFormView(CDigitShowBasicView::IDD), m_Vout{}, m_Phyout{}, m_Para{}, m_NowTime(_T("")),
+CDigitShowDSTView::CDigitShowDSTView()
+    : CFormView(CDigitShowDSTView::IDD), m_Vout{}, m_Phyout{}, m_Para{}, m_NowTime(_T("")),
       m_SamplingTime(timer::TimeInterval_3.count()), m_FileName(_T("")), m_pEditBrush(new CBrush(RGB(255, 255, 255))),
       m_pStaticBrush(new CBrush(BG_COLOR)), m_pDlgBrush(new CBrush(BG_COLOR))
 {
 }
 
-CDigitShowBasicView::~CDigitShowBasicView()
+CDigitShowDSTView::~CDigitShowDSTView()
 {
     GetDocument()->CloseBoard();
 }
 
-void CDigitShowBasicView::DoDataExchange(CDataExchange *pDX)
+void CDigitShowDSTView::DoDataExchange(CDataExchange *pDX)
 {
     CFormView::DoDataExchange(pDX);
-    //{{AFX_DATA_MAP(CDigitShowBasicView)
+    //{{AFX_DATA_MAP(CDigitShowDSTView)
     spdlog::trace("{}", __func__);
 
     // Use loops for array-based DDX
@@ -110,7 +110,7 @@ void CDigitShowBasicView::DoDataExchange(CDataExchange *pDX)
     //}}AFX_DATA_MAP
 }
 
-BOOL CDigitShowBasicView::PreCreateWindow(CREATESTRUCT &cs)
+BOOL CDigitShowDSTView::PreCreateWindow(CREATESTRUCT &cs)
 {
     // TODO: この位置で CREATESTRUCT cs を修正して Window クラスまたはスタイルを
     //  修正してください。
@@ -118,29 +118,29 @@ BOOL CDigitShowBasicView::PreCreateWindow(CREATESTRUCT &cs)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CDigitShowBasicView クラスの診断
+// CDigitShowDSTView クラスの診断
 
 #ifdef _DEBUG
-void CDigitShowBasicView::AssertValid() const
+void CDigitShowDSTView::AssertValid() const
 {
     CFormView::AssertValid();
 }
 
-void CDigitShowBasicView::Dump(CDumpContext &dc) const
+void CDigitShowDSTView::Dump(CDumpContext &dc) const
 {
     CFormView::Dump(dc);
 }
 
-CDigitShowBasicDoc *CDigitShowBasicView::GetDocument() // 非デバッグ バージョンはインラインです。
+CDigitShowDSTDoc *CDigitShowDSTView::GetDocument() // 非デバッグ バージョンはインラインです。
 {
-    ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CDigitShowBasicDoc)));
-    return (CDigitShowBasicDoc *)m_pDocument;
+    ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CDigitShowDSTDoc)));
+    return (CDigitShowDSTDoc *)m_pDocument;
 }
 #endif //_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
-// CDigitShowBasicView クラスのメッセージ ハンドラ
-void CDigitShowBasicView::OnInitialUpdate()
+// CDigitShowDSTView クラスのメッセージ ハンドラ
+void CDigitShowDSTView::OnInitialUpdate()
 {
     CFormView::OnInitialUpdate();
     GetParentFrame()->RecalcLayout();
@@ -191,7 +191,7 @@ void CDigitShowBasicView::OnInitialUpdate()
     SetTimer(timer::kTimerId_UI, static_cast<UINT>(timer::TimeInterval_1.count()), NULL);
 }
 
-HBRUSH CDigitShowBasicView::OnCtlColor(CDC *pDC, CWnd *pWnd, UINT nCtlColor)
+HBRUSH CDigitShowDSTView::OnCtlColor(CDC *pDC, CWnd *pWnd, UINT nCtlColor)
 {
     switch (nCtlColor)
     {
@@ -210,7 +210,7 @@ HBRUSH CDigitShowBasicView::OnCtlColor(CDC *pDC, CWnd *pWnd, UINT nCtlColor)
         return CFormView::OnCtlColor(pDC, pWnd, nCtlColor);
     }
 }
-void CDigitShowBasicView::OnDestroy()
+void CDigitShowDSTView::OnDestroy()
 {
     CFormView::OnDestroy();
     // TODO: この位置にメッセージ ハンドラ用のコードを追加してください
@@ -218,7 +218,7 @@ void CDigitShowBasicView::OnDestroy()
     delete m_pStaticBrush;
     delete m_pDlgBrush;
 }
-void CDigitShowBasicView::OnTimer(UINT_PTR nIDEvent)
+void CDigitShowDSTView::OnTimer(UINT_PTR nIDEvent)
 {
     // TODO: この位置にメッセージ ハンドラ用のコードを追加するかまたはデフォルトの処理を呼び出してください
 
@@ -289,7 +289,7 @@ void CDigitShowBasicView::OnTimer(UINT_PTR nIDEvent)
     CFormView::OnTimer(nIDEvent);
 }
 
-void CDigitShowBasicView::ShowData()
+void CDigitShowDSTView::ShowData()
 {
     // Format voltage output display strings
     for (size_t i = 0; i < CHANNELS_VOUT; ++i)
@@ -331,7 +331,7 @@ void CDigitShowBasicView::ShowData()
     UpdateData(FALSE);
 }
 
-void CDigitShowBasicView::OnBUTTONCtrlOn()
+void CDigitShowDSTView::OnBUTTONCtrlOn()
 {
     spdlog::info("Control ON button clicked");
     // TODO: Add your control notification handler code here
@@ -408,7 +408,7 @@ void CDigitShowBasicView::OnBUTTONCtrlOn()
     pDoc->Start_Control();
 }
 
-void CDigitShowBasicView::OnBUTTONCtrlOff()
+void CDigitShowDSTView::OnBUTTONCtrlOff()
 {
     spdlog::info("Control OFF button clicked");
     // TODO: Add your control notification handler code here
@@ -438,7 +438,7 @@ void CDigitShowBasicView::OnBUTTONCtrlOff()
     spdlog::info("Control timer stopped");
 }
 
-void CDigitShowBasicView::OnBUTTONInterceptSave()
+void CDigitShowDSTView::OnBUTTONInterceptSave()
 {
     // TODO: Add your control notification handler code here
     auto *pDoc = GetDocument();
@@ -450,7 +450,7 @@ void CDigitShowBasicView::OnBUTTONInterceptSave()
     pDoc->SaveToFile();
 }
 
-LRESULT CDigitShowBasicView::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CDigitShowDSTView::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
@@ -497,7 +497,7 @@ LRESULT CDigitShowBasicView::DefWindowProc(UINT message, WPARAM wParam, LPARAM l
     return CFormView::DefWindowProc(message, wParam, lParam);
 }
 
-void CDigitShowBasicView::OnBUTTONSetTimeInterval()
+void CDigitShowDSTView::OnBUTTONSetTimeInterval()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     CStringW tmp;

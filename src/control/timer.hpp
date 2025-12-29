@@ -3,7 +3,7 @@
  * @brief Pure function declarations for control patterns
  *
  * This file declares pure functions for all control patterns, replacing
- * the global-state-dependent functions in DigitShowBasicDoc.cpp.
+ * the global-state-dependent functions in DigitShowDSTDoc.cpp.
  */
 
 #pragma once

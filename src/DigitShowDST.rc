@@ -49,7 +49,7 @@ BEGIN
     "LANGUAGE 17, 1\r\n"
     "#pragma code_page(65001)\r\n"
     "#endif //_WIN32\r\n"
-    "#include ""res\\DigitShowBasic.rc2""  // Microsoft Visual C++ 以外のツールで編集されたリソース\r\n"
+    "#include ""res\\DigitShowDST.rc2""  // Microsoft Visual C++ 以外のツールで編集されたリソース\r\n"
     "#include ""l.jpn\\afxres.rc""          // 標準のコンポーネント\r\n"
     "#endif\r\n"
     "\0"
@@ -65,9 +65,9 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON                    "res\\DigitShowBasic.ico"
+IDR_MAINFRAME           ICON                    "res\\DigitShowDST.ico"
 
-IDR_DIGITSTYPE          ICON                    "res\\DigitShowBasicDoc.ico"
+IDR_DIGITSTYPE          ICON                    "res\\DigitShowDSTDoc.ico"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ BEGIN
     END
     POPUP "Help(&H)"
     BEGIN
-        MENUITEM "DigitShowBasic Ver.(&A)...\tF1", ID_APP_ABOUT
+        MENUITEM "DigitShowDST Ver.(&A)...\tF1", ID_APP_ABOUT
     END
 END
 
@@ -152,18 +152,18 @@ END
 
 IDD_ABOUTBOX DIALOG 0, 0, 235, 55
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "DigitShowBasicのﾊﾞｰｼﾞｮﾝ情報"
+CAPTION "DigitShowDSTのﾊﾞｰｼﾞｮﾝ情報"
 FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
-    LTEXT           "DigitShowBasic Version 2.0, 2005/07/20",IDC_STATIC,40,10,119,8,SS_NOPREFIX
+    LTEXT           "DigitShowDST Version 2.0, 2005/07/20",IDC_STATIC,40,10,119,8,SS_NOPREFIX
     LTEXT           "Copyright (C) 2005",IDC_STATIC,40,25,119,8
     DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
 END
 
 IDD_AppInfo DIALOGEX 0, 0, 400, 350
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "About DigitShowBasic"
+CAPTION "About DigitShowDST"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     EDITTEXT        IDC_AppInfo_FreeText,7,7,386,315,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL | WS_HSCROLL
@@ -171,7 +171,7 @@ BEGIN
     PUSHBUTTON      "Copy Diff",IDC_AppInfo_CopyDiff2ClipBoard,237,329,50,14
 END
 
-IDD_DIGITSHOWBASIC_FORM DIALOGEX 0, 0, 569, 273
+IDD_DigitShowDST_FORM DIALOGEX 0, 0, 569, 273
 STYLE DS_SETFONT | WS_CHILD
 FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x0
 BEGIN
@@ -711,12 +711,12 @@ BEGIN
     BEGIN
         BLOCK "041104b0"
         BEGIN
-            VALUE "FileDescription", "DigitShowBasic MFC ｱﾌﾟﾘｹｰｼｮﾝ"
+            VALUE "FileDescription", "DigitShowDST MFC ｱﾌﾟﾘｹｰｼｮﾝ"
             VALUE "FileVersion", "1, 0, 0, 1"
-            VALUE "InternalName", "DigitShowBasic"
+            VALUE "InternalName", "DigitShowDST"
             VALUE "LegalCopyright", "Copyright (C) 2001"
-            VALUE "OriginalFilename", "DigitShowBasic.EXE"
-            VALUE "ProductName", "DigitShowBasic ｱﾌﾟﾘｹｰｼｮﾝ"
+            VALUE "OriginalFilename", "DigitShowDST.EXE"
+            VALUE "ProductName", "DigitShowDST ｱﾌﾟﾘｹｰｼｮﾝ"
             VALUE "ProductVersion", "1, 0, 0, 1"
         END
     END
@@ -743,7 +743,7 @@ BEGIN
         BOTTOMMARGIN, 48
     END
 
-    IDD_DIGITSHOWBASIC_FORM, DIALOG
+    IDD_DigitShowDST_FORM, DIALOG
     BEGIN
         LEFTMARGIN, 7
         TOPMARGIN, 7
@@ -843,7 +843,7 @@ BEGIN
     0
 END
 
-IDD_DIGITSHOWBASIC_FORM AFX_DIALOG_LAYOUT
+IDD_DigitShowDST_FORM AFX_DIALOG_LAYOUT
 BEGIN
     0
 END
@@ -881,12 +881,12 @@ END
 
 STRINGTABLE
 BEGIN
-    IDR_MAINFRAME           "DigitShowBasic\n\nDigitS\n\n\nDigitShowBasic.Document\nDigitS Document"
+    IDR_MAINFRAME           "DigitShowDST\n\nDigitS\n\n\nDigitShowDST.Document\nDigitS Document"
 END
 
 STRINGTABLE
 BEGIN
-    AFX_IDS_APP_TITLE       "DigitShowBasic"
+    AFX_IDS_APP_TITLE       "DigitShowDST"
     AFX_IDS_IDLEMESSAGE     "ﾚﾃﾞｨ"
 END
 
@@ -999,7 +999,7 @@ END
 LANGUAGE 17, 1
 #pragma code_page(65001)
 #endif //_WIN32
-#include "res\DigitShowBasic.rc2"  // Microsoft Visual C++ 以外のツールで編集されたリソース
+#include "res\DigitShowDST.rc2"  // Microsoft Visual C++ 以外のツールで編集されたリソース
 #include "l.jpn\afxres.rc"          // 標準のコンポーネント
 #endif
 

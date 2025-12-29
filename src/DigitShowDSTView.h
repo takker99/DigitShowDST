@@ -1,39 +1,39 @@
 ﻿/**
- * @file DigitShowBasicView.h
- * @brief Declaration and interface definition for CDigitShowBasicView class
+ * @file DigitShowDSTView.h
+ * @brief Declaration and interface definition for CDigitShowDSTView class
  *
- * CDigitShowBasicView クラスの宣言およびインターフェイスの定義をします。
+ * CDigitShowDSTView クラスの宣言およびインターフェイスの定義をします。
  */
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-#if !defined(AFX_DIGITSHOWBASICVIEW_H__44354AEA_B72E_464C_AAD2_A696AA19EF89__INCLUDED_)
-#define AFX_DIGITSHOWBASICVIEW_H__44354AEA_B72E_464C_AAD2_A696AA19EF89__INCLUDED_
+#if !defined(AFX_DigitShowDSTVIEW_H__44354AEA_B72E_464C_AAD2_A696AA19EF89__INCLUDED_)
+#define AFX_DigitShowDSTVIEW_H__44354AEA_B72E_464C_AAD2_A696AA19EF89__INCLUDED_
 
 #include "resource.h"
 #include <array>
 
 /**
- * @class CDigitShowBasicView
- * @brief Main view class for DigitShowBasic application
+ * @class CDigitShowDSTView
+ * @brief Main view class for DigitShowDST application
  *
  * Form view that displays sensor readings, controls timers, and manages UI updates.
  * シリアライズ機能のみから作成します。
  */
-class CDigitShowBasicView : public CFormView
+class CDigitShowDSTView : public CFormView
 {
   protected:
     /**
      * @brief Default constructor (created only from serialization)
      */
-    CDigitShowBasicView();
-    DECLARE_DYNCREATE(CDigitShowBasicView)
+    CDigitShowDSTView();
+    DECLARE_DYNCREATE(CDigitShowDSTView)
 
   public:
-    //{{AFX_DATA(CDigitShowBasicView)
+    //{{AFX_DATA(CDigitShowDSTView)
     enum
     {
-        IDD = IDD_DIGITSHOWBASIC_FORM /**< Dialog resource ID */
+        IDD = IDD_DigitShowDST_FORM /**< Dialog resource ID */
     };
 
     // Array sizes for channel data
@@ -71,9 +71,9 @@ class CDigitShowBasicView : public CFormView
   public:
     /**
      * @brief Get pointer to document
-     * @return Pointer to CDigitShowBasicDoc
+     * @return Pointer to CDigitShowDSTDoc
      */
-    CDigitShowBasicDoc *GetDocument();
+    CDigitShowDSTDoc *GetDocument();
 
     // オペレーション
   public:
@@ -82,7 +82,7 @@ class CDigitShowBasicView : public CFormView
     CBrush *m_pDlgBrush;    /**< Brush for dialog background */
                             // オーバーライド
                             // ClassWizard は仮想関数のオーバーライドを生成します。
-                            //{{AFX_VIRTUAL(CDigitShowBasicView)
+                            //{{AFX_VIRTUAL(CDigitShowDSTView)
   public:
     /**
      * @brief Pre-create window initialization
@@ -123,7 +123,7 @@ class CDigitShowBasicView : public CFormView
     /**
      * @brief Destructor
      */
-    ~CDigitShowBasicView() override;
+    ~CDigitShowDSTView() override;
 #ifdef _DEBUG
     /** @brief Assert validity of object state */
     virtual void AssertValid() const override;
@@ -135,7 +135,7 @@ class CDigitShowBasicView : public CFormView
   protected:
     // 生成されたメッセージ マップ関数
   protected:
-    //{{AFX_MSG(CDigitShowBasicView)
+    //{{AFX_MSG(CDigitShowDSTView)
     /**
      * @brief Handle control color messages
      * @param pDC Device context
@@ -169,10 +169,10 @@ class CDigitShowBasicView : public CFormView
     DECLARE_MESSAGE_MAP()
 };
 
-#ifndef _DEBUG // DigitShowBasicView.cpp ファイルがデバッグ環境の時使用されます。
-inline CDigitShowBasicDoc *CDigitShowBasicView::GetDocument()
+#ifndef _DEBUG // DigitShowDSTView.cpp ファイルがデバッグ環境の時使用されます。
+inline CDigitShowDSTDoc *CDigitShowDSTView::GetDocument()
 {
-    return dynamic_cast<CDigitShowBasicDoc *>(m_pDocument);
+    return dynamic_cast<CDigitShowDSTDoc *>(m_pDocument);
 }
 #endif
 
@@ -181,4 +181,4 @@ inline CDigitShowBasicDoc *CDigitShowBasicView::GetDocument()
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ は前行の直前に追加の宣言を挿入します。
 
-#endif // !defined(AFX_DIGITSHOWBASICVIEW_H__44354AEA_B72E_464C_AAD2_A696AA19EF89__INCLUDED_)
+#endif // !defined(AFX_DigitShowDSTVIEW_H__44354AEA_B72E_464C_AAD2_A696AA19EF89__INCLUDED_)

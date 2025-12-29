@@ -1,10 +1,12 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/takker99/DigitShowBasic/schemas/control_script.schema.json",
+  "$id": "https://github.com/takker99/DigitShowDST/schemas/control_script.schema.json",
   "title": "Control Script",
-  "description": "DigitShowBasic control script for triaxial test automation",
+  "description": "DigitShowDST control script for triaxial test automation",
   "type": "object",
-  "required": ["steps"],
+  "required": [
+    "steps"
+  ],
   "properties": {
     "$schema": {
       "type": "string",
@@ -17,30 +19,78 @@
       "maxItems": 128,
       "items": {
         "oneOf": [
-          { "$ref": "#/definitions/no_control" },
-          { "$ref": "#/definitions/monotonic_loading_constant_pressure" },
-          { "$ref": "#/definitions/monotonic_loading_constant_volume" },
-          { "$ref": "#/definitions/cyclic_loading_constant_pressure" },
-          { "$ref": "#/definitions/cyclic_loading_constant_volume" },
-          { "$ref": "#/definitions/creep_constant_pressure" },
-          { "$ref": "#/definitions/creep_constant_volume" },
-          { "$ref": "#/definitions/relaxation_constant_pressure" },
-          { "$ref": "#/definitions/relaxation_constant_volume" },
-          { "$ref": "#/definitions/monotonic_loading_displacement_constant_pressure" },
-          { "$ref": "#/definitions/monotonic_loading_displacement_constant_volume" },
-          { "$ref": "#/definitions/cyclic_loading_displacement_constant_pressure" },
-          { "$ref": "#/definitions/cyclic_loading_displacement_constant_volume" },
-          { "$ref": "#/definitions/acceleration_constant_pressure" },
-          { "$ref": "#/definitions/acceleration_constant_volume" },
-          { "$ref": "#/definitions/constant_tau_consolidation" },
-          { "$ref": "#/definitions/k_consolidation" },
-          { "$ref": "#/definitions/creep_constant_pressure_fast" },
-          { "$ref": "#/definitions/creep_constant_pressure_fast_ref" },
-          { "$ref": "#/definitions/pre_consolidation" },
-          { "$ref": "#/definitions/rebase_reference" },
-          { "$ref": "#/definitions/before_consolidation" },
-          { "$ref": "#/definitions/after_consolidation" },
-          { "$ref": "#/definitions/wait" }
+          {
+            "$ref": "#/definitions/no_control"
+          },
+          {
+            "$ref": "#/definitions/monotonic_loading_constant_pressure"
+          },
+          {
+            "$ref": "#/definitions/monotonic_loading_constant_volume"
+          },
+          {
+            "$ref": "#/definitions/cyclic_loading_constant_pressure"
+          },
+          {
+            "$ref": "#/definitions/cyclic_loading_constant_volume"
+          },
+          {
+            "$ref": "#/definitions/creep_constant_pressure"
+          },
+          {
+            "$ref": "#/definitions/creep_constant_volume"
+          },
+          {
+            "$ref": "#/definitions/relaxation_constant_pressure"
+          },
+          {
+            "$ref": "#/definitions/relaxation_constant_volume"
+          },
+          {
+            "$ref": "#/definitions/monotonic_loading_displacement_constant_pressure"
+          },
+          {
+            "$ref": "#/definitions/monotonic_loading_displacement_constant_volume"
+          },
+          {
+            "$ref": "#/definitions/cyclic_loading_displacement_constant_pressure"
+          },
+          {
+            "$ref": "#/definitions/cyclic_loading_displacement_constant_volume"
+          },
+          {
+            "$ref": "#/definitions/acceleration_constant_pressure"
+          },
+          {
+            "$ref": "#/definitions/acceleration_constant_volume"
+          },
+          {
+            "$ref": "#/definitions/constant_tau_consolidation"
+          },
+          {
+            "$ref": "#/definitions/k_consolidation"
+          },
+          {
+            "$ref": "#/definitions/creep_constant_pressure_fast"
+          },
+          {
+            "$ref": "#/definitions/creep_constant_pressure_fast_ref"
+          },
+          {
+            "$ref": "#/definitions/pre_consolidation"
+          },
+          {
+            "$ref": "#/definitions/rebase_reference"
+          },
+          {
+            "$ref": "#/definitions/before_consolidation"
+          },
+          {
+            "$ref": "#/definitions/after_consolidation"
+          },
+          {
+            "$ref": "#/definitions/wait"
+          }
         ]
       }
     }
@@ -58,10 +108,16 @@
     },
     "no_control": {
       "type": "object",
-      "required": ["use"],
+      "required": [
+        "use"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
         "use": {
           "const": "no_control",
           "description": "Identifier for 'no control' — motor clutch ON but no rotation; EP outputs hold previous voltages."
@@ -71,22 +127,52 @@
     },
     "monotonic_loading_constant_pressure": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
         "use": {
           "const": "monotonic_loading_constant_pressure",
           "description": "Monotonic axial loading (stress-controlled) — maintain target deviator stress while actively controlling radial stress."
         },
         "with": {
           "type": "object",
-          "required": ["direction", "motor_rpm", "tau_kPa", "sigma_kPa"],
+          "required": [
+            "direction",
+            "motor_rpm",
+            "tau_kPa",
+            "sigma_kPa"
+          ],
           "properties": {
-            "direction": { "type": "string", "enum": ["load", "unload"], "description": "Load direction (load=compression, unload=extension)" },
-            "motor_rpm": { "type": "number", "minimum": 0, "description": "Nominal motor speed. Units: RPM." },
-            "tau_kPa": { "type": "number", "description": "Target deviator stress (τ). Units: kPa." },
-            "sigma_kPa": { "type": "number", "minimum": 0, "description": "Radial effective stress (σ). Units: kPa." }
+            "direction": {
+              "type": "string",
+              "enum": [
+                "load",
+                "unload"
+              ],
+              "description": "Load direction (load=compression, unload=extension)"
+            },
+            "motor_rpm": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Nominal motor speed. Units: RPM."
+            },
+            "tau_kPa": {
+              "type": "number",
+              "description": "Target deviator stress (τ). Units: kPa."
+            },
+            "sigma_kPa": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Radial effective stress (σ). Units: kPa."
+            }
           },
           "additionalProperties": false
         }
@@ -95,18 +181,46 @@
     },
     "monotonic_loading_constant_volume": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "monotonic_loading_constant_volume", "description": "Monotonic axial loading under constant-volume constraint." },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "monotonic_loading_constant_volume",
+          "description": "Monotonic axial loading under constant-volume constraint."
+        },
         "with": {
           "type": "object",
-          "required": ["direction", "motor_rpm", "tau_kPa"],
+          "required": [
+            "direction",
+            "motor_rpm",
+            "tau_kPa"
+          ],
           "properties": {
-            "direction": { "type": "string", "enum": ["load", "unload"], "description": "Axial direction: 'load' = compression, 'unload' = extension." },
-            "motor_rpm": { "type": "number", "minimum": 0, "description": "Nominal motor speed. Units: RPM." },
-            "tau_kPa": { "type": "number", "description": "Target deviator stress (τ). Units: kPa." }
+            "direction": {
+              "type": "string",
+              "enum": [
+                "load",
+                "unload"
+              ],
+              "description": "Axial direction: 'load' = compression, 'unload' = extension."
+            },
+            "motor_rpm": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Nominal motor speed. Units: RPM."
+            },
+            "tau_kPa": {
+              "type": "number",
+              "description": "Target deviator stress (τ). Units: kPa."
+            }
           },
           "additionalProperties": false
         }
@@ -115,21 +229,63 @@
     },
     "cyclic_loading_constant_pressure": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "cyclic_loading_constant_pressure", "description": "Cyclic axial loading (stress-controlled) between specified deviator limits while maintaining radial stress." },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "cyclic_loading_constant_pressure",
+          "description": "Cyclic axial loading (stress-controlled) between specified deviator limits while maintaining radial stress."
+        },
         "with": {
           "type": "object",
-          "required": ["direction", "motor_rpm", "tau_lower_kPa", "tau_upper_kPa", "num_cycles", "sigma_kPa"],
+          "required": [
+            "direction",
+            "motor_rpm",
+            "tau_lower_kPa",
+            "tau_upper_kPa",
+            "num_cycles",
+            "sigma_kPa"
+          ],
           "properties": {
-            "direction": { "type": "string", "enum": ["load", "unload"], "description": "Axial direction." },
-            "motor_rpm": { "type": "number", "minimum": 0, "description": "Nominal motor speed. Units: RPM." },
-            "tau_lower_kPa": { "type": "number", "description": "Lower deviator stress limit [kPa]" },
-            "tau_upper_kPa": { "type": "number", "description": "Upper deviator stress limit [kPa]" },
-            "num_cycles": { "type": "integer", "minimum": 1, "description": "Number of full cycles to perform." },
-            "sigma_kPa": { "type": "number", "minimum": 0, "description": "Radial effective stress (σ). Units: kPa." }
+            "direction": {
+              "type": "string",
+              "enum": [
+                "load",
+                "unload"
+              ],
+              "description": "Axial direction."
+            },
+            "motor_rpm": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Nominal motor speed. Units: RPM."
+            },
+            "tau_lower_kPa": {
+              "type": "number",
+              "description": "Lower deviator stress limit [kPa]"
+            },
+            "tau_upper_kPa": {
+              "type": "number",
+              "description": "Upper deviator stress limit [kPa]"
+            },
+            "num_cycles": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Number of full cycles to perform."
+            },
+            "sigma_kPa": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Radial effective stress (σ). Units: kPa."
+            }
           },
           "additionalProperties": false
         }
@@ -138,20 +294,53 @@
     },
     "cyclic_loading_constant_volume": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "cyclic_loading_constant_volume", "description": "Cyclic axial loading under constant-volume conditions." },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "cyclic_loading_constant_volume",
+          "description": "Cyclic axial loading under constant-volume conditions."
+        },
         "with": {
           "type": "object",
-          "required": ["direction", "motor_rpm", "tau_lower_kPa", "tau_upper_kPa", "num_cycles"],
+          "required": [
+            "direction",
+            "motor_rpm",
+            "tau_lower_kPa",
+            "tau_upper_kPa",
+            "num_cycles"
+          ],
           "properties": {
-            "direction": { "type": "string", "enum": ["load", "unload"], "description": "Axial direction." },
-            "motor_rpm": { "type": "number", "minimum": 0 },
-            "tau_lower_kPa": { "type": "number" },
-            "tau_upper_kPa": { "type": "number" },
-            "num_cycles": { "type": "integer", "minimum": 1 }
+            "direction": {
+              "type": "string",
+              "enum": [
+                "load",
+                "unload"
+              ],
+              "description": "Axial direction."
+            },
+            "motor_rpm": {
+              "type": "number",
+              "minimum": 0
+            },
+            "tau_lower_kPa": {
+              "type": "number"
+            },
+            "tau_upper_kPa": {
+              "type": "number"
+            },
+            "num_cycles": {
+              "type": "integer",
+              "minimum": 1
+            }
           },
           "additionalProperties": false
         }
@@ -160,19 +349,49 @@
     },
     "creep_constant_pressure": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "creep_constant_pressure", "description": "Creep step: hold constant deviator stress while observing time-dependent deformation." },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "creep_constant_pressure",
+          "description": "Creep step: hold constant deviator stress while observing time-dependent deformation."
+        },
         "with": {
           "type": "object",
-          "required": ["motor_rpm", "tau_kPa", "time_min", "sigma_kPa"],
+          "required": [
+            "motor_rpm",
+            "tau_kPa",
+            "time_min",
+            "sigma_kPa"
+          ],
           "properties": {
-            "motor_rpm": { "type": "number", "minimum": 0, "description": "Nominal motor speed. Units: RPM." },
-            "tau_kPa": { "type": "number", "description": "Target deviator stress (τ). Units: kPa." },
-            "time_min": { "type": "number", "minimum": 0, "description": "Duration of the step. Units: minutes." },
-            "sigma_kPa": { "type": "number", "minimum": 0, "description": "Radial effective stress (σ). Units: kPa." }
+            "motor_rpm": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Nominal motor speed. Units: RPM."
+            },
+            "tau_kPa": {
+              "type": "number",
+              "description": "Target deviator stress (τ). Units: kPa."
+            },
+            "time_min": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Duration of the step. Units: minutes."
+            },
+            "sigma_kPa": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Radial effective stress (σ). Units: kPa."
+            }
           },
           "additionalProperties": false
         }
@@ -181,18 +400,40 @@
     },
     "creep_constant_volume": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "creep_constant_volume", "description": "Creep step under constant-volume constraint." },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "creep_constant_volume",
+          "description": "Creep step under constant-volume constraint."
+        },
         "with": {
           "type": "object",
-          "required": ["motor_rpm", "tau_kPa", "time_min"],
+          "required": [
+            "motor_rpm",
+            "tau_kPa",
+            "time_min"
+          ],
           "properties": {
-            "motor_rpm": { "type": "number", "minimum": 0 },
-            "tau_kPa": { "type": "number" },
-            "time_min": { "type": "number", "minimum": 0 }
+            "motor_rpm": {
+              "type": "number",
+              "minimum": 0
+            },
+            "tau_kPa": {
+              "type": "number"
+            },
+            "time_min": {
+              "type": "number",
+              "minimum": 0
+            }
           },
           "additionalProperties": false
         }
@@ -201,17 +442,38 @@
     },
     "relaxation_constant_pressure": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "relaxation_constant_pressure", "description": "Stress relaxation step under constant radial stress." },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "relaxation_constant_pressure",
+          "description": "Stress relaxation step under constant radial stress."
+        },
         "with": {
           "type": "object",
-          "required": ["time_min", "sigma_kPa"],
+          "required": [
+            "time_min",
+            "sigma_kPa"
+          ],
           "properties": {
-            "time_min": { "type": "number", "minimum": 0, "description": "Duration of the step. Units: minutes." },
-            "sigma_kPa": { "type": "number", "minimum": 0, "description": "Radial effective stress (σ). Units: kPa." }
+            "time_min": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Duration of the step. Units: minutes."
+            },
+            "sigma_kPa": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Radial effective stress (σ). Units: kPa."
+            }
           },
           "additionalProperties": false
         }
@@ -220,16 +482,31 @@
     },
     "relaxation_constant_volume": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "relaxation_constant_volume", "description": "Relaxation step at constant volume." },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "relaxation_constant_volume",
+          "description": "Relaxation step at constant volume."
+        },
         "with": {
           "type": "object",
-          "required": ["time_min"],
+          "required": [
+            "time_min"
+          ],
           "properties": {
-            "time_min": { "type": "number", "minimum": 0 }
+            "time_min": {
+              "type": "number",
+              "minimum": 0
+            }
           },
           "additionalProperties": false
         }
@@ -238,20 +515,55 @@
     },
     "constant_tau_consolidation": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "constant_tau_consolidation", "description": "Consolidation while holding constant deviator stress τ." },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "constant_tau_consolidation",
+          "description": "Consolidation while holding constant deviator stress τ."
+        },
         "with": {
           "type": "object",
-          "required": ["direction", "motor_rpm", "tau_kPa", "consolidation_rate_kPa_per_min", "target_sigma_kPa"],
+          "required": [
+            "direction",
+            "motor_rpm",
+            "tau_kPa",
+            "consolidation_rate_kPa_per_min",
+            "target_sigma_kPa"
+          ],
           "properties": {
-            "direction": { "type": "string", "enum": ["compression", "dilation"] },
-            "motor_rpm": { "type": "number", "minimum": 0, "description": "Nominal motor speed. Units: RPM." },
-            "tau_kPa": { "type": "number", "description": "Target deviator stress (τ). Units: kPa." },
-            "consolidation_rate_kPa_per_min": { "type": "number", "description": "Rate at which radial effective stress should be changed. Units: kPa per minute." },
-            "target_sigma_kPa": { "type": "number", "description": "Final radial effective stress target. Units: kPa." }
+            "direction": {
+              "type": "string",
+              "enum": [
+                "compression",
+                "dilation"
+              ]
+            },
+            "motor_rpm": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Nominal motor speed. Units: RPM."
+            },
+            "tau_kPa": {
+              "type": "number",
+              "description": "Target deviator stress (τ). Units: kPa."
+            },
+            "consolidation_rate_kPa_per_min": {
+              "type": "number",
+              "description": "Rate at which radial effective stress should be changed. Units: kPa per minute."
+            },
+            "target_sigma_kPa": {
+              "type": "number",
+              "description": "Final radial effective stress target. Units: kPa."
+            }
           },
           "additionalProperties": false
         }
@@ -260,21 +572,59 @@
     },
     "k_consolidation": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "k_consolidation", "description": "K-value consolidation (stress-path)." },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "k_consolidation",
+          "description": "K-value consolidation (stress-path)."
+        },
         "with": {
           "type": "object",
-          "required": ["direction", "motor_rpm", "tau_start_kPa", "tau_end_kPa", "sigma_start_kPa", "k_value"],
+          "required": [
+            "direction",
+            "motor_rpm",
+            "tau_start_kPa",
+            "tau_end_kPa",
+            "sigma_start_kPa",
+            "k_value"
+          ],
           "properties": {
-            "direction": { "type": "string", "enum": ["compression", "dilation"] },
-            "motor_rpm": { "type": "number", "minimum": 0 },
-            "tau_start_kPa": { "type": "number", "description": "Initial deviator stress τ₀. Units: kPa." },
-            "tau_end_kPa": { "type": "number", "description": "Final deviator stress τ_end. Units: kPa." },
-            "sigma_start_kPa": { "type": "number", "description": "Initial radial effective stress σ₀. Units: kPa." },
-            "k_value": { "type": "number", "description": "K value defining the stress-path slope." }
+            "direction": {
+              "type": "string",
+              "enum": [
+                "compression",
+                "dilation"
+              ]
+            },
+            "motor_rpm": {
+              "type": "number",
+              "minimum": 0
+            },
+            "tau_start_kPa": {
+              "type": "number",
+              "description": "Initial deviator stress τ₀. Units: kPa."
+            },
+            "tau_end_kPa": {
+              "type": "number",
+              "description": "Final deviator stress τ_end. Units: kPa."
+            },
+            "sigma_start_kPa": {
+              "type": "number",
+              "description": "Initial radial effective stress σ₀. Units: kPa."
+            },
+            "k_value": {
+              "type": "number",
+              "description": "K value defining the stress-path slope."
+            }
           },
           "additionalProperties": false
         }
@@ -283,19 +633,52 @@
     },
     "monotonic_loading_displacement_constant_pressure": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "monotonic_loading_displacement_constant_pressure", "description": "Displacement-targeted monotonic loading with active radial stress control." },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "monotonic_loading_displacement_constant_pressure",
+          "description": "Displacement-targeted monotonic loading with active radial stress control."
+        },
         "with": {
           "type": "object",
-          "required": ["direction", "motor_rpm", "target_displacement_mm", "sigma_kPa"],
+          "required": [
+            "direction",
+            "motor_rpm",
+            "target_displacement_mm",
+            "sigma_kPa"
+          ],
           "properties": {
-            "direction": { "type": "string", "enum": ["load", "unload"], "description": "Load direction" },
-            "motor_rpm": { "type": "number", "minimum": 0, "description": "Nominal motor speed. Units: RPM." },
-            "target_displacement_mm": { "type": "number", "description": "Target axial displacement to reach. Units: mm." },
-            "sigma_kPa": { "type": "number", "minimum": 0, "description": "Radial effective stress (σ). Units: kPa." }
+            "direction": {
+              "type": "string",
+              "enum": [
+                "load",
+                "unload"
+              ],
+              "description": "Load direction"
+            },
+            "motor_rpm": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Nominal motor speed. Units: RPM."
+            },
+            "target_displacement_mm": {
+              "type": "number",
+              "description": "Target axial displacement to reach. Units: mm."
+            },
+            "sigma_kPa": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Radial effective stress (σ). Units: kPa."
+            }
           },
           "additionalProperties": false
         }
@@ -304,18 +687,46 @@
     },
     "monotonic_loading_displacement_constant_volume": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "monotonic_loading_displacement_constant_volume", "description": "Displacement-targeted monotonic loading under constant-volume conditions." },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "monotonic_loading_displacement_constant_volume",
+          "description": "Displacement-targeted monotonic loading under constant-volume conditions."
+        },
         "with": {
           "type": "object",
-          "required": ["direction", "motor_rpm", "target_displacement_mm"],
+          "required": [
+            "direction",
+            "motor_rpm",
+            "target_displacement_mm"
+          ],
           "properties": {
-            "direction": { "type": "string", "enum": ["load", "unload"], "description": "Axial direction." },
-            "motor_rpm": { "type": "number", "minimum": 0, "description": "Nominal motor speed. Units: RPM." },
-            "target_displacement_mm": { "type": "number", "description": "Target axial displacement. Units: mm." }
+            "direction": {
+              "type": "string",
+              "enum": [
+                "load",
+                "unload"
+              ],
+              "description": "Axial direction."
+            },
+            "motor_rpm": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Nominal motor speed. Units: RPM."
+            },
+            "target_displacement_mm": {
+              "type": "number",
+              "description": "Target axial displacement. Units: mm."
+            }
           },
           "additionalProperties": false
         }
@@ -324,21 +735,63 @@
     },
     "cyclic_loading_displacement_constant_pressure": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "cyclic_loading_displacement_constant_pressure", "description": "Cyclic displacement-controlled loading with active radial stress control." },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "cyclic_loading_displacement_constant_pressure",
+          "description": "Cyclic displacement-controlled loading with active radial stress control."
+        },
         "with": {
           "type": "object",
-          "required": ["direction", "motor_rpm", "displacement_lower_mm", "displacement_upper_mm", "num_cycles", "sigma_kPa"],
+          "required": [
+            "direction",
+            "motor_rpm",
+            "displacement_lower_mm",
+            "displacement_upper_mm",
+            "num_cycles",
+            "sigma_kPa"
+          ],
           "properties": {
-            "direction": { "type": "string", "enum": ["load", "unload"], "description": "Axial direction." },
-            "motor_rpm": { "type": "number", "minimum": 0, "description": "Nominal motor speed. Units: RPM." },
-            "displacement_lower_mm": { "type": "number", "description": "Lower bound for axial displacement. Units: mm." },
-            "displacement_upper_mm": { "type": "number", "description": "Upper bound for axial displacement. Units: mm." },
-            "num_cycles": { "type": "integer", "minimum": 1, "description": "Number of cycles" },
-            "sigma_kPa": { "type": "number", "minimum": 0, "description": "Radial effective stress (σ). Units: kPa." }
+            "direction": {
+              "type": "string",
+              "enum": [
+                "load",
+                "unload"
+              ],
+              "description": "Axial direction."
+            },
+            "motor_rpm": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Nominal motor speed. Units: RPM."
+            },
+            "displacement_lower_mm": {
+              "type": "number",
+              "description": "Lower bound for axial displacement. Units: mm."
+            },
+            "displacement_upper_mm": {
+              "type": "number",
+              "description": "Upper bound for axial displacement. Units: mm."
+            },
+            "num_cycles": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Number of cycles"
+            },
+            "sigma_kPa": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Radial effective stress (σ). Units: kPa."
+            }
           },
           "additionalProperties": false
         }
@@ -347,20 +800,53 @@
     },
     "cyclic_loading_displacement_constant_volume": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "cyclic_loading_displacement_constant_volume", "description": "Cyclic displacement-controlled loading under constant-volume conditions." },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "cyclic_loading_displacement_constant_volume",
+          "description": "Cyclic displacement-controlled loading under constant-volume conditions."
+        },
         "with": {
           "type": "object",
-          "required": ["direction", "motor_rpm", "displacement_lower_mm", "displacement_upper_mm", "num_cycles"],
+          "required": [
+            "direction",
+            "motor_rpm",
+            "displacement_lower_mm",
+            "displacement_upper_mm",
+            "num_cycles"
+          ],
           "properties": {
-            "direction": { "type": "string", "enum": ["load", "unload"], "description": "Axial direction." },
-            "motor_rpm": { "type": "number", "minimum": 0 },
-            "displacement_lower_mm": { "type": "number" },
-            "displacement_upper_mm": { "type": "number" },
-            "num_cycles": { "type": "integer", "minimum": 1 }
+            "direction": {
+              "type": "string",
+              "enum": [
+                "load",
+                "unload"
+              ],
+              "description": "Axial direction."
+            },
+            "motor_rpm": {
+              "type": "number",
+              "minimum": 0
+            },
+            "displacement_lower_mm": {
+              "type": "number"
+            },
+            "displacement_upper_mm": {
+              "type": "number"
+            },
+            "num_cycles": {
+              "type": "integer",
+              "minimum": 1
+            }
           },
           "additionalProperties": false
         }
@@ -369,20 +855,56 @@
     },
     "acceleration_constant_pressure": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "acceleration_constant_pressure", "description": "Acceleration-based loading with radial stress control." },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "acceleration_constant_pressure",
+          "description": "Acceleration-based loading with radial stress control."
+        },
         "with": {
           "type": "object",
-          "required": ["direction", "motor_rpm", "acceleration_rate_rpm_per_min", "target_tau_kPa", "sigma_kPa"],
+          "required": [
+            "direction",
+            "motor_rpm",
+            "acceleration_rate_rpm_per_min",
+            "target_tau_kPa",
+            "sigma_kPa"
+          ],
           "properties": {
-            "direction": { "type": "string", "enum": ["load", "unload"] },
-            "motor_rpm": { "type": "number", "minimum": 0, "description": "Initial motor speed [RPM]" },
-            "acceleration_rate_rpm_per_min": { "type": "number", "description": "Motor acceleration rate. Units: RPM per minute." },
-            "target_tau_kPa": { "type": "number", "description": "Target deviator stress (τ). Units: kPa." },
-            "sigma_kPa": { "type": "number", "minimum": 0, "description": "Radial effective stress (σ). Units: kPa." }
+            "direction": {
+              "type": "string",
+              "enum": [
+                "load",
+                "unload"
+              ]
+            },
+            "motor_rpm": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Initial motor speed [RPM]"
+            },
+            "acceleration_rate_rpm_per_min": {
+              "type": "number",
+              "description": "Motor acceleration rate. Units: RPM per minute."
+            },
+            "target_tau_kPa": {
+              "type": "number",
+              "description": "Target deviator stress (τ). Units: kPa."
+            },
+            "sigma_kPa": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Radial effective stress (σ). Units: kPa."
+            }
           },
           "additionalProperties": false
         }
@@ -391,19 +913,50 @@
     },
     "acceleration_constant_volume": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "acceleration_constant_volume", "description": "Acceleration-based control under constant-volume constraints." },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "acceleration_constant_volume",
+          "description": "Acceleration-based control under constant-volume constraints."
+        },
         "with": {
           "type": "object",
-          "required": ["direction", "motor_rpm", "acceleration_rate_rpm_per_min", "target_tau_kPa"],
+          "required": [
+            "direction",
+            "motor_rpm",
+            "acceleration_rate_rpm_per_min",
+            "target_tau_kPa"
+          ],
           "properties": {
-            "direction": { "type": "string", "enum": ["load", "unload"] },
-            "motor_rpm": { "type": "number", "minimum": 0, "description": "Initial motor speed [RPM]" },
-            "acceleration_rate_rpm_per_min": { "type": "number", "description": "Acceleration rate [RPM/min]" },
-            "target_tau_kPa": { "type": "number", "description": "Target deviator stress (τ). Units: kPa." }
+            "direction": {
+              "type": "string",
+              "enum": [
+                "load",
+                "unload"
+              ]
+            },
+            "motor_rpm": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Initial motor speed [RPM]"
+            },
+            "acceleration_rate_rpm_per_min": {
+              "type": "number",
+              "description": "Acceleration rate [RPM/min]"
+            },
+            "target_tau_kPa": {
+              "type": "number",
+              "description": "Target deviator stress (τ). Units: kPa."
+            }
           },
           "additionalProperties": false
         }
@@ -412,20 +965,58 @@
     },
     "creep_constant_pressure_fast": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "creep_constant_pressure_fast", "description": "Fast-response creep step under constant pressure." },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "creep_constant_pressure_fast",
+          "description": "Fast-response creep step under constant pressure."
+        },
         "with": {
           "type": "object",
-          "required": ["direction", "motor_rpm", "tau_kPa", "time_min", "sigma_kPa"],
+          "required": [
+            "direction",
+            "motor_rpm",
+            "tau_kPa",
+            "time_min",
+            "sigma_kPa"
+          ],
           "properties": {
-            "direction": { "type": "string", "enum": ["load", "unload"], "description": "Motor/clutch direction for this creep step" },
-            "motor_rpm": { "type": "number", "minimum": 0, "description": "Nominal motor speed. Units: RPM." },
-            "tau_kPa": { "type": "number", "description": "Target deviator stress (τ). Units: kPa." },
-            "time_min": { "type": "number", "minimum": 0, "description": "Duration of the step. Units: minutes." },
-            "sigma_kPa": { "type": "number", "minimum": 0, "description": "Radial effective stress (σ). Units: kPa." }
+            "direction": {
+              "type": "string",
+              "enum": [
+                "load",
+                "unload"
+              ],
+              "description": "Motor/clutch direction for this creep step"
+            },
+            "motor_rpm": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Nominal motor speed. Units: RPM."
+            },
+            "tau_kPa": {
+              "type": "number",
+              "description": "Target deviator stress (τ). Units: kPa."
+            },
+            "time_min": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Duration of the step. Units: minutes."
+            },
+            "sigma_kPa": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Radial effective stress (σ). Units: kPa."
+            }
           },
           "additionalProperties": false
         }
@@ -434,20 +1025,58 @@
     },
     "creep_constant_pressure_fast_ref": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "creep_constant_pressure_fast_ref", "description": "Reference variant of the fast-response creep step." },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "creep_constant_pressure_fast_ref",
+          "description": "Reference variant of the fast-response creep step."
+        },
         "with": {
           "type": "object",
-          "required": ["direction", "motor_rpm", "tau_kPa", "time_min", "sigma_kPa"],
+          "required": [
+            "direction",
+            "motor_rpm",
+            "tau_kPa",
+            "time_min",
+            "sigma_kPa"
+          ],
           "properties": {
-            "direction": { "type": "string", "enum": ["load", "unload"], "description": "Motor/clutch direction (reference variant)" },
-            "motor_rpm": { "type": "number", "minimum": 0, "description": "Nominal motor speed. Units: RPM." },
-            "tau_kPa": { "type": "number", "description": "Target deviator stress (τ). Units: kPa." },
-            "time_min": { "type": "number", "minimum": 0, "description": "Duration of the step. Units: minutes." },
-            "sigma_kPa": { "type": "number", "minimum": 0, "description": "Radial effective stress (σ). Units: kPa." }
+            "direction": {
+              "type": "string",
+              "enum": [
+                "load",
+                "unload"
+              ],
+              "description": "Motor/clutch direction (reference variant)"
+            },
+            "motor_rpm": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Nominal motor speed. Units: RPM."
+            },
+            "tau_kPa": {
+              "type": "number",
+              "description": "Target deviator stress (τ). Units: kPa."
+            },
+            "time_min": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Duration of the step. Units: minutes."
+            },
+            "sigma_kPa": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Radial effective stress (σ). Units: kPa."
+            }
           },
           "additionalProperties": false
         }
@@ -456,17 +1085,36 @@
     },
     "pre_consolidation": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "pre_consolidation" },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "pre_consolidation"
+        },
         "with": {
           "type": "object",
-          "required": ["target_tau_kPa", "motor_rpm"],
+          "required": [
+            "target_tau_kPa",
+            "motor_rpm"
+          ],
           "properties": {
-            "target_tau_kPa": { "type": "number", "description": "Target deviator stress (τ). Units: kPa." },
-            "motor_rpm": { "type": "number", "minimum": 0, "description": "Nominal motor speed. Units: RPM." }
+            "target_tau_kPa": {
+              "type": "number",
+              "description": "Target deviator stress (τ). Units: kPa."
+            },
+            "motor_rpm": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Nominal motor speed. Units: RPM."
+            }
           },
           "additionalProperties": false
         }
@@ -475,46 +1123,89 @@
     },
     "rebase_reference": {
       "type": "object",
-      "required": ["use"],
+      "required": [
+        "use"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "rebase_reference", "description": "Placeholder step to rebase measurement reference (zero-reference for physical inputs). Unified name replacing before_consolidation and after_consolidation. No parameters required." }
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "rebase_reference",
+          "description": "Placeholder step to rebase measurement reference (zero-reference for physical inputs). Unified name replacing before_consolidation and after_consolidation. No parameters required."
+        }
       },
       "additionalProperties": false
     },
     "before_consolidation": {
       "type": "object",
-      "required": ["use"],
+      "required": [
+        "use"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "before_consolidation", "description": "Legacy alias for rebase_reference. Placeholder step marking the start of a consolidation phase." }
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "before_consolidation",
+          "description": "Legacy alias for rebase_reference. Placeholder step marking the start of a consolidation phase."
+        }
       },
       "additionalProperties": false
     },
     "after_consolidation": {
       "type": "object",
-      "required": ["use"],
+      "required": [
+        "use"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "after_consolidation", "description": "Legacy alias for rebase_reference. Placeholder step marking the end of a consolidation phase." }
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "after_consolidation",
+          "description": "Legacy alias for rebase_reference. Placeholder step marking the end of a consolidation phase."
+        }
       },
       "additionalProperties": false
     },
     "wait": {
       "type": "object",
-      "required": ["use", "with"],
+      "required": [
+        "use",
+        "with"
+      ],
       "properties": {
-        "id": { "$ref": "#/definitions/step_id" },
-        "name": { "$ref": "#/definitions/step_name" },
-        "use": { "const": "wait", "description": "Wait for a specified duration before proceeding to the next control step." },
+        "id": {
+          "$ref": "#/definitions/step_id"
+        },
+        "name": {
+          "$ref": "#/definitions/step_name"
+        },
+        "use": {
+          "const": "wait",
+          "description": "Wait for a specified duration before proceeding to the next control step."
+        },
         "with": {
           "type": "object",
-          "required": ["time_min"],
+          "required": [
+            "time_min"
+          ],
           "properties": {
-            "time_min": { "type": "number", "minimum": 0, "description": "Wait duration in minutes." }
+            "time_min": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Wait duration in minutes."
+            }
           },
           "additionalProperties": false
         }

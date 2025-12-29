@@ -80,7 +80,7 @@ CString CAppInfoDlg::BuildAboutText() const
     std::ostringstream oss;
 
     // Application version information
-    oss << "DigitShowBasic\r\n";
+    oss << "DigitShowDST\r\n";
     oss << "Version: " << git_version::VERSION.data() << "\r\n";
     oss << "Commit: " << git_version::COMMIT_SHORT.data() << "\r\n";
     oss << "Full Commit: " << git_version::COMMIT_FULL.data() << "\r\n";

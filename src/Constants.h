@@ -10,7 +10,7 @@
 
 /**
  * @namespace dsb
- * @brief DigitShowBasic namespace containing constants and utilities
+ * @brief DigitShowDST namespace containing constants and utilities
  */
 namespace dsb
 {

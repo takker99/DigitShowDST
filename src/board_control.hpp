@@ -36,7 +36,7 @@ struct InitResult
  * @param daDeviceNames D/A device names (e.g., {"AIO001"})
  * @return Expected with InitResult or error message
  *
- * This consolidates OpenBoard() logic from DigitShowBasicDoc.
+ * This consolidates OpenBoard() logic from DigitShowDSTDoc.
  * Sets up board state in board:: namespace (AdId, DaId, AdChannels, etc.)
  */
 template <size_t Extent1, size_t Extent2>
@@ -48,7 +48,7 @@ template <size_t Extent1, size_t Extent2>
  * @brief Close all initialized boards
  * @return Expected with void or error message
  *
- * This consolidates CloseBoard() logic from DigitShowBasicDoc.
+ * This consolidates CloseBoard() logic from DigitShowDSTDoc.
  */
 [[nodiscard]] std::expected<void, std::string> CloseBoards() noexcept;
 
@@ -56,7 +56,7 @@ template <size_t Extent1, size_t Extent2>
  * @brief Read analog input from all A/D boards and populate Vout array
  * @return Expected with void or error message
  *
- * This consolidates AD_INPUT() logic from DigitShowBasicDoc.
+ * This consolidates AD_INPUT() logic from DigitShowDSTDoc.
  * Reads from board::AdData and writes to variables::Vout.
  */
 [[nodiscard]] std::expected<void, std::string> ReadAnalogInputs() noexcept;
@@ -65,7 +65,7 @@ template <size_t Extent1, size_t Extent2>
  * @brief Write analog output to all D/A boards
  * @return Expected with void or error message
  *
- * This consolidates DA_OUTPUT() logic from DigitShowBasicDoc.
+ * This consolidates DA_OUTPUT() logic from DigitShowDSTDoc.
  * Reads from variables::DAVout and writes to hardware.
  */
 [[nodiscard]] std::expected<void, std::string> WriteAnalogOutputs() noexcept;
@@ -77,7 +77,7 @@ template <size_t Extent1, size_t Extent2>
  * @param samplingTimes Number of samples per event
  * @return Expected with void or error message
  *
- * This consolidates FIFO setup logic from DigitShowBasicView.
+ * This consolidates FIFO setup logic from DigitShowDSTView.
  */
 [[nodiscard]] std::expected<void, std::string> ConfigureFifoSampling(HWND hWnd, const float samplingClockUs,
                                                                      const unsigned long samplingTimes) noexcept;

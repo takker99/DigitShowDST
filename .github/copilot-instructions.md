@@ -1,7 +1,7 @@
-# Copilot Instructions for DigitShowBasic
+# Copilot Instructions for DigitShowDST
 
 ## System Overview
-- Legacy MFC single-doc/single-view app (`DigitShowBasicDoc`/`DigitShowBasicView`); the Doc keeps hardware state and globals, the View owns UI and timers.
+- Legacy MFC single-doc/single-view app (`DigitShowDSTDoc`/`DigitShowDSTView`); the Doc keeps hardware state and globals, the View owns UI and timers.
 - Timer 1 (50 ms) refreshes the UI: `AD_INPUT()` → `Cal_Physical()` → `Cal_Param()` updates `variables::physical::latest_physical_input` / `latest_physical_output`, and UI consumers read those snapshots directly.
 - Timer 2 (500 ms) is the closed-loop controller; `Control_DA()` fans out to `MLoading_*`, `CLoading_*`, etc., and issues D/A writes.
 - Timer 3 (default 1000 ms) streams logs through `SaveToFile()`; FIFO dumps use `SaveToFile2()` and reuse the same column order.
@@ -36,7 +36,7 @@
 
 ## Build & Runtime
 - Build through VS Code tasks (`MSBuild: Build Release`, `MSBuild: Build Debug`), which bootstrap `Launch-VsDevShell.ps1` automatically.
-- Manual builds: `msbuild .\DigitShowBasic.sln /t:Build /p:Configuration=Release` (requires VS Dev Shell initialized via `Launch-VsDevShell.ps1`).
+- Manual builds: `msbuild .\DigitShowDST.sln /t:Build /p:Configuration=Release` (requires VS Dev Shell initialized via `Launch-VsDevShell.ps1`).
 - No automated test harness yet; validate by exercising the GUI. Add hardware fallbacks (check `Flag_SetBoard`) whenever touching real I/O so agents can run without boards.
 
 ## Python Tooling
@@ -51,6 +51,6 @@
 - Update the relevant doc when changing behavior—avoid creating new memos that scatter guidance.
 
 ## Key References
-- Core flows: `DigitShowBasicDoc.cpp` (hardware, logging, control dispatch), `DigitShowBasicView.cpp` (timers/UI glue), and the `Control_*` modules (mode-specific logic).
-- Dialog wiring sits in `MainFrm.cpp`/`DigitShowBasic.rc`; accelerators for menu shortcuts are maintained there as well.
+- Core flows: `DigitShowDSTDoc.cpp` (hardware, logging, control dispatch), `DigitShowDSTView.cpp` (timers/UI glue), and the `Control_*` modules (mode-specific logic).
+- Dialog wiring sits in `MainFrm.cpp`/`DigitShowDST.rc`; accelerators for menu shortcuts are maintained there as well.
 - Additional context lives in `knowledge/data_file_formats.md`, `knowledge/tsv_unix_time_migration.md`, and `knowledge/code_analysis_2025-10-28.md`.

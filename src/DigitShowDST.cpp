@@ -1,6 +1,6 @@
 ﻿/**
- * @file DigitShowBasic.cpp
- * @brief Implementation of CDigitShowBasicApp application class
+ * @file DigitShowDST.cpp
+ * @brief Implementation of CDigitShowDSTApp application class
  *
  * Implements application initialization and main message loop.
  * アプリケーション用クラスの機能定義を行います。
@@ -8,9 +8,9 @@
 
 #include "StdAfx.h"
 
-#include "DigitShowBasic.h"
-#include "DigitShowBasicDoc.h"
-#include "DigitShowBasicView.h"
+#include "DigitShowDST.h"
+#include "DigitShowDSTDoc.h"
+#include "DigitShowDSTView.h"
 #include "Logging.hpp"
 #include "Variables.hpp"
 #include "resource.h"
@@ -32,10 +32,10 @@ static constexpr const char *THIS_FILE = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CDigitShowBasicApp
+// CDigitShowDSTApp
 
-BEGIN_MESSAGE_MAP_IGNORE_UNUSED_LOCAL_TYPEDEF(CDigitShowBasicApp, CWinApp)
-//{{AFX_MSG_MAP(CDigitShowBasicApp)
+BEGIN_MESSAGE_MAP_IGNORE_UNUSED_LOCAL_TYPEDEF(CDigitShowDSTApp, CWinApp)
+//{{AFX_MSG_MAP(CDigitShowDSTApp)
 // メモ - ClassWizard はこの位置にマッピング用のマクロを追加または削除します。
 //        この位置に生成されるコードを編集しないでください。
 //}}AFX_MSG_MAP
@@ -45,18 +45,18 @@ ON_COMMAND(ID_FILE_OPEN, &CWinApp::OnFileOpen)
 END_MESSAGE_MAP_IGNORE_UNUSED_LOCAL_TYPEDEF()
 
 /////////////////////////////////////////////////////////////////////////////
-// 唯一の CDigitShowBasicApp オブジェクト
+// 唯一の CDigitShowDSTApp オブジェクト
 
-CDigitShowBasicApp theApp;
+CDigitShowDSTApp theApp;
 
 /////////////////////////////////////////////////////////////////////////////
-// CDigitShowBasicApp クラスの初期化
+// CDigitShowDSTApp クラスの初期化
 
-BOOL CDigitShowBasicApp::InitInstance()
+BOOL CDigitShowDSTApp::InitInstance()
 {
     // Initialize logging first
     logging::initialize();
-    spdlog::info("DigitShowBasic application starting");
+    spdlog::info("DigitShowDST application starting");
 
     // CLI hook: --validate-config <path> to validate YAML and exit
     {
@@ -88,7 +88,7 @@ BOOL CDigitShowBasicApp::InitInstance()
                     if (i + 1 >= static_cast<size_t>(argc))
                     {
                         spdlog::error("Missing config file argument for --validate-config");
-                        std::cerr << "Usage: DigitShowBasic --validate-config <file.yaml>" << std::endl;
+                        std::cerr << "Usage: DigitShowDST --validate-config <file.yaml>" << std::endl;
                         ::ExitProcess(2);
                     }
                     std::string path = to_narrow(args[i + 1]);
@@ -141,9 +141,9 @@ BOOL CDigitShowBasicApp::InitInstance()
     //  はドキュメント、フレーム ウィンドウとビューを結合するために機能します。
 
     CSingleDocTemplate *pDocTemplate = nullptr;
-    pDocTemplate = new CSingleDocTemplate(IDR_MAINFRAME, RUNTIME_CLASS(CDigitShowBasicDoc),
+    pDocTemplate = new CSingleDocTemplate(IDR_MAINFRAME, RUNTIME_CLASS(CDigitShowDSTDoc),
                                           RUNTIME_CLASS(CMainFrame), // メイン SDI フレーム ウィンドウ
-                                          RUNTIME_CLASS(CDigitShowBasicView));
+                                          RUNTIME_CLASS(CDigitShowDSTView));
     AddDocTemplate(pDocTemplate);
     spdlog::debug("Document template registered");
 
@@ -164,7 +164,7 @@ BOOL CDigitShowBasicApp::InitInstance()
     m_pMainWnd->UpdateWindow();
 
     // Set window title with version information
-    std::string titleStr = std::format("DigitShowBasic v{} [{}]{}", git_version::VERSION.data(),
+    std::string titleStr = std::format("DigitShowDST v{} [{}]{}", git_version::VERSION.data(),
                                        git_version::COMMIT_SHORT.data(), git_version::DIRTY ? " dirty" : "");
     CString title(titleStr.c_str());
     m_pMainWnd->SetWindowText(title);

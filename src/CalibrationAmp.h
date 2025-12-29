@@ -9,7 +9,7 @@
 #if !defined(AFX_CALIBRATIONAMP_H__C9D79E38_8396_494A_8202_AC899D8267E6__INCLUDED_)
 #define AFX_CALIBRATIONAMP_H__C9D79E38_8396_494A_8202_AC899D8267E6__INCLUDED_
 
-#include "DigitShowBasicDoc.h"
+#include "DigitShowDSTDoc.h"
 #include "Variables.hpp"
 #include "resource.h"
 

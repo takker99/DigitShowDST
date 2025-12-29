@@ -1,10 +1,10 @@
 ﻿/**
- * @file DigitShowBasicDoc.cpp
- * @brief Implementation of CDigitShowBasicDoc class
+ * @file DigitShowDSTDoc.cpp
+ * @brief Implementation of CDigitShowDSTDoc class
  *
  * Implements document functionality including hardware control, data acquisition,
  * control algorithms, and data logging.
- * CDigitShowBasicDoc クラスの動作の定義を行います。
+ * CDigitShowDSTDoc クラスの動作の定義を行います。
  */
 
 #include "StdAfx.h"
@@ -12,7 +12,7 @@
 #include "Board.hpp"
 #include "Constants.h"
 #include "DataConvert.h"
-#include "DigitShowBasicDoc.h"
+#include "DigitShowDSTDoc.h"
 #include "File.hpp"
 #include "Logging.hpp"
 #include "Sensitivity.hpp"
@@ -46,9 +46,9 @@ using namespace variables;
 
 /////////////////////////////////////////////////////////////////////////////
 
-IMPLEMENT_DYNCREATE(CDigitShowBasicDoc, CDocument)
-BEGIN_MESSAGE_MAP_IGNORE_UNUSED_LOCAL_TYPEDEF(CDigitShowBasicDoc, CDocument)
-//{{AFX_MSG_MAP(CDigitShowBasicDoc)
+IMPLEMENT_DYNCREATE(CDigitShowDSTDoc, CDocument)
+BEGIN_MESSAGE_MAP_IGNORE_UNUSED_LOCAL_TYPEDEF(CDigitShowDSTDoc, CDocument)
+//{{AFX_MSG_MAP(CDigitShowDSTDoc)
 // メモ - ClassWizard はこの位置にマッピング用のマクロを追加または削除します。
 //        この位置に生成されるコードを編集しないでください。
 //}}AFX_MSG_MAP
@@ -56,7 +56,7 @@ END_MESSAGE_MAP_IGNORE_UNUSED_LOCAL_TYPEDEF()
 
 /////////////////////////////////////////////////////////////////////////////
 
-BOOL CDigitShowBasicDoc::OnNewDocument()
+BOOL CDigitShowDSTDoc::OnNewDocument()
 {
     if (!CDocument::OnNewDocument())
         return FALSE;
@@ -78,8 +78,8 @@ BOOL CDigitShowBasicDoc::OnNewDocument()
 
 /////////////////////////////////////////////////////////////////////////////
 
-// CDigitShowBasicDoc シリアライゼーション
-void CDigitShowBasicDoc::Serialize(CArchive &ar)
+// CDigitShowDSTDoc シリアライゼーション
+void CDigitShowDSTDoc::Serialize(CArchive &ar)
 {
     if (ar.IsStoring())
     {
@@ -93,9 +93,9 @@ void CDigitShowBasicDoc::Serialize(CArchive &ar)
 
 /////////////////////////////////////////////////////////////////////////////
 
-// CDigitShowBasicDoc file writers management
+// CDigitShowDSTDoc file writers management
 
-bool CDigitShowBasicDoc::OpenSaveWriters(const std::filesystem::path &basePath)
+bool CDigitShowDSTDoc::OpenSaveWriters(const std::filesystem::path &basePath)
 {
     using namespace file;
 
@@ -162,7 +162,7 @@ bool CDigitShowBasicDoc::OpenSaveWriters(const std::filesystem::path &basePath)
     return true;
 }
 
-void CDigitShowBasicDoc::CloseSaveWriters() noexcept
+void CDigitShowDSTDoc::CloseSaveWriters() noexcept
 {
     m_vltWriter.close();
     m_phyWriter.close();
@@ -170,7 +170,7 @@ void CDigitShowBasicDoc::CloseSaveWriters() noexcept
     spdlog::debug("Closed all TSV writers");
 }
 
-void CDigitShowBasicDoc::FlushWriters()
+void CDigitShowDSTDoc::FlushWriters()
 {
     m_vltWriter.flush();
     m_phyWriter.flush();
@@ -180,7 +180,7 @@ void CDigitShowBasicDoc::FlushWriters()
     spdlog::debug("Flushed all TSV writers (CURNUM={})", m_lastFlushedCurnum);
 }
 
-void CDigitShowBasicDoc::FlushWritersIfNeeded()
+void CDigitShowDSTDoc::FlushWritersIfNeeded()
 {
     using namespace std::chrono;
 
@@ -208,7 +208,7 @@ void CDigitShowBasicDoc::FlushWritersIfNeeded()
     }
 }
 
-void CDigitShowBasicDoc::ResetFlushState() noexcept
+void CDigitShowDSTDoc::ResetFlushState() noexcept
 {
     m_lastFlushedCurnum = control::CURNUM;
     m_lastFlushTime = std::chrono::steady_clock::now();
@@ -216,13 +216,13 @@ void CDigitShowBasicDoc::ResetFlushState() noexcept
 
 /////////////////////////////////////////////////////////////////////////////
 
-// CDigitShowBasicDoc クラスの診断
+// CDigitShowDSTDoc クラスの診断
 #ifdef _DEBUG
-void CDigitShowBasicDoc::AssertValid() const
+void CDigitShowDSTDoc::AssertValid() const
 {
     CDocument::AssertValid();
 }
-void CDigitShowBasicDoc::Dump(CDumpContext &dc) const
+void CDigitShowDSTDoc::Dump(CDumpContext &dc) const
 {
     CDocument::Dump(dc);
 }
@@ -230,8 +230,8 @@ void CDigitShowBasicDoc::Dump(CDumpContext &dc) const
 
 /////////////////////////////////////////////////////////////////////////////
 
-// CDigitShowBasicDoc コマンド
-void CDigitShowBasicDoc::OpenBoard()
+// CDigitShowDSTDoc コマンド
+void CDigitShowDSTDoc::OpenBoard()
 {
     using namespace board;
 
@@ -261,7 +261,7 @@ void CDigitShowBasicDoc::OpenBoard()
     spdlog::info("Board initialization completed successfully via board_control layer");
 }
 
-void CDigitShowBasicDoc::CloseBoard()
+void CDigitShowDSTDoc::CloseBoard()
 {
     using namespace board;
 
@@ -280,7 +280,7 @@ void CDigitShowBasicDoc::CloseBoard()
     }
 }
 //--- Input from A/D Board ---
-void CDigitShowBasicDoc::AD_INPUT()
+void CDigitShowDSTDoc::AD_INPUT()
 {
     // Use board_control layer
     if (const auto result = board_control::ReadAnalogInputs(); !result)
@@ -290,7 +290,7 @@ void CDigitShowBasicDoc::AD_INPUT()
 }
 
 //--- Output to D/A Board ---
-void CDigitShowBasicDoc::DA_OUTPUT()
+void CDigitShowDSTDoc::DA_OUTPUT()
 {
     // Use board_control layer
     if (const auto result = board_control::WriteAnalogOutputs(); !result)
@@ -299,7 +299,7 @@ void CDigitShowBasicDoc::DA_OUTPUT()
     }
 }
 //--- Calcuration of the Other Parameters ---
-void CDigitShowBasicDoc::Cal_Param()
+void CDigitShowDSTDoc::Cal_Param()
 {
     // Build PhysicalInput with initial specimen and Phyout values (initial-based displacements)
     const PhysicalInput initial_based_input{
@@ -331,7 +331,7 @@ void CDigitShowBasicDoc::Cal_Param()
         });
 }
 
-void CDigitShowBasicDoc::SaveToFile()
+void CDigitShowDSTDoc::SaveToFile()
 {
     using namespace file;
 
@@ -399,11 +399,11 @@ void CDigitShowBasicDoc::SaveToFile()
     m_paramWriter.stream().write(m_writeScratch.data(), static_cast<std::streamsize>(m_writeScratch.size()));
 }
 //--- Control Statements ---
-void CDigitShowBasicDoc::Start_Control()
+void CDigitShowDSTDoc::Start_Control()
 {
     spdlog::info("Control started");
 }
-void CDigitShowBasicDoc::Stop_Control()
+void CDigitShowDSTDoc::Stop_Control()
 {
     spdlog::info("Control stopped");
     DAVout[CH_Motor] = 0.0f;      // Motor Stop
@@ -423,7 +423,7 @@ static constexpr double amp = 0.5, amp2F = 0.5,
 static constexpr double Dmax = 1.2;  // Maximum output change per step (kPa)
 static constexpr double ERR_DispCV = 0.002, ampCV = 17.0; // Sensitivity for Constant Volume control
 
-void CDigitShowBasicDoc::Control_DA()
+void CDigitShowDSTDoc::Control_DA()
 {
     // Bounds check for control_steps
     if (control::CURNUM >= control::control_steps.size())

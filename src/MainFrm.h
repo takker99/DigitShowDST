@@ -12,7 +12,7 @@
 
 /**
  * @class CMainFrame
- * @brief Main frame window class for DigitShowBasic application
+ * @brief Main frame window class for DigitShowDST application
  *
  * Manages menu commands and child dialogs.
  * シリアライズ機能のみから作成します。

@@ -48,13 +48,13 @@
     <ClCompile Include="AppInfoDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DigitShowBasic.cpp">
+    <ClCompile Include="DigitShowDST.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DigitShowBasicDoc.cpp">
+    <ClCompile Include="DigitShowDSTDoc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DigitShowBasicView.cpp">
+    <ClCompile Include="DigitShowDSTView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MainFrm.cpp">
@@ -71,7 +71,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="DigitShowBasic.rc">
+    <ResourceCompile Include="DigitShowDST.rc">
       <Filter>Source Files</Filter>
     </ResourceCompile>
   </ItemGroup>
@@ -112,13 +112,13 @@
     <ClInclude Include="AppInfoDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DigitShowBasic.h">
+    <ClInclude Include="DigitShowDST.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DigitShowBasicDoc.h">
+    <ClInclude Include="DigitShowDSTDoc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DigitShowBasicView.h">
+    <ClInclude Include="DigitShowDSTView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MainFrm.h">
@@ -138,15 +138,15 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\DigitShowBasic.ico">
+    <Image Include="res\DigitShowDST.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\DigitShowBasicDoc.ico">
+    <Image Include="res\DigitShowDSTDoc.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="res\DigitShowBasic.rc2">
+    <CustomBuild Include="res\DigitShowDST.rc2">
       <Filter>Resource Files</Filter>
     </CustomBuild>
   </ItemGroup>

@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/takker99/DigitShowBasic/schemas/calibration_factor.schema.json",
+  "$id": "https://github.com/takker99/DigitShowDST/schemas/calibration_factor.schema.json",
   "title": "Calibration Factor Data",
   "description": "Calibration coefficients for A/D channels and initial specimen data in triaxial testing apparatus",
   "type": "object",

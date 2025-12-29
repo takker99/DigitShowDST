@@ -1,6 +1,6 @@
 # JSON Schema Documentation
 
-このディレクトリには、DigitShowBasicアプリケーションで使用されるデータファイルのJSON Schemaが含まれています。
+このディレクトリには、DigitShowDSTアプリケーションで使用されるデータファイルのJSON Schemaが含まれています。
 
 ## スキーマファイル
 

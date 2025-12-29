@@ -2,7 +2,7 @@
 
 /**
  * @file Logging.hpp
- * @brief spdlog initialization for DigitShowBasic
+ * @brief spdlog initialization for DigitShowDST
  *
  * Provides initialization function for the global spdlog logger.
  * Use spdlog::* functions directly instead of macros.
@@ -20,7 +20,7 @@ namespace logging
  *
  * Sets up logging with:
  * - Console output (stdout with colors)
- * - Rotating log file: logs/digitshowbasic.log
+ * - Rotating log file: logs/DigitShowDST.log
  * - Max file size: 10 MiB per file
  * - Max files: 5 rotating files
  * - Default level: debug
@@ -34,14 +34,14 @@ inline void initialize() noexcept
         auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         console_sink->set_level(spdlog::level::info);
 
-        auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>("logs/digitshowbasic.log",
+        auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>("logs/DigitShowDST.log",
                                                                                 10 * 1024 * 1024, // 10MB
                                                                                 5);               // 5 files
         file_sink->set_level(spdlog::level::trace);
 
         // Combine sinks
         std::vector<spdlog::sink_ptr> sinks{console_sink, file_sink};
-        auto logger = std::make_shared<spdlog::logger>("digitshowbasic", sinks.begin(), sinks.end());
+        auto logger = std::make_shared<spdlog::logger>("DigitShowDST", sinks.begin(), sinks.end());
 
         // Set pattern and level
         logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] %v");

@@ -1,14 +1,14 @@
 ﻿/**
- * @file DigitShowBasicDoc.h
- * @brief Declaration and interface definition for CDigitShowBasicDoc class
+ * @file DigitShowDSTDoc.h
+ * @brief Declaration and interface definition for CDigitShowDSTDoc class
  *
- * CDigitShowBasicDoc クラスの宣言およびインターフェイスの定義をします。
+ * CDigitShowDSTDoc クラスの宣言およびインターフェイスの定義をします。
  */
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-#if !defined(AFX_DIGITSHOWBASICDOC_H__0F5B25DB_9338_44C6_9841_265C5A221957__INCLUDED_)
-#define AFX_DIGITSHOWBASICDOC_H__0F5B25DB_9338_44C6_9841_265C5A221957__INCLUDED_
+#if !defined(AFX_DigitShowDSTDOC_H__0F5B25DB_9338_44C6_9841_265C5A221957__INCLUDED_)
+#define AFX_DigitShowDSTDOC_H__0F5B25DB_9338_44C6_9841_265C5A221957__INCLUDED_
 
 #include "TsvWriter.hpp"
 #include <chrono>
@@ -17,18 +17,18 @@
 #include <string>
 
 /**
- * @class CDigitShowBasicDoc
- * @brief Main document class for DigitShowBasic application
+ * @class CDigitShowDSTDoc
+ * @brief Main document class for DigitShowDST application
  *
  * Manages test data, hardware control, data logging, and test execution.
  * シリアライズ機能のみから作成します。
  */
-class CDigitShowBasicDoc : public CDocument
+class CDigitShowDSTDoc : public CDocument
 {
   protected:
     /** @brief Default constructor (created only from serialization) */
-    CDigitShowBasicDoc() noexcept = default;
-    DECLARE_DYNCREATE(CDigitShowBasicDoc)
+    CDigitShowDSTDoc() noexcept = default;
+    DECLARE_DYNCREATE(CDigitShowDSTDoc)
 
     // アトリビュート
   public:
@@ -36,7 +36,7 @@ class CDigitShowBasicDoc : public CDocument
   public:
     // オーバーライド
     //  ClassWizard は仮想関数のオーバーライドを生成します。
-    //{{AFX_VIRTUAL(CDigitShowBasicDoc)
+    //{{AFX_VIRTUAL(CDigitShowDSTDoc)
   public:
     /** @brief Create new document */
     BOOL OnNewDocument() override;
@@ -106,7 +106,7 @@ class CDigitShowBasicDoc : public CDocument
     void ResetFlushState() noexcept;
 
     /** @brief Destructor */
-    ~CDigitShowBasicDoc() override = default;
+    ~CDigitShowDSTDoc() override = default;
 #ifdef _DEBUG
     virtual void AssertValid() const override;
     virtual void Dump(CDumpContext &dc) const override;
@@ -134,7 +134,7 @@ class CDigitShowBasicDoc : public CDocument
     std::chrono::steady_clock::time_point m_lastFlushTime{};
 
   protected:
-    //{{AFX_MSG(CDigitShowBasicDoc)
+    //{{AFX_MSG(CDigitShowDSTDoc)
     // メモ - ClassWizard はこの位置にメンバ関数を追加または削除します。
     //        この位置に生成されるコードを編集しないでください。
     //}}AFX_MSG
@@ -146,4 +146,4 @@ class CDigitShowBasicDoc : public CDocument
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ は前行の直前に追加の宣言を挿入します。
 
-#endif // !defined(AFX_DIGITSHOWBASICDOC_H__0F5B25DB_9338_44C6_9841_265C5A221957__INCLUDED_)
+#endif // !defined(AFX_DigitShowDSTDOC_H__0F5B25DB_9338_44C6_9841_265C5A221957__INCLUDED_)

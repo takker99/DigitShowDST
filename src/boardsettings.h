@@ -9,7 +9,7 @@
 #if !defined(AFX_BoardSettings_H__7C23E5A9_7E1B_4821_857B_F8600C2F6EA6__INCLUDED_)
 #define AFX_BoardSettings_H__7C23E5A9_7E1B_4821_857B_F8600C2F6EA6__INCLUDED_
 
-#include "DigitShowBasicDoc.h"
+#include "DigitShowDSTDoc.h"
 #include "resource.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ class CBoardSettings : public CDialog
      */
     CBoardSettings(CWnd *pParent = NULL);
 
-    CDigitShowBasicDoc *pDoc{}; /**< Pointer to document */
+    CDigitShowDSTDoc *pDoc{}; /**< Pointer to document */
 
     // ダイアログ データ
     //{{AFX_DATA(CBoardSettings)

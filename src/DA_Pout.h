@@ -9,7 +9,7 @@
 #if !defined(AFX_DA_POUT_H__0001B6E0_A540_11D5_B813_0020E0636BD5__INCLUDED_)
 #define AFX_DA_POUT_H__0001B6E0_A540_11D5_B813_0020E0636BD5__INCLUDED_
 
-#include "DigitShowBasicDoc.h"
+#include "DigitShowDSTDoc.h"
 #include "resource.h"
 #include <array>
 
@@ -31,7 +31,7 @@ class CDA_Pout : public CDialog
      */
     CDA_Pout(CWnd *pParent = NULL);
 
-    CDigitShowBasicDoc *pDoc2{}; /**< Pointer to document */
+    CDigitShowDSTDoc *pDoc2{}; /**< Pointer to document */
     // ダイアログ データ
     //{{AFX_DATA(CDA_Pout)
     enum

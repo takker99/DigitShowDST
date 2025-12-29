@@ -4,7 +4,7 @@ applyTo: "**/*.c,**/*.cpp,**/*.h,**/*.hpp"
 
 # C++ Coding Guidelines
 
-This document defines the standard conventions for writing and reviewing C++ code in the DigitShowBasic project. Based on Modern C++ (C++17 and later) best practices, we aim for safe and maintainable code.
+This document defines the standard conventions for writing and reviewing C++ code in the DigitShowDST project. Based on Modern C++ (C++17 and later) best practices, we aim for safe and maintainable code.
 
 ## Core Principles
 
