@@ -1,0 +1,28 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "configuration": {
+    "default-registry": {
+      "baseline": "4f8fe05871555c1798dbcb1957d0d595e94f7b57",
+      "kind": "git",
+      "repository": "https://github.com/microsoft/vcpkg"
+    },
+    "overlay-ports": [
+      "./vcpkg-overlays"
+    ],
+    "registries": [
+      {
+        "kind": "artifact",
+        "location": "https://github.com/microsoft/vcpkg-ce-catalog/archive/refs/heads/main.zip",
+        "name": "microsoft"
+      }
+    ]
+  },
+  "dependencies": [
+    "doctest",
+    "ryml",
+    "spdlog",
+    "si"
+  ],
+  "name": "digitshowbasic",
+  "version": "0.1.0"
+}

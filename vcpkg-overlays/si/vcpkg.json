@@ -1,0 +1,10 @@
+{
+  "name": "si",
+  "version-string": "2.5.3",
+  "description": "A header only C++ library that provides type safety and user defined literals for physical units",
+  "homepage": "https://github.com/bernedom/SI",
+  "license": "MIT",
+  "default-features": [],
+  "features": {},
+  "dependencies": []
+}
