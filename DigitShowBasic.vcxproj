@@ -236,9 +236,9 @@
   </Target>
   <Target Name="GenerateGitVersionHeader" BeforeTargets="InitializeBuildStatus">
     <Message Text="Generating git_version.hpp ..." Importance="high" />
-    <Exec Command="powershell -ExecutionPolicy Bypass -File &quot;$(ProjectDir)scripts\generate_git_version.ps1&quot; -OutDir &quot;$(ProjectDir)src\generated&quot;" ContinueOnError="false" />
+    <Exec Command="powershell -ExecutionPolicy Bypass -File &quot;$(ProjectDir)scripts\generate_git_version.ps1&quot; -OutDir &quot;$(ProjectDir)generated&quot;" ContinueOnError="false" />
     <ItemGroup>
-      <ClInclude Include="$(ProjectDir)src\generated\git_version.hpp" />
+      <ClInclude Include="$(ProjectDir)generated\git_version.hpp" />
     </ItemGroup>
   </Target>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
