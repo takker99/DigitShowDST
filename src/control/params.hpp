@@ -155,7 +155,7 @@ struct ControlParams
 
         // Default parameter values
         static constexpr double DEFAULT_ERROR = 0.002;
-        static constexpr double DEFAULT_KI = 0.5;
+        static constexpr double DEFAULT_KI = 50;
         static constexpr double DEFAULT_CV_LIMIT_KPA = 1.2;
     } tilt_mm;
 
