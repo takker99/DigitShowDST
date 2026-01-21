@@ -24,6 +24,7 @@
 #include <array>
 #include <expected>
 #include <format>
+#include <numbers>
 #include <string>
 
 namespace variables
@@ -46,6 +47,9 @@ inline constexpr size_t CH_VERTICAL_FRONT_DISP = 3; // A/D Channel of Vertical F
 inline constexpr size_t CH_VERTICAL_REAR_DISP = 4;  // A/D Channel of Vertical Rear Displacement
 inline constexpr size_t CH_FRONT_FRICTION_LC = 5;   // A/D Channel of Front Friction Load Cell
 inline constexpr size_t CH_REAR_FRICTION_LC = 6;    // A/D Channel of Rear Friction Load Cell
+
+inline constexpr double CYLINDER_AREA_MM2 =
+    std::numbers::pi * 40.0 * 40.0; // Cylinder Area in mm² (use Fujikura BF Cylinder SCD-80-108-B0)
 
 //---Array---
 inline std::array<float, MAX_AI_CHANNELS> Vout = {};    // Output Voltage from A/D board

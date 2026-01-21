@@ -18,7 +18,9 @@
 
 #pragma once
 
+#include "../Variables.hpp"
 #include "../math_constexpr.hpp"
+#include "control.hpp"
 #include "measurement.hpp"
 #include "params.hpp"
 #include "utils.hpp"
@@ -41,10 +43,12 @@
 template <control::PhysicalOutputLike Output>
 inline constexpr Output apply_ep_constant_pressure_control(
     const control::ControlParams::VerticalStress &vertical_stress_params,
+
     const control::ControlParams::Tilt &tilt_params, const control::PhysicalInput &input, const Output &output) noexcept
 {
     // sigmaをPVとしてEPの平均圧力を速度型I制御する
-    const auto ki_sigma = vertical_stress_params.ki * input.specimen.area_mm2() / 1000.0;
+    const auto ki_sigma = vertical_stress_params.kp * input.specimen.area_mm2() / variables::CYLINDER_AREA_MM2 *
+                          (control::CtrlStepTime / vertical_stress_params.ti);
     const auto sigma_error =
         apply_tolerance(vertical_stress_params.setpoint - input.vertical_stress_kpa(), vertical_stress_params.error);
 

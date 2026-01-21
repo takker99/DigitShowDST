@@ -124,16 +124,25 @@
         "vertical_stress_error_kpa": {
           "type": "number",
           "minimum": 0,
+          "default": 0.5,
           "description": "Vertical stress tolerance override. Units: kPa."
         },
-        "vertical_stress_ki_kpa_per_kpa_m2": {
+        "vertical_stress_kp": {
           "type": "number",
           "minimum": 0,
-          "description": "Vertical stress loop gain override. Units: kPa/(kPa·m²)."
+          "default": 1,
+          "description": "Vertical stress loop gain override. No units."
+        },
+        "vertical_stress_ti_s": {
+          "type": "number",
+          "minimum": 0,
+          "default": 0.1,
+          "description": "Vertical stress integral time override. Units: seconds."
         },
         "ep_output_limit_kpa": {
           "type": "number",
           "minimum": 0,
+          "default": 1.2,
           "description": "EP output limit per tick. Units: kPa."
         }
       }

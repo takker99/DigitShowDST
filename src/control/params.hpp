@@ -107,10 +107,11 @@ struct ControlParams
 
     struct VerticalStress
     {
-        double setpoint = 0.0;     // [10] Stress setpoint (kPa)
-        double error = 0.5;        // [11] Stress error (kPa)
-        double ki = 0.5;           // [12] Stress gain
-        double cv_limit_kpa = 1.2; // EP output (control variable) limit a tick (kPa)
+        double setpoint = 0.0;                                   // [10] Stress setpoint (kPa)
+        double error = 0.5;                                      // [11] Stress error (kPa)
+        double kp = 1.0;                                         // Proportional gain
+        std::chrono::seconds_d ti = std::chrono::seconds_d{0.1}; // Integral time
+        double cv_limit_kpa = 1.2;                               // EP output (control variable) limit a tick (kPa)
     } vertical_stress_kpa;
 
     struct ShearStress
