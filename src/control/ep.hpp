@@ -53,7 +53,9 @@ inline constexpr Output apply_ep_constant_pressure_control(
         apply_tolerance(vertical_stress_params.setpoint - input.vertical_stress_kpa(), vertical_stress_params.error);
 
     // 垂直変位差をPVとしてEPの圧力差を速度型I制御する
-    const auto tilt_error = apply_tolerance(tilt_params.setpoint - input.tilt_mm(), tilt_params.error);
+    const auto tilt_error =
+        // どちらかのEPが飽和していると、垂直変位差制御が逆にノイズになってしまうため、飽和時は制御を無効化する
+        output.is_ep_saturated() ? 0.0 : apply_tolerance(tilt_params.setpoint - input.tilt_mm(), tilt_params.error);
 
     const auto max_pressure = math_constexpr::abs(vertical_stress_params.max_pressure_rate_kpa_per_s *
                                                   std::chrono::seconds_d{control::CtrlStepTime}.count());
@@ -62,6 +64,19 @@ inline constexpr Output apply_ep_constant_pressure_control(
         std::clamp(ki_sigma * sigma_error + tilt_params.ki_kpa_per_mm * tilt_error, -max_pressure, max_pressure);
     new_output.rear_ep_kpa +=
         std::clamp(ki_sigma * sigma_error - tilt_params.ki_kpa_per_mm * tilt_error, -max_pressure, max_pressure);
+
+    if !consteval
+    {
+        spdlog::trace("EP Constant Pressure Control: ");
+        spdlog::trace("  Sigma Error = {:.3f} kPa - {:.3f} kPa = {:.3f} kPa (ignore less than {:.3f} kPa)",
+                      vertical_stress_params.setpoint, input.vertical_stress_kpa(), sigma_error,
+                      vertical_stress_params.error);
+        spdlog::trace("  Tilt Error = {:.3f} mm - {:.3f} mm = {:.3f} mm (ignore less than {:.3f} mm)",
+                      tilt_params.setpoint, input.tilt_mm(), tilt_error, tilt_params.error);
+        spdlog::trace("  (EP is {}saturated)", output.is_ep_saturated() ? "" : "not ");
+        spdlog::trace("  Front EP Output: {:.3f} kPa", new_output.front_ep_kpa);
+        spdlog::trace("  Rear EP Output: {:.3f} kPa", new_output.rear_ep_kpa);
+    }
 
     return new_output;
 }
@@ -88,7 +103,9 @@ inline constexpr Output apply_ep_constant_volume_control(const control::ControlP
         apply_tolerance(disp_params.setpoint - input.normal_displacement_mm(), disp_params.error);
 
     // 垂直変位差をPVとしてEPの圧力差を速度型I制御する
-    const auto tilt_error = apply_tolerance(tilt_params.setpoint - input.tilt_mm(), tilt_params.error);
+    const auto tilt_error =
+        // どちらかのEPが飽和していると、垂直変位差制御が逆にノイズになってしまうため、飽和時は制御を無効化する
+        output.is_ep_saturated() ? 0.0 : apply_tolerance(tilt_params.setpoint - input.tilt_mm(), tilt_params.error);
 
     const auto max_pressure = math_constexpr::abs(disp_params.max_pressure_rate_kpa_per_s *
                                                   std::chrono::seconds_d{control::CtrlStepTime}.count());

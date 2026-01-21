@@ -69,6 +69,8 @@ inline std::array<double, MAX_DA_CHANNELS> DA_Cal_a = {0.0,         0.0, 0.00333
 inline std::array<double, MAX_DA_CHANNELS> DA_Cal_b = {0.0,          0.0, 0.0, -0.286962967,
                                                        -0.335375138, 0.0, 0.0, 0.0}; // D/A Calibration Factor
 
+inline constexpr float MAX_VOLTAGE_OUTPUT = 9.9999f;
+
 //---SpecimenData---
 // Structure of Initial Specimen Data
 inline control::SpecimenSnapshot SpecimenData = {

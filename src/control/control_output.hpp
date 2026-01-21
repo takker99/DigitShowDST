@@ -25,6 +25,8 @@
  */
 
 #pragma once
+#include "../Variables.hpp"
+#include "../math_constexpr.hpp"
 #include "measurement.hpp"
 
 /**
@@ -42,4 +44,32 @@ struct ControlOutput
     // Cyclic control state (only used by cyclic patterns)
     size_t num_cyclic = 0;    // Cycle counter
     bool flag_cyclic = false; // Cyclic state flag (loading/unloading phase)
+
+    bool is_ep_saturated() const noexcept
+    {
+        return front_ep_kpa >= max_front_ep_kpa() || rear_ep_kpa >= max_rear_ep_kpa();
+    }
+
+    bool is_motor_saturated() const noexcept
+    {
+        return math_constexpr::abs(motor_rpm) >= max_motor_rpm();
+    }
+
+    static double max_front_ep_kpa() noexcept
+    {
+        using namespace variables;
+        return control::fromVoltage(MAX_VOLTAGE_OUTPUT, DA_Cal_a[CH_EP_Cell_f], DA_Cal_b[CH_EP_Cell_f]);
+    }
+
+    static double max_rear_ep_kpa() noexcept
+    {
+        using namespace variables;
+        return control::fromVoltage(MAX_VOLTAGE_OUTPUT, DA_Cal_a[CH_EP_Cell_r], DA_Cal_b[CH_EP_Cell_r]);
+    }
+    static double max_motor_rpm() noexcept
+    {
+        using namespace variables;
+        return control::fromIISMotorVoltage(5.0f, 0.0f, MAX_VOLTAGE_OUTPUT, DA_Cal_a[CH_MotorSpeed],
+                                            DA_Cal_b[CH_MotorSpeed]);
+    }
 };
