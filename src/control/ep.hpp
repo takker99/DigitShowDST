@@ -55,12 +55,13 @@ inline constexpr Output apply_ep_constant_pressure_control(
     // 垂直変位差をPVとしてEPの圧力差を速度型I制御する
     const auto tilt_error = apply_tolerance(tilt_params.setpoint - input.tilt_mm(), tilt_params.error);
 
-    const auto cv_limit_kpa = math_constexpr::abs(vertical_stress_params.cv_limit_kpa);
+    const auto max_pressure = math_constexpr::abs(vertical_stress_params.max_pressure_rate_kpa_per_s *
+                                                  std::chrono::seconds_d{control::CtrlStepTime}.count());
     auto new_output = output;
     new_output.front_ep_kpa +=
-        std::clamp(ki_sigma * sigma_error + tilt_params.ki_kpa_per_mm * tilt_error, -cv_limit_kpa, cv_limit_kpa);
+        std::clamp(ki_sigma * sigma_error + tilt_params.ki_kpa_per_mm * tilt_error, -max_pressure, max_pressure);
     new_output.rear_ep_kpa +=
-        std::clamp(ki_sigma * sigma_error - tilt_params.ki_kpa_per_mm * tilt_error, -cv_limit_kpa, cv_limit_kpa);
+        std::clamp(ki_sigma * sigma_error - tilt_params.ki_kpa_per_mm * tilt_error, -max_pressure, max_pressure);
 
     return new_output;
 }
@@ -89,14 +90,15 @@ inline constexpr Output apply_ep_constant_volume_control(const control::ControlP
     // 垂直変位差をPVとしてEPの圧力差を速度型I制御する
     const auto tilt_error = apply_tolerance(tilt_params.setpoint - input.tilt_mm(), tilt_params.error);
 
-    const auto cv_limit_kpa = math_constexpr::abs(disp_params.cv_limit_kpa);
+    const auto max_pressure = math_constexpr::abs(disp_params.max_pressure_rate_kpa_per_s *
+                                                  std::chrono::seconds_d{control::CtrlStepTime}.count());
     auto new_output = output;
     new_output.front_ep_kpa +=
-        std::clamp(disp_params.ki_kpa_per_mm * disp_ave_error + tilt_params.ki_kpa_per_mm * tilt_error, -cv_limit_kpa,
-                   cv_limit_kpa);
+        std::clamp(disp_params.ki_kpa_per_mm * disp_ave_error + tilt_params.ki_kpa_per_mm * tilt_error, -max_pressure,
+                   max_pressure);
     new_output.rear_ep_kpa +=
-        std::clamp(disp_params.ki_kpa_per_mm * disp_ave_error - tilt_params.ki_kpa_per_mm * tilt_error, -cv_limit_kpa,
-                   cv_limit_kpa);
+        std::clamp(disp_params.ki_kpa_per_mm * disp_ave_error - tilt_params.ki_kpa_per_mm * tilt_error, -max_pressure,
+                   max_pressure);
 
     return new_output;
 }

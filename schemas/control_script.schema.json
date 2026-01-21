@@ -139,11 +139,11 @@
           "default": 0.1,
           "description": "Vertical stress integral time override. Units: seconds."
         },
-        "ep_output_limit_kpa": {
+        "max_ep_pressure_rate_kpa_per_s": {
           "type": "number",
           "minimum": 0,
-          "default": 1.2,
-          "description": "EP output limit per tick. Units: kPa."
+          "default": 2.4,
+          "description": "Maximum EP pressure change rate. Units: kPa/s."
         }
       }
     },
@@ -188,10 +188,11 @@
           "minimum": 0,
           "description": "Normal displacement gain override. Units: kPa/mm."
         },
-        "ep_output_limit_kpa": {
+        "max_ep_pressure_rate_kpa_per_s": {
           "type": "number",
           "minimum": 0,
-          "description": "EP output limit per tick. Units: kPa."
+          "default": 2.4,
+          "description": "Maximum EP pressure change rate. Units: kPa/s."
         }
       }
     },

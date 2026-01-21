@@ -333,16 +333,18 @@ inline std::expected<control::ControlParams, std::vector<control::ParseError>> J
     GET_FIELD_OR_COLLECT(ki_s, double, "vertical_stress_ti_s",                                                         \
                          control::ControlParams::VerticalStress::DEFAULT_TI.count());                                  \
     params.vertical_stress_kpa.ti = seconds_d{ki_s};                                                                   \
-    GET_FIELD_OR_COLLECT(params.vertical_stress_kpa.cv_limit_kpa, double, "ep_output_limit_kpa",                       \
-                         control::ControlParams::VerticalStress::DEFAULT_CV_LIMIT_KPA);
+    GET_FIELD_OR_COLLECT(params.vertical_stress_kpa.max_pressure_rate_kpa_per_s, double,                               \
+                         "max_ep_pressure_rate_kpa_per_s",                                                             \
+                         control::ControlParams::VerticalStress::DEFAULT_MAX_PRESSURE_RATE_KPA_PER_S);
 
 #define LOAD_NORMAL_DISPLACEMENT_PARAMETERS()                                                                          \
     GET_FIELD_OR_COLLECT(params.normal_displacement_mm.error, double, "normal_displacement_error_mm",                  \
                          control::ControlParams::NormalDisplacement::DEFAULT_ERROR);                                   \
     GET_FIELD_OR_COLLECT(params.normal_displacement_mm.ki_kpa_per_mm, double, "normal_displacement_ki_kpa_per_mm",     \
                          control::ControlParams::NormalDisplacement::DEFAULT_KI);                                      \
-    GET_FIELD_OR_COLLECT(params.normal_displacement_mm.cv_limit_kpa, double, "ep_output_limit_kpa",                    \
-                         control::ControlParams::NormalDisplacement::DEFAULT_CV_LIMIT_KPA);
+    GET_FIELD_OR_COLLECT(params.normal_displacement_mm.max_pressure_rate_kpa_per_s, double,                            \
+                         "max_ep_pressure_rate_kpa_per_s",                                                             \
+                         control::ControlParams::NormalDisplacement::DEFAULT_MAX_PRESSURE_RATE_KPA_PER_S);
 
 #define LOAD_TILT_PARAMETERS()                                                                                         \
     GET_FIELD_OR_COLLECT(params.tilt_mm.error, double, "tilt_error_mm", control::ControlParams::Tilt::DEFAULT_ERROR);  \
@@ -612,16 +614,18 @@ inline ryml::Tree ControlParamsToJsonStep(const control::ControlParams &params)
                          control::ControlParams::VerticalStress::DEFAULT_KP);                                          \
     WRITE_OPTIONAL_FIELD(with_node, "vertical_stress_ti_s", params.vertical_stress_kpa.ti.count(),                     \
                          control::ControlParams::VerticalStress::DEFAULT_TI.count());                                  \
-    WRITE_OPTIONAL_FIELD(with_node, "ep_output_limit_kpa", params.vertical_stress_kpa.cv_limit_kpa,                    \
-                         control::ControlParams::VerticalStress::DEFAULT_CV_LIMIT_KPA);
+    WRITE_OPTIONAL_FIELD(with_node, "max_pressure_rate_kpa_per_s",                                                     \
+                         params.vertical_stress_kpa.max_pressure_rate_kpa_per_s,                                       \
+                         control::ControlParams::VerticalStress::DEFAULT_MAX_PRESSURE_RATE_KPA_PER_S);
 
 #define WRITE_NORMAL_DISPLACEMENT_OPTIONAL_FIELDS()                                                                    \
     WRITE_OPTIONAL_FIELD(with_node, "normal_displacement_error_mm", params.normal_displacement_mm.error,               \
                          control::ControlParams::NormalDisplacement::DEFAULT_ERROR);                                   \
     WRITE_OPTIONAL_FIELD(with_node, "normal_displacement_ki_kpa_per_mm", params.normal_displacement_mm.ki_kpa_per_mm,  \
                          control::ControlParams::NormalDisplacement::DEFAULT_KI);                                      \
-    WRITE_OPTIONAL_FIELD(with_node, "ep_output_limit_kpa", params.normal_displacement_mm.cv_limit_kpa,                 \
-                         control::ControlParams::NormalDisplacement::DEFAULT_CV_LIMIT_KPA);
+    WRITE_OPTIONAL_FIELD(with_node, "max_ep_pressure_rate_kpa_per_s",                                                  \
+                         params.normal_displacement_mm.max_pressure_rate_kpa_per_s,                                    \
+                         control::ControlParams::NormalDisplacement::DEFAULT_MAX_PRESSURE_RATE_KPA_PER_S);
 
 #define WRITE_TILT_OPTIONAL_FIELDS()                                                                                   \
     WRITE_OPTIONAL_FIELD(with_node, "tilt_error_mm", params.tilt_mm.error,                                             \

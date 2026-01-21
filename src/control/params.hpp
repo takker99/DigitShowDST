@@ -107,17 +107,18 @@ struct ControlParams
 
     struct VerticalStress
     {
-        double setpoint = 0.0;                      // [10] Stress setpoint (kPa)
-        double error = DEFAULT_ERROR;               // [11] Stress error (kPa)
-        double kp = DEFAULT_KP;                     // Proportional gain
-        std::chrono::seconds_d ti = DEFAULT_TI;     // Integral time
-        double cv_limit_kpa = DEFAULT_CV_LIMIT_KPA; // EP output (control variable) limit a tick (kPa)
+        double setpoint = 0.0;                  // [10] Stress setpoint (kPa)
+        double error = DEFAULT_ERROR;           // [11] Stress error (kPa)
+        double kp = DEFAULT_KP;                 // Proportional gain
+        std::chrono::seconds_d ti = DEFAULT_TI; // Integral time
+        double max_pressure_rate_kpa_per_s =
+            DEFAULT_MAX_PRESSURE_RATE_KPA_PER_S; // EP output (control variable) limit a tick (kPa)
 
         // Default parameter values
         static constexpr double DEFAULT_ERROR = 0.5;
         static constexpr double DEFAULT_KP = 0.5;
         static constexpr auto DEFAULT_TI = std::chrono::seconds_d{0.1};
-        static constexpr double DEFAULT_CV_LIMIT_KPA = 1.2;
+        static constexpr double DEFAULT_MAX_PRESSURE_RATE_KPA_PER_S = 2.4;
     } vertical_stress_kpa;
 
     struct ShearStress
@@ -138,12 +139,13 @@ struct ControlParams
         double setpoint = 0.0; // [2] Target displacement for displacement-based patterns
         double error = DEFAULT_ERROR;
         double ki_kpa_per_mm = DEFAULT_KI;
-        double cv_limit_kpa = DEFAULT_CV_LIMIT_KPA; // EP output (control variable) limit a tick (kPa)
+        double max_pressure_rate_kpa_per_s =
+            DEFAULT_MAX_PRESSURE_RATE_KPA_PER_S; // EP output (control variable) limit a tick (kPa)
 
         // Default parameter values
         static constexpr double DEFAULT_ERROR = 0.002;
         static constexpr double DEFAULT_KI = 17.0;
-        static constexpr double DEFAULT_CV_LIMIT_KPA = 1.2;
+        static constexpr double DEFAULT_MAX_PRESSURE_RATE_KPA_PER_S = 2.4;
     } normal_displacement_mm;
 
     struct Tilt
