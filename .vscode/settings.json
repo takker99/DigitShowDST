@@ -160,5 +160,6 @@
       "workflows/*.yaml",
       "test_data/*.yaml"
     ]
-  }
+  },
+  "githubPullRequests.createDefaultBaseBranch": "createdFromBranch"
 }
