@@ -38,6 +38,7 @@
 #include <mutex>
 #include <ranges>
 #include <spdlog/spdlog.h>
+#include <utility>
 
 // Static state for range conversions
 static std::array<float, 2> adRangeMax = {0.0f};
@@ -293,11 +294,7 @@ std::expected<void, std::string> WriteAnalogOutputs() noexcept
         std::array<long, 8> daData = {0};
         for (size_t j = 0; std::cmp_less(j, DaChannels[i]); j++)
         {
-            // Clamp output voltage
-            if (DAVout[k] < 0.0f)
-                DAVout[k] = 0.0f;
-            if (DAVout[k] > 9.9999f)
-                DAVout[k] = 9.9999f;
+            DAVout[k] = std::clamp(DAVout[k], 0.0f, MAX_VOLTAGE_OUTPUT);
             daData[j] = VoltToBinary(daRangeMax[i], daRangeMin[i], DaResolution[i], DAVout[k]);
             k++;
         }
