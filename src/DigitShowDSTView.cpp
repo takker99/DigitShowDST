@@ -43,7 +43,7 @@
 #include "digitshow_operations.hpp"
 #include "physical_variables.hpp"
 #include "resource.h"
-#include "samplingsettings.h"
+#include "SamplingSettings.h"
 #include "timer.hpp"
 #include <chrono>
 #include <climits>
