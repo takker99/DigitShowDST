@@ -2,7 +2,9 @@
 
 ![Github License](https://img.shields.io/github/license/takker99/DigitShowDST)  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-<img alt="image" src="./assets/main_window.png" />
+<img alt="image"  src="./assets/main_window.png" />
+<img alt="image" style="max-width:1002px;" src="./assets/frontend.png" />
+
 
 
 ## 簡単な説明
