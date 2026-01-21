@@ -151,12 +151,10 @@ struct ControlParams
         double setpoint = 0.0;
         double error = DEFAULT_ERROR;
         double ki_kpa_per_mm = DEFAULT_KI;
-        double cv_limit_kpa = DEFAULT_CV_LIMIT_KPA; // EP output (control variable) limit a tick (kPa)
 
         // Default parameter values
         static constexpr double DEFAULT_ERROR = 0.002;
         static constexpr double DEFAULT_KI = 50;
-        static constexpr double DEFAULT_CV_LIMIT_KPA = 1.2;
     } tilt_mm;
 
     // Name field for step identification

@@ -347,9 +347,7 @@ inline std::expected<control::ControlParams, std::vector<control::ParseError>> J
 #define LOAD_TILT_PARAMETERS()                                                                                         \
     GET_FIELD_OR_COLLECT(params.tilt_mm.error, double, "tilt_error_mm", control::ControlParams::Tilt::DEFAULT_ERROR);  \
     GET_FIELD_OR_COLLECT(params.tilt_mm.ki_kpa_per_mm, double, "tilt_ki_kpa_per_mm",                                   \
-                         control::ControlParams::Tilt::DEFAULT_KI);                                                    \
-    GET_FIELD_OR_COLLECT(params.tilt_mm.cv_limit_kpa, double, "ep_output_limit_kpa",                                   \
-                         control::ControlParams::Tilt::DEFAULT_CV_LIMIT_KPA);
+                         control::ControlParams::Tilt::DEFAULT_KI);
 
     // For patterns that use 'with', read from the 'with' object
     // Direction values: "load"/"unload" for most patterns, "compression"/"dilation" for consolidation patterns
@@ -629,9 +627,7 @@ inline ryml::Tree ControlParamsToJsonStep(const control::ControlParams &params)
     WRITE_OPTIONAL_FIELD(with_node, "tilt_error_mm", params.tilt_mm.error,                                             \
                          control::ControlParams::Tilt::DEFAULT_ERROR);                                                 \
     WRITE_OPTIONAL_FIELD(with_node, "tilt_ki_kpa_per_mm", params.tilt_mm.ki_kpa_per_mm,                                \
-                         control::ControlParams::Tilt::DEFAULT_KI);                                                    \
-    WRITE_OPTIONAL_FIELD(with_node, "ep_output_limit_kpa", params.tilt_mm.cv_limit_kpa,                                \
-                         control::ControlParams::Tilt::DEFAULT_CV_LIMIT_KPA);
+                         control::ControlParams::Tilt::DEFAULT_KI);
 
     // Write 'use' field first
     step["use"] << get_use_label(params.pattern).data();
