@@ -39,6 +39,14 @@ inline constexpr size_t CH_MotorSpeed = 2; // D/A Channel of Motor Speed
 inline constexpr size_t CH_EP_Cell_f = 3;  // D/A Channel of EP (Bellofram_f)
 inline constexpr size_t CH_EP_Cell_r = 4;  // D/A Channel of EP (Bellofram_r)
 
+inline constexpr size_t CH_SHEAR_LC = 0;            // A/D Channel of Shear Load Cell
+inline constexpr size_t CH_VERTICAL_LC = 1;         // A/D Channel of Vertical Load Cell
+inline constexpr size_t CH_SHEAR_DISP = 2;          // A/D Channel of Shear Displacement
+inline constexpr size_t CH_VERTICAL_FRONT_DISP = 3; // A/D Channel of Vertical Front Displacement
+inline constexpr size_t CH_VERTICAL_REAR_DISP = 4;  // A/D Channel of Vertical Rear Displacement
+inline constexpr size_t CH_FRONT_FRICTION_LC = 5;   // A/D Channel of Front Friction Load Cell
+inline constexpr size_t CH_REAR_FRICTION_LC = 6;    // A/D Channel of Rear Friction Load Cell
+
 //---Array---
 inline std::array<float, MAX_AI_CHANNELS> Vout = {};    // Output Voltage from A/D board
 inline std::array<double, MAX_AI_CHANNELS> Phyout = {}; // Physical Value Calculated from Vout

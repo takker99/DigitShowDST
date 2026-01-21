@@ -24,9 +24,14 @@ namespace variables::physical
 {
 void update() noexcept
 {
-    const control::PhysicalInput initial_based_input{
-        SpecimenData, Phyout[0], Phyout[1], Phyout[2], Phyout[3], Phyout[4], Phyout[5], Phyout[6],
-    };
+    const control::PhysicalInput initial_based_input{.specimen = SpecimenData,
+                                                     .shear_force_N = Phyout[CH_SHEAR_LC],
+                                                     .vertical_force_N = Phyout[CH_VERTICAL_LC],
+                                                     .shear_displacement_mm = Phyout[CH_SHEAR_DISP],
+                                                     .front_vertical_disp_mm = Phyout[CH_VERTICAL_FRONT_DISP],
+                                                     .rear_vertical_disp_mm = Phyout[CH_VERTICAL_REAR_DISP],
+                                                     .front_friction_force_N = Phyout[CH_FRONT_FRICTION_LC],
+                                                     .rear_friction_force_N = Phyout[CH_REAR_FRICTION_LC]};
 
     auto expected = latest_physical_input.load();
     while (!latest_physical_input.compare_exchange_weak(expected, rebase(initial_based_input, expected.specimen)))

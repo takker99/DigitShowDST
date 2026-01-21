@@ -34,7 +34,6 @@
 #include "DigitShowDSTView.h"
 #include "File.hpp"
 #include "Logging.hpp"
-#include "SamplingSettings.h"
 #include "Variables.hpp"
 #include "aio_error_logger.hpp"
 #include "aio_wrapper.hpp"
@@ -44,6 +43,7 @@
 #include "digitshow_operations.hpp"
 #include "physical_variables.hpp"
 #include "resource.h"
+#include "samplingsettings.h"
 #include "timer.hpp"
 #include <chrono>
 #include <climits>
