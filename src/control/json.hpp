@@ -34,18 +34,6 @@
 #include <sstream>
 #include <vector>
 
-// Default sensitivity parameters
-static constexpr double kDefaultErrStressKpa = 0.5;
-static constexpr double kDefaultTiltErrMm = 0.002;
-static constexpr double kDefaultVerticalStressKp = 0.5;
-static constexpr double kDefaultVerticalStressTiS = 0.1;
-static constexpr double kDefaultShearStressKpRpmPerKpa = 0.5;
-static constexpr double kDefaultTiltGainKpaPerMm = 0.5;
-static constexpr double kDefaultEpOutputLimitKpa = 1.2;
-static constexpr double kDefaultNormalDispErrMm = 0.002;
-static constexpr double kDefaultNormalDispGainKpaPerMm = 17.0;
-static constexpr double kDefaultMotorOutputLimitRpm = 3000.0;
-
 namespace control
 {
 
@@ -328,34 +316,40 @@ inline std::expected<control::ControlParams, std::vector<control::ParseError>> J
 
 #define LOAD_SHEAR_STRESS_PARAMETERS()                                                                                 \
     GET_REQUIRED_FIELD(params.shear_stress_kpa.setpoint, double, "target_tau_kPa");                                    \
-    GET_FIELD_OR_COLLECT(params.shear_stress_kpa.error, double, "shear_stress_error_kpa", kDefaultErrStressKpa);       \
+    GET_FIELD_OR_COLLECT(params.shear_stress_kpa.error, double, "shear_stress_error_kpa",                              \
+                         control::ControlParams::ShearStress::DEFAULT_ERROR);                                          \
     GET_FIELD_OR_COLLECT(params.shear_stress_kpa.kp_rpm_per_kpa, double, "shear_stress_kp_rpm_per_kpa",                \
-                         kDefaultShearStressKpRpmPerKpa);                                                              \
+                         control::ControlParams::ShearStress::DEFAULT_KP);                                             \
     GET_FIELD_OR_COLLECT(params.shear_stress_kpa.cv_limit_rpm, double, "motor_output_limit_rpm",                       \
-                         kDefaultMotorOutputLimitRpm);
+                         control::ControlParams::ShearStress::DEFAULT_CV_LIMIT_RPM);
 
 #define LOAD_VERTICAL_STRESS_PARAMETERS()                                                                              \
     GET_REQUIRED_FIELD(params.vertical_stress_kpa.setpoint, double, "target_sigma_kPa");                               \
-    GET_FIELD_OR_COLLECT(params.vertical_stress_kpa.error, double, "vertical_stress_error_kpa", kDefaultErrStressKpa); \
-    GET_FIELD_OR_COLLECT(params.vertical_stress_kpa.kp, double, "vertical_stress_kp", kDefaultVerticalStressKp);       \
+    GET_FIELD_OR_COLLECT(params.vertical_stress_kpa.error, double, "vertical_stress_error_kpa",                        \
+                         control::ControlParams::VerticalStress::DEFAULT_ERROR);                                       \
+    GET_FIELD_OR_COLLECT(params.vertical_stress_kpa.kp, double, "vertical_stress_kp",                                  \
+                         control::ControlParams::VerticalStress::DEFAULT_KP);                                          \
     double ki_s = 0.0;                                                                                                 \
-    GET_FIELD_OR_COLLECT(ki_s, double, "vertical_stress_ti_s", kDefaultVerticalStressTiS);                             \
+    GET_FIELD_OR_COLLECT(ki_s, double, "vertical_stress_ti_s",                                                         \
+                         control::ControlParams::VerticalStress::DEFAULT_TI.count());                                  \
     params.vertical_stress_kpa.ti = seconds_d{ki_s};                                                                   \
     GET_FIELD_OR_COLLECT(params.vertical_stress_kpa.cv_limit_kpa, double, "ep_output_limit_kpa",                       \
-                         kDefaultEpOutputLimitKpa);
+                         control::ControlParams::VerticalStress::DEFAULT_CV_LIMIT_KPA);
 
 #define LOAD_NORMAL_DISPLACEMENT_PARAMETERS()                                                                          \
     GET_FIELD_OR_COLLECT(params.normal_displacement_mm.error, double, "normal_displacement_error_mm",                  \
-                         kDefaultNormalDispErrMm);                                                                     \
+                         control::ControlParams::NormalDisplacement::DEFAULT_ERROR);                                   \
     GET_FIELD_OR_COLLECT(params.normal_displacement_mm.ki_kpa_per_mm, double, "normal_displacement_ki_kpa_per_mm",     \
-                         kDefaultNormalDispGainKpaPerMm);                                                              \
+                         control::ControlParams::NormalDisplacement::DEFAULT_KI);                                      \
     GET_FIELD_OR_COLLECT(params.normal_displacement_mm.cv_limit_kpa, double, "ep_output_limit_kpa",                    \
-                         kDefaultEpOutputLimitKpa);
+                         control::ControlParams::NormalDisplacement::DEFAULT_CV_LIMIT_KPA);
 
 #define LOAD_TILT_PARAMETERS()                                                                                         \
-    GET_FIELD_OR_COLLECT(params.tilt_mm.error, double, "tilt_error_mm", kDefaultTiltErrMm);                            \
-    GET_FIELD_OR_COLLECT(params.tilt_mm.ki_kpa_per_mm, double, "tilt_ki_kpa_per_mm", kDefaultTiltGainKpaPerMm);        \
-    GET_FIELD_OR_COLLECT(params.tilt_mm.cv_limit_kpa, double, "ep_output_limit_kpa", kDefaultEpOutputLimitKpa);
+    GET_FIELD_OR_COLLECT(params.tilt_mm.error, double, "tilt_error_mm", control::ControlParams::Tilt::DEFAULT_ERROR);  \
+    GET_FIELD_OR_COLLECT(params.tilt_mm.ki_kpa_per_mm, double, "tilt_ki_kpa_per_mm",                                   \
+                         control::ControlParams::Tilt::DEFAULT_KI);                                                    \
+    GET_FIELD_OR_COLLECT(params.tilt_mm.cv_limit_kpa, double, "ep_output_limit_kpa",                                   \
+                         control::ControlParams::Tilt::DEFAULT_CV_LIMIT_KPA);
 
     // For patterns that use 'with', read from the 'with' object
     // Direction values: "load"/"unload" for most patterns, "compression"/"dilation" for consolidation patterns
@@ -606,33 +600,38 @@ inline ryml::Tree ControlParamsToJsonStep(const control::ControlParams &params)
 
     // Helper macros for writing optional sensitivity parameters
 #define WRITE_SHEAR_STRESS_OPTIONAL_FIELDS()                                                                           \
-    WRITE_OPTIONAL_FIELD(with_node, "shear_stress_error_kpa", params.shear_stress_kpa.error, kDefaultErrStressKpa);    \
+    WRITE_OPTIONAL_FIELD(with_node, "shear_stress_error_kpa", params.shear_stress_kpa.error,                           \
+                         control::ControlParams::ShearStress::DEFAULT_ERROR);                                          \
     WRITE_OPTIONAL_FIELD(with_node, "shear_stress_kp_rpm_per_kpa", params.shear_stress_kpa.kp_rpm_per_kpa,             \
-                         kDefaultShearStressKpRpmPerKpa);                                                              \
+                         control::ControlParams::ShearStress::DEFAULT_KP);                                             \
     WRITE_OPTIONAL_FIELD(with_node, "motor_output_limit_rpm", params.shear_stress_kpa.cv_limit_rpm,                    \
-                         kDefaultMotorOutputLimitRpm);
+                         control::ControlParams::ShearStress::DEFAULT_CV_LIMIT_RPM);
 
 #define WRITE_VERTICAL_STRESS_OPTIONAL_FIELDS()                                                                        \
     WRITE_OPTIONAL_FIELD(with_node, "vertical_stress_error_kpa", params.vertical_stress_kpa.error,                     \
-                         kDefaultErrStressKpa);                                                                        \
-    WRITE_OPTIONAL_FIELD(with_node, "vertical_stress_kp", params.vertical_stress_kpa.kp, kDefaultVerticalStressKp);    \
+                         control::ControlParams::VerticalStress::DEFAULT_ERROR);                                       \
+    WRITE_OPTIONAL_FIELD(with_node, "vertical_stress_kp", params.vertical_stress_kpa.kp,                               \
+                         control::ControlParams::VerticalStress::DEFAULT_KP);                                          \
     WRITE_OPTIONAL_FIELD(with_node, "vertical_stress_ti_s", params.vertical_stress_kpa.ti.count(),                     \
-                         kDefaultVerticalStressTiS);                                                                   \
+                         control::ControlParams::VerticalStress::DEFAULT_TI.count());                                  \
     WRITE_OPTIONAL_FIELD(with_node, "ep_output_limit_kpa", params.vertical_stress_kpa.cv_limit_kpa,                    \
-                         kDefaultEpOutputLimitKpa);
+                         control::ControlParams::VerticalStress::DEFAULT_CV_LIMIT_KPA);
 
 #define WRITE_NORMAL_DISPLACEMENT_OPTIONAL_FIELDS()                                                                    \
     WRITE_OPTIONAL_FIELD(with_node, "normal_displacement_error_mm", params.normal_displacement_mm.error,               \
-                         kDefaultNormalDispErrMm);                                                                     \
+                         control::ControlParams::NormalDisplacement::DEFAULT_ERROR);                                   \
     WRITE_OPTIONAL_FIELD(with_node, "normal_displacement_ki_kpa_per_mm", params.normal_displacement_mm.ki_kpa_per_mm,  \
-                         kDefaultNormalDispGainKpaPerMm);                                                              \
+                         control::ControlParams::NormalDisplacement::DEFAULT_KI);                                      \
     WRITE_OPTIONAL_FIELD(with_node, "ep_output_limit_kpa", params.normal_displacement_mm.cv_limit_kpa,                 \
-                         kDefaultEpOutputLimitKpa);
+                         control::ControlParams::NormalDisplacement::DEFAULT_CV_LIMIT_KPA);
 
 #define WRITE_TILT_OPTIONAL_FIELDS()                                                                                   \
-    WRITE_OPTIONAL_FIELD(with_node, "tilt_error_mm", params.tilt_mm.error, kDefaultTiltErrMm);                         \
-    WRITE_OPTIONAL_FIELD(with_node, "tilt_ki_kpa_per_mm", params.tilt_mm.ki_kpa_per_mm, kDefaultTiltGainKpaPerMm);     \
-    WRITE_OPTIONAL_FIELD(with_node, "ep_output_limit_kpa", params.tilt_mm.cv_limit_kpa, kDefaultEpOutputLimitKpa);
+    WRITE_OPTIONAL_FIELD(with_node, "tilt_error_mm", params.tilt_mm.error,                                             \
+                         control::ControlParams::Tilt::DEFAULT_ERROR);                                                 \
+    WRITE_OPTIONAL_FIELD(with_node, "tilt_ki_kpa_per_mm", params.tilt_mm.ki_kpa_per_mm,                                \
+                         control::ControlParams::Tilt::DEFAULT_KI);                                                    \
+    WRITE_OPTIONAL_FIELD(with_node, "ep_output_limit_kpa", params.tilt_mm.cv_limit_kpa,                                \
+                         control::ControlParams::Tilt::DEFAULT_CV_LIMIT_KPA);
 
     // Write 'use' field first
     step["use"] << get_use_label(params.pattern).data();

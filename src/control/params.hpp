@@ -107,35 +107,56 @@ struct ControlParams
 
     struct VerticalStress
     {
-        double setpoint = 0.0;                                   // [10] Stress setpoint (kPa)
-        double error = 0.5;                                      // [11] Stress error (kPa)
-        double kp = 1.0;                                         // Proportional gain
-        std::chrono::seconds_d ti = std::chrono::seconds_d{0.1}; // Integral time
-        double cv_limit_kpa = 1.2;                               // EP output (control variable) limit a tick (kPa)
+        double setpoint = 0.0;                      // [10] Stress setpoint (kPa)
+        double error = DEFAULT_ERROR;               // [11] Stress error (kPa)
+        double kp = DEFAULT_KP;                     // Proportional gain
+        std::chrono::seconds_d ti = DEFAULT_TI;     // Integral time
+        double cv_limit_kpa = DEFAULT_CV_LIMIT_KPA; // EP output (control variable) limit a tick (kPa)
+
+        // Default parameter values
+        static constexpr double DEFAULT_ERROR = 0.5;
+        static constexpr double DEFAULT_KP = 0.5;
+        static constexpr auto DEFAULT_TI = std::chrono::seconds_d{0.1};
+        static constexpr double DEFAULT_CV_LIMIT_KPA = 1.2;
     } vertical_stress_kpa;
 
     struct ShearStress
     {
         double setpoint = 0.0;
-        double error = 0.5;
-        double kp_rpm_per_kpa = 0.5;
-        double cv_limit_rpm = 3000.0; // Motor output (control variable) limit a tick (RPM)
+        double error = DEFAULT_ERROR;
+        double kp_rpm_per_kpa = DEFAULT_KP;
+        double cv_limit_rpm = DEFAULT_CV_LIMIT_RPM; // Motor output (control variable) limit a tick (RPM)
+
+        // Default parameter values
+        static constexpr double DEFAULT_ERROR = 0.5;
+        static constexpr double DEFAULT_KP = 0.5;
+        static constexpr double DEFAULT_CV_LIMIT_RPM = 3000.0;
     } shear_stress_kpa;
 
     struct NormalDisplacement
     {
         double setpoint = 0.0; // [2] Target displacement for displacement-based patterns
-        double error = 0.002;
-        double ki_kpa_per_mm = 0.5;
-        double cv_limit_kpa = 1.2; // EP output (control variable) limit a tick (kPa)
+        double error = DEFAULT_ERROR;
+        double ki_kpa_per_mm = DEFAULT_KI;
+        double cv_limit_kpa = DEFAULT_CV_LIMIT_KPA; // EP output (control variable) limit a tick (kPa)
+
+        // Default parameter values
+        static constexpr double DEFAULT_ERROR = 0.002;
+        static constexpr double DEFAULT_KI = 17.0;
+        static constexpr double DEFAULT_CV_LIMIT_KPA = 1.2;
     } normal_displacement_mm;
 
     struct Tilt
     {
         double setpoint = 0.0;
-        double error = 0.002;
-        double ki_kpa_per_mm = 0.5;
-        double cv_limit_kpa = 1.2; // EP output (control variable) limit a tick (kPa)
+        double error = DEFAULT_ERROR;
+        double ki_kpa_per_mm = DEFAULT_KI;
+        double cv_limit_kpa = DEFAULT_CV_LIMIT_KPA; // EP output (control variable) limit a tick (kPa)
+
+        // Default parameter values
+        static constexpr double DEFAULT_ERROR = 0.002;
+        static constexpr double DEFAULT_KI = 0.5;
+        static constexpr double DEFAULT_CV_LIMIT_KPA = 1.2;
     } tilt_mm;
 
     // Name field for step identification
