@@ -17,14 +17,19 @@ A/Dチャンネルの較正係数を定義するスキーマ。
 - `channels`: チャンネル数 (固定値: 64)
 - `calibration_data`: 各チャンネルの較正データ配列
   - `channel`: チャンネル番号 (0-63)
-  - `cal_a`: 二次係数
-  - `cal_b`: 一次係数
-  - `cal_c`: 定数項
+  - `factors`: 較正係数の配列 [a, b, c] (新形式、推奨)
+  - `cal_a`, `cal_b`, `cal_c`: 個別の較正係数フィールド (旧形式、下位互換性のためサポート)
 
 **バリデーション:**
 - 必ず64チャンネル分のデータが必要
 - チャンネル番号は0-63の範囲内
 - すべての係数は数値型
+- 新形式の`factors`配列は正確に3要素が必要
+
+**形式の変更:**
+- 新しいファイルは`factors: [a, b, c]`形式で保存されます
+- 古い`cal_a, cal_b, cal_c`形式も読み込み可能です (下位互換性)
+- 詳細は`docs/calibration_format_migration.md`を参照
 
 ### 2. specimen_data.schema.json
 ### 3. control_script.schema.json
