@@ -611,10 +611,8 @@ void CDigitShowDSTView::OnBUTTONSetTimeInterval()
     m_Combo1->GetWindowText(tmp);
     using namespace std::literals::chrono_literals;
     // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers)
-    if (tmp == "0.05 s")
-        timer::TimeInterval_3 = 50ms; // 2022.12.14追記。これにより0.05sでのサンプリングが可能になる。
-    if (tmp == "0.1 s")
-        timer::TimeInterval_3 = 100ms; // 2022.12.14追記。これにより0.1sでのサンプリングが可能になる。
+    // NOTE: Modbus RTU migration - removed 50ms and 100ms options (minimum is now 200ms)
+    // The 100ms Timer 1 is dedicated to Modbus AI reads, so log interval must be >= 200ms
     if (tmp == "0.2 s")
         timer::TimeInterval_3 = 200ms;
     if (tmp == "0.5 s")

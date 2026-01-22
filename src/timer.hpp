@@ -33,8 +33,9 @@ inline constexpr std::uintptr_t kTimerId_Control = 2;
 inline constexpr std::uintptr_t kTimerId_Log = 3;
 
 // Timer intervals using std::chrono for type safety
-inline constexpr std::chrono::milliseconds TimeInterval_1{50};   // Time interval to display output data
+// NOTE: Timer 1 changed from 50ms to 100ms for Modbus RTU ReadInputRegister operation
+inline constexpr std::chrono::milliseconds TimeInterval_1{100};  // Time interval for Modbus AI read + display
 inline constexpr std::chrono::milliseconds TimeInterval_2{500};  // Time interval to feed back
-inline constinit std::chrono::milliseconds TimeInterval_3{1000}; // Time interval to save the data
+inline constinit std::chrono::milliseconds TimeInterval_3{1000}; // Time interval to save the data (min 200ms)
 
 } // namespace timer
