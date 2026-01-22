@@ -379,5 +379,20 @@ void CDigitShowDSTDoc::UpdateApiServerData() noexcept
         const auto input = variables::physical::latest_physical_input.load();
         const auto output = variables::physical::latest_physical_output.load();
         m_apiServer.update_sensor_data(input, output);
+
+        // Update raw voltage data
+        m_apiServer.update_voltage_data(variables::Vout, variables::DAVout);
+
+        // Update control state
+        m_apiServer.update_control_state(control::current_step_index, control::is_control_running,
+                                          control::step_elapsed);
+    }
+}
+
+void CDigitShowDSTDoc::NotifyCalibrationChanged() noexcept
+{
+    if (m_apiServer.is_running())
+    {
+        m_apiServer.notify_calibration_changed();
     }
 }

@@ -107,5 +107,11 @@ void CCalibrationAmp::OnBUTTONAmpUpdate()
         AmpPB[AmpID] = m_AmpPB;
         AmpPO[AmpID] = m_AmpPO;
         set_status_text_and_fit_dialog(*this, IDC_STATIC_STATUS, "Calibration factors computed.");
+
+        // Notify API server that calibration data has changed
+        if (pDoc != nullptr)
+        {
+            pDoc->NotifyCalibrationChanged();
+        }
     }
 }
