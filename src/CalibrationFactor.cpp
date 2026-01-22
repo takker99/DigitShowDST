@@ -394,9 +394,14 @@ void CCalibrationFactor::OnBUTTONCFSaveConfig()
                     ryml::NodeRef ch = channels.append_child();
                     ch |= ryml::MAP;
                     ch["channel"] << i;
-                    ch["cal_a"] << Cal_a[i];
-                    ch["cal_b"] << Cal_b[i];
-                    ch["cal_c"] << Cal_c[i];
+                    
+                    // Use new array format for calibration factors
+                    ryml::NodeRef factors = ch["factors"];
+                    factors |= ryml::SEQ;
+                    factors.append_child() << Cal_a[i];
+                    factors.append_child() << Cal_b[i];
+                    factors.append_child() << Cal_c[i];
+                    
                     if (AmpPB[i] != 0.0 || AmpPO[i] != 0.0)
                     {
                         ch["amp_pb"] << AmpPB[i];
@@ -508,9 +513,43 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
                 ch["channel"] >> idx;
                 if (idx < 64)
                 {
-                    ch["cal_a"] >> m_CFA[idx];
-                    ch["cal_b"] >> m_CFB[idx];
-                    ch["cal_c"] >> m_CFC[idx];
+                    // Support both new array format and legacy individual fields
+                    if (ch.has_child("factors") && ch["factors"].is_seq())
+                    {
+                        // New format: factors array [a, b, c]
+                        const auto factors = ch["factors"];
+                        if (factors.num_children() == 3)
+                        {
+                            factors[0] >> m_CFA[idx];
+                            factors[1] >> m_CFB[idx];
+                            factors[2] >> m_CFC[idx];
+                            spdlog::trace("Loaded calibration for channel {} (new format): a={}, b={}, c={}", idx,
+                                          m_CFA[idx], m_CFB[idx], m_CFC[idx]);
+                        }
+                        else
+                        {
+                            spdlog::warn("Channel {} has 'factors' array with {} elements (expected 3), skipping", idx,
+                                         factors.num_children());
+                            continue;
+                        }
+                    }
+                    else if (ch.has_child("cal_a") && ch.has_child("cal_b") && ch.has_child("cal_c"))
+                    {
+                        // Legacy format: individual fields cal_a, cal_b, cal_c
+                        ch["cal_a"] >> m_CFA[idx];
+                        ch["cal_b"] >> m_CFB[idx];
+                        ch["cal_c"] >> m_CFC[idx];
+                        spdlog::trace("Loaded calibration for channel {} (legacy format): a={}, b={}, c={}", idx,
+                                      m_CFA[idx], m_CFB[idx], m_CFC[idx]);
+                    }
+                    else
+                    {
+                        spdlog::warn("Channel {} missing calibration data (neither 'factors' array nor individual "
+                                     "'cal_a/b/c' fields), skipping",
+                                     idx);
+                        continue;
+                    }
+                    
                     if (ch.has_child("amp_pb"))
                     {
                         ch["amp_pb"] >> AmpPB[idx];
@@ -524,8 +563,6 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
                     {
                         channel_list << "CH" << idx << " ";
                     }
-                    spdlog::trace("Loaded calibration for channel {}: a={}, b={}, c={}", idx, m_CFA[idx], m_CFB[idx],
-                                  m_CFC[idx]);
                 }
             }
 

@@ -648,3 +648,244 @@ with:
         CHECK(params.name == "Test loading step");
     }
 }
+
+TEST_SUITE("Calibration Factor Array Format")
+{
+    TEST_CASE("LoadConfigFile parses calibration with new factors array format (JSON)")
+    {
+        // Create a temporary JSON file with new array format
+        const auto temp_path = fs::temp_directory_path() / "test_cal_new_format.json";
+        {
+            std::ofstream ofs(temp_path);
+            ofs << R"({
+                "calibration_data": [
+                    {"channel": 0, "factors": [0.5, 1.5, 2.5]},
+                    {"channel": 1, "factors": [0.0, 1.0, 0.0]}
+                ],
+                "initial_specimen": {
+                    "height_mm": 120.0,
+                    "area_mm2": 14400.0,
+                    "weight_g": 0.0,
+                    "box_weight_g": 10000.0
+                }
+            })";
+        }
+
+        const auto tree_opt = LoadConfigFile(temp_path);
+        REQUIRE(tree_opt.has_value());
+
+        const auto &tree = tree_opt.value();
+        const auto root = tree.rootref();
+
+        CHECK(root.has_child("calibration_data"));
+        const auto channels = root["calibration_data"];
+        CHECK(channels.is_seq());
+        CHECK(channels.num_children() == 2);
+
+        // Check first channel
+        const auto ch0 = channels[0];
+        int channel0 = -1;
+        ch0["channel"] >> channel0;
+        CHECK(channel0 == 0);
+        
+        CHECK(ch0.has_child("factors"));
+        const auto factors0 = ch0["factors"];
+        CHECK(factors0.is_seq());
+        CHECK(factors0.num_children() == 3);
+        
+        double a0 = 0.0, b0 = 0.0, c0 = 0.0;
+        factors0[0] >> a0;
+        factors0[1] >> b0;
+        factors0[2] >> c0;
+        CHECK(a0 == doctest::Approx(0.5));
+        CHECK(b0 == doctest::Approx(1.5));
+        CHECK(c0 == doctest::Approx(2.5));
+
+        // Check second channel
+        const auto ch1 = channels[1];
+        int channel1 = -1;
+        ch1["channel"] >> channel1;
+        CHECK(channel1 == 1);
+        
+        const auto factors1 = ch1["factors"];
+        double a1 = 0.0, b1 = 0.0, c1 = 0.0;
+        factors1[0] >> a1;
+        factors1[1] >> b1;
+        factors1[2] >> c1;
+        CHECK(a1 == doctest::Approx(0.0));
+        CHECK(b1 == doctest::Approx(1.0));
+        CHECK(c1 == doctest::Approx(0.0));
+
+        // Clean up
+        fs::remove(temp_path);
+    }
+
+    TEST_CASE("LoadConfigFile parses calibration with new factors array format (YAML)")
+    {
+        // Create a temporary YAML file with new array format
+        const auto temp_path = fs::temp_directory_path() / "test_cal_new_format.yaml";
+        {
+            std::ofstream ofs(temp_path);
+            ofs << R"(
+calibration_data:
+  - channel: 0
+    factors: [0.5, 1.5, 2.5]
+  - channel: 1
+    factors: [0.0, 1.0, 0.0]
+initial_specimen:
+  height_mm: 120.0
+  area_mm2: 14400.0
+  weight_g: 0.0
+  box_weight_g: 10000.0
+)";
+        }
+
+        const auto tree_opt = LoadConfigFile(temp_path);
+        REQUIRE(tree_opt.has_value());
+
+        const auto &tree = tree_opt.value();
+        const auto root = tree.rootref();
+
+        CHECK(root.has_child("calibration_data"));
+        const auto channels = root["calibration_data"];
+        CHECK(channels.is_seq());
+        CHECK(channels.num_children() == 2);
+
+        // Check first channel
+        const auto ch0 = channels[0];
+        int channel0 = -1;
+        ch0["channel"] >> channel0;
+        CHECK(channel0 == 0);
+        
+        const auto factors0 = ch0["factors"];
+        CHECK(factors0.is_seq());
+        CHECK(factors0.num_children() == 3);
+        
+        double a0 = 0.0, b0 = 0.0, c0 = 0.0;
+        factors0[0] >> a0;
+        factors0[1] >> b0;
+        factors0[2] >> c0;
+        CHECK(a0 == doctest::Approx(0.5));
+        CHECK(b0 == doctest::Approx(1.5));
+        CHECK(c0 == doctest::Approx(2.5));
+
+        // Clean up
+        fs::remove(temp_path);
+    }
+
+    TEST_CASE("LoadConfigFile maintains backward compatibility with old cal_a/b/c format")
+    {
+        // Create a temporary JSON file with old format
+        const auto temp_path = fs::temp_directory_path() / "test_cal_old_format.json";
+        {
+            std::ofstream ofs(temp_path);
+            ofs << R"({
+                "calibration_data": [
+                    {"channel": 0, "cal_a": 0.5, "cal_b": 1.5, "cal_c": 2.5}
+                ],
+                "initial_specimen": {
+                    "height_mm": 120.0,
+                    "area_mm2": 14400.0,
+                    "weight_g": 0.0,
+                    "box_weight_g": 10000.0
+                }
+            })";
+        }
+
+        const auto tree_opt = LoadConfigFile(temp_path);
+        REQUIRE(tree_opt.has_value());
+
+        const auto &tree = tree_opt.value();
+        const auto root = tree.rootref();
+
+        CHECK(root.has_child("calibration_data"));
+        const auto channels = root["calibration_data"];
+        CHECK(channels.is_seq());
+        CHECK(channels.num_children() == 1);
+
+        // Verify old format still loads correctly
+        const auto ch0 = channels[0];
+        int channel = -1;
+        double cal_a = 0.0, cal_b = 0.0, cal_c = 0.0;
+        ch0["channel"] >> channel;
+        ch0["cal_a"] >> cal_a;
+        ch0["cal_b"] >> cal_b;
+        ch0["cal_c"] >> cal_c;
+        
+        CHECK(channel == 0);
+        CHECK(cal_a == doctest::Approx(0.5));
+        CHECK(cal_b == doctest::Approx(1.5));
+        CHECK(cal_c == doctest::Approx(2.5));
+
+        // Clean up
+        fs::remove(temp_path);
+    }
+
+    TEST_CASE("New format round-trip from JSON to YAML preserves array structure")
+    {
+        const auto json_path = fs::temp_directory_path() / "roundtrip_new.json";
+        const auto yaml_path = fs::temp_directory_path() / "roundtrip_new.yaml";
+
+        // Create original JSON with new format
+        {
+            std::ofstream ofs(json_path);
+            ofs << R"({
+                "calibration_data": [
+                    {"channel": 0, "factors": [1.5, 2.0, 3.5]}
+                ],
+                "initial_specimen": {
+                    "height_mm": 120.0,
+                    "area_mm2": 14400.0,
+                    "weight_g": 500.0,
+                    "box_weight_g": 10000.0
+                }
+            })";
+        }
+
+        // Load JSON
+        auto tree_opt = LoadConfigFile(json_path);
+        REQUIRE(tree_opt.has_value());
+        auto tree = tree_opt.value();
+
+        // Save as YAML
+        const auto save_success = SaveConfigFile(yaml_path, tree, FileFormat::YAML);
+        REQUIRE(save_success);
+
+        // Load YAML back
+        auto yaml_tree_opt = LoadConfigFile(yaml_path);
+        REQUIRE(yaml_tree_opt.has_value());
+        const auto yaml_tree = yaml_tree_opt.value();
+
+        // Verify data preservation
+        const auto root = yaml_tree.rootref();
+        CHECK(root.has_child("calibration_data"));
+        CHECK(root.has_child("initial_specimen"));
+
+        const auto channels = root["calibration_data"];
+        CHECK(channels.is_seq());
+        CHECK(channels.num_children() == 1);
+
+        const auto ch0 = channels[0];
+        int channel = -1;
+        ch0["channel"] >> channel;
+        CHECK(channel == 0);
+        
+        // Verify factors array
+        CHECK(ch0.has_child("factors"));
+        const auto factors = ch0["factors"];
+        CHECK(factors.is_seq());
+        CHECK(factors.num_children() == 3);
+        
+        double a = 0.0, b = 0.0, c = 0.0;
+        factors[0] >> a;
+        factors[1] >> b;
+        factors[2] >> c;
+        CHECK(a == doctest::Approx(1.5));
+        CHECK(b == doctest::Approx(2.0));
+        CHECK(c == doctest::Approx(3.5));
+
+        // Clean up
+        fs::remove(json_path);
+        fs::remove(yaml_path);
+    }
+}

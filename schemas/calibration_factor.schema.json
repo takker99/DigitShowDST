@@ -20,40 +20,81 @@
       "items": {
         "type": "object",
         "required": [
-          "channel",
-          "cal_a",
-          "cal_b",
-          "cal_c"
+          "channel"
         ],
-        "properties": {
-          "channel": {
-            "type": "integer",
-            "description": "Channel number (0-63)",
-            "minimum": 0,
-            "maximum": 63
+        "oneOf": [
+          {
+            "description": "New format: calibration factors as array",
+            "required": [
+              "channel",
+              "factors"
+            ],
+            "properties": {
+              "channel": {
+                "type": "integer",
+                "description": "Channel number (0-63)",
+                "minimum": 0,
+                "maximum": 63
+              },
+              "factors": {
+                "type": "array",
+                "description": "Calibration coefficients [a, b, c] in: Physical Value = a*V^2 + b*V + c",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "type": "number"
+                }
+              },
+              "amp_pb": {
+                "type": "number",
+                "description": "Physical value at base point for amplifier calibration (optional, omitted if 0)"
+              },
+              "amp_po": {
+                "type": "number",
+                "description": "Physical value at offset point for amplifier calibration (optional, omitted if 0)"
+              }
+            },
+            "additionalProperties": false
           },
-          "cal_a": {
-            "type": "number",
-            "description": "Quadratic coefficient (a) in: Physical Value = a*V^2 + b*V + c"
-          },
-          "cal_b": {
-            "type": "number",
-            "description": "Linear coefficient (b) in: Physical Value = a*V^2 + b*V + c"
-          },
-          "cal_c": {
-            "type": "number",
-            "description": "Constant coefficient (c) in: Physical Value = a*V^2 + b*V + c"
-          },
-          "amp_pb": {
-            "type": "number",
-            "description": "Physical value at base point for amplifier calibration (optional, omitted if 0)"
-          },
-          "amp_po": {
-            "type": "number",
-            "description": "Physical value at offset point for amplifier calibration (optional, omitted if 0)"
+          {
+            "description": "Legacy format: individual calibration fields (deprecated, for backward compatibility)",
+            "required": [
+              "channel",
+              "cal_a",
+              "cal_b",
+              "cal_c"
+            ],
+            "properties": {
+              "channel": {
+                "type": "integer",
+                "description": "Channel number (0-63)",
+                "minimum": 0,
+                "maximum": 63
+              },
+              "cal_a": {
+                "type": "number",
+                "description": "Quadratic coefficient (a) in: Physical Value = a*V^2 + b*V + c"
+              },
+              "cal_b": {
+                "type": "number",
+                "description": "Linear coefficient (b) in: Physical Value = a*V^2 + b*V + c"
+              },
+              "cal_c": {
+                "type": "number",
+                "description": "Constant coefficient (c) in: Physical Value = a*V^2 + b*V + c"
+              },
+              "amp_pb": {
+                "type": "number",
+                "description": "Physical value at base point for amplifier calibration (optional, omitted if 0)"
+              },
+              "amp_po": {
+                "type": "number",
+                "description": "Physical value at offset point for amplifier calibration (optional, omitted if 0)"
+              }
+            },
+            "additionalProperties": false
           }
-        },
-        "additionalProperties": false
+        ]
       }
     },
     "initial_specimen": {
@@ -96,15 +137,11 @@
       "calibration_data": [
         {
           "channel": 0,
-          "cal_a": 0.0,
-          "cal_b": 1.0,
-          "cal_c": 0.0
+          "factors": [0.0, 1.0, 0.0]
         },
         {
           "channel": 1,
-          "cal_a": 0.0,
-          "cal_b": 1.0,
-          "cal_c": 0.0
+          "factors": [0.0, 1.0, 0.0]
         }
       ],
       "initial_specimen": {
