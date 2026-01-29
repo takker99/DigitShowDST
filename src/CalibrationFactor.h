@@ -64,6 +64,7 @@ class CCalibrationFactor : public CDialog
 
     // Array sizes for calibration channels
     static constexpr size_t CHANNELS_CAL = 8; /**< Number of calibration channels (ch0-ch7) */
+    static constexpr size_t CHANNELS_DA = 8;  /**< Number of D/A channels (ch0-ch7) */
 
     // Calibration data consolidated into arrays
     std::array<CStringW, CHANNELS_CAL> m_CFP; /**< Physical quantity names for channels 0-7 */
@@ -71,6 +72,10 @@ class CCalibrationFactor : public CDialog
     std::array<double, CHANNELS_CAL> m_CFB{}; /**< Calibration coefficient 'b' (linear term) */
     std::array<double, CHANNELS_CAL> m_CFC{}; /**< Calibration coefficient 'c' (constant term) */
     std::array<CStringW, CHANNELS_CAL> m_C;   /**< Current voltage values [V] */
+
+    // D/A calibration data
+    std::array<double, CHANNELS_DA> m_DA_Cala{}; /**< D/A calibration coefficient 'a' (linear term) */
+    std::array<double, CHANNELS_DA> m_DA_Calb{}; /**< D/A calibration coefficient 'b' (constant term) */
 
     // Initial specimen data
     double m_InitSpecHeight{};    /**< Initial specimen height [mm] */
