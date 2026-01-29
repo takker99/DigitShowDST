@@ -24,6 +24,7 @@
 #include "StdAfx.h"
 
 #include "ApiServer.hpp"
+#include "Variables.hpp"
 #include "openapi_spec.hpp"
 #include "version_info.hpp"
 #include <chrono>
