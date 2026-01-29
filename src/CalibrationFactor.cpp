@@ -126,6 +126,38 @@ ON_BN_CLICKED(IDC_BUTTON_Amp06, &CCalibrationFactor::OnBUTTONAmp06)
 ON_BN_CLICKED(IDC_BUTTON_Amp07, &CCalibrationFactor::OnBUTTONAmp07)
 ON_BN_CLICKED(IDC_BUTTON_CFLoadConfig, &CCalibrationFactor::OnBUTTONCFLoadConfig)
 ON_BN_CLICKED(IDC_BUTTON_CFSaveConfig, &CCalibrationFactor::OnBUTTONCFSaveConfig)
+
+// EN_CHANGE message handlers for calibration factors
+ON_EN_CHANGE(IDC_EDIT_CFA00, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFB00, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFC00, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFA01, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFB01, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFC01, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFA02, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFB02, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFC02, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFA03, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFB03, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFC03, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFA04, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFB04, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFC04, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFA05, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFB05, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFC05, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFA06, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFB06, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFC06, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFA07, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFB07, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFC07, &CCalibrationFactor::OnEditChange)
+
+// EN_CHANGE message handlers for specimen data
+ON_EN_CHANGE(IDC_EDIT_InitSpecHeight, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_InitSpecArea, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_InitSpecWeight, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_InitSpecBoxWeight, &CCalibrationFactor::OnEditChange)
 //}}AFX_MSG_MAP
 END_MESSAGE_MAP_IGNORE_UNUSED_LOCAL_TYPEDEF()
 
@@ -139,6 +171,9 @@ BOOL CCalibrationFactor::OnInitDialog()
 
     // Initialize status control
     SetDlgItemText(IDC_STATIC_STATUS, _T(""));
+
+    // Disable Update button by default - will be enabled when changes are made
+    EnableUpdateButton(false);
 
     // TODO: この位置に初期化の補足処理を追加してください
 
@@ -178,12 +213,15 @@ void CCalibrationFactor::CF_Load()
     m_InitSpecBoxWeight = variables::SpecimenData.box_weight_g();
 
     UpdateData(false);
+
+    // Disable Update button after loading data
+    EnableUpdateButton(false);
     // NOLINTEND(*-pro-type-vararg)
 }
 
 void CCalibrationFactor::Update()
 {
-    UpdateData(false);
+    UpdateData(TRUE);
 
     // Save calibration factors for channels 0-7
     std::ranges::copy(m_CFA, Cal_a.begin());
@@ -200,6 +238,23 @@ void CCalibrationFactor::Update()
     }()))
     {
     };
+
+    // Disable Update button after successful update
+    EnableUpdateButton(false);
+}
+
+void CCalibrationFactor::EnableUpdateButton(const bool enable) noexcept
+{
+    if (auto *pButton = GetDlgItem(IDC_BUTTON_CFUpdate))
+    {
+        pButton->EnableWindow(enable ? TRUE : FALSE);
+    }
+}
+
+void CCalibrationFactor::OnEditChange()
+{
+    // Enable Update button when any calibration factor or specimen field changes
+    EnableUpdateButton(true);
 }
 
 void CCalibrationFactor::OnBUTTONZero00()
