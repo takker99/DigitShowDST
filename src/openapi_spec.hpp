@@ -133,6 +133,7 @@ paths:
       description: |
         Opens a server-sent events (SSE) connection that streams real-time sensor data.
         Data is sent at the configured update interval (default: 100ms).
+        Also emits 'calibration' events when calibration data changes.
       operationId: streamSensorData
       responses:
         '200':
@@ -142,15 +143,31 @@ paths:
               schema:
                 type: string
                 description: |
-                  Server-sent event stream. Each event contains:
-                  - event: "data"
-                  - data: JSON-encoded SensorData object
+                  Server-sent event stream. Events include:
+                  - event: "data" - Sensor data updates
+                  - event: "calibration" - Calibration data changed
               example: |
                 event: data
-                data: {"timestamp": 1704153600000, "physical_input": {...}, "physical_output": {...}}
+                data: {"timestamp": 1704153600000, "physical_input": {...}, "physical_output": {...}, "raw_voltages": {...}, "control_state": {...}}
+
+                event: calibration
+                data: {"ad_channels": [...], "da_channels": [...]}
 
                 event: data
-                data: {"timestamp": 1704153600100, "physical_input": {...}, "physical_output": {...}}
+                data: {"timestamp": 1704153600100, "physical_input": {...}, "physical_output": {...}, "raw_voltages": {...}, "control_state": {...}}
+
+  /api/calibration:
+    get:
+      summary: Get calibration data
+      description: Returns A/D and D/A channel calibration coefficients
+      operationId: getCalibration
+      responses:
+        '200':
+          description: Calibration data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalibrationData'
 
 components:
   schemas:
@@ -161,6 +178,8 @@ components:
         - timestamp
         - physical_input
         - physical_output
+        - raw_voltages
+        - control_state
       properties:
         timestamp:
           type: integer
@@ -171,6 +190,10 @@ components:
           $ref: '#/components/schemas/PhysicalInput'
         physical_output:
           $ref: '#/components/schemas/PhysicalOutput'
+        raw_voltages:
+          $ref: '#/components/schemas/RawVoltages'
+        control_state:
+          $ref: '#/components/schemas/ControlState'
 
     PhysicalInput:
       type: object
@@ -305,6 +328,119 @@ components:
           format: double
           description: Shear box weight in grams
           example: 10000.0
+
+    RawVoltages:
+      type: object
+      description: Raw voltage readings from A/D and D/A channels
+      required:
+        - ad_channels
+        - da_channels
+      properties:
+        ad_channels:
+          type: array
+          description: A/D channel voltages (64 channels)
+          items:
+            type: object
+            properties:
+              channel:
+                type: integer
+                description: Channel number (0-63)
+                example: 0
+              voltage:
+                type: number
+                format: float
+                description: Raw voltage in Volts
+                example: 2.543
+        da_channels:
+          type: array
+          description: D/A channel voltages (8 channels)
+          items:
+            type: object
+            properties:
+              channel:
+                type: integer
+                description: Channel number (0-7)
+                example: 0
+              voltage:
+                type: number
+                format: float
+                description: Output voltage in Volts
+                example: 5.012
+
+    ControlState:
+      type: object
+      description: Current control loop state
+      required:
+        - current_step
+        - is_running
+        - elapsed_ms
+      properties:
+        current_step:
+          type: integer
+          description: Current control step index
+          example: 3
+        is_running:
+          type: boolean
+          description: Whether control is currently running
+          example: true
+        elapsed_ms:
+          type: integer
+          format: int64
+          description: Time elapsed in current step (milliseconds)
+          example: 15234
+
+    CalibrationData:
+      type: object
+      description: Calibration coefficients for A/D and D/A channels
+      required:
+        - ad_channels
+        - da_channels
+      properties:
+        ad_channels:
+          type: array
+          description: A/D channel calibration data (only non-default calibrations included)
+          items:
+            type: object
+            properties:
+              channel:
+                type: integer
+                description: Channel number (0-63)
+                example: 0
+              cal_a:
+                type: number
+                format: double
+                description: Quadratic coefficient (a) in Physical = a*V² + b*V + c
+                example: 0.0
+              cal_b:
+                type: number
+                format: double
+                description: Linear coefficient (b) in Physical = a*V² + b*V + c
+                example: 100.5
+              cal_c:
+                type: number
+                format: double
+                description: Constant coefficient (c) in Physical = a*V² + b*V + c
+                example: -0.5
+        da_channels:
+          type: array
+          description: D/A channel calibration data (only non-default calibrations included)
+          items:
+            type: object
+            properties:
+              channel:
+                type: integer
+                description: Channel number (0-7)
+                example: 3
+              cal_a:
+                type: number
+                format: double
+                description: Linear coefficient (a) in Physical = a*V + b
+                example: 0.017854906
+              cal_b:
+                type: number
+                format: double
+                description: Constant coefficient (b) in Physical = a*V + b
+                example: -0.286962967
 )";
 
 } // namespace api

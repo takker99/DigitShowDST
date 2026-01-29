@@ -24,6 +24,7 @@
 #include "StdAfx.h"
 
 #include "ApiServer.hpp"
+#include "Variables.hpp"
 #include "openapi_spec.hpp"
 #include "version_info.hpp"
 #include <chrono>
@@ -152,6 +153,28 @@ void ApiServer::update_sensor_data(const control::PhysicalInput &input,
     last_update_ = std::chrono::system_clock::now();
 }
 
+void ApiServer::update_voltage_data(const std::array<float, 64> &ad_voltages,
+                                    const std::array<float, 8> &da_voltages) noexcept
+{
+    std::lock_guard<std::mutex> lock(data_mutex_);
+    current_ad_voltages_ = ad_voltages;
+    current_da_voltages_ = da_voltages;
+}
+
+void ApiServer::update_control_state(const size_t step_index, const bool is_running,
+                                     const std::chrono::steady_clock::duration elapsed) noexcept
+{
+    std::lock_guard<std::mutex> lock(data_mutex_);
+    current_control_step_ = step_index;
+    control_is_running_ = is_running;
+    control_elapsed_ = elapsed;
+}
+
+void ApiServer::notify_calibration_changed() noexcept
+{
+    calibration_changed_.store(true);
+}
+
 void ApiServer::setup_routes() noexcept
 {
     if (!server_)
@@ -181,6 +204,10 @@ void ApiServer::setup_routes() noexcept
     // SSE stream endpoint
     server_->Get("/api/sensor-data/stream",
                  [this](const httplib::Request &req, httplib::Response &res) { handle_sensor_stream(req, res); });
+
+    // Calibration data endpoint
+    server_->Get("/api/calibration",
+                 [this](const httplib::Request &req, httplib::Response &res) { handle_calibration(req, res); });
 
     // OpenAPI specification endpoints - JSON by default
     server_->Get("/api/openapi",
@@ -236,6 +263,20 @@ void ApiServer::handle_sensor_stream(const httplib::Request & /*req*/, httplib::
 
         try
         {
+            // Check if calibration data changed and send calibration event
+            if (calibration_changed_.exchange(false))
+            {
+                const auto calibration_json = calibration_to_json();
+                const auto calibration_message =
+                    std::format("event: calibration\ndata: {}\n\n", calibration_json.dump());
+
+                if (!sink.write(calibration_message.c_str(), calibration_message.size()))
+                {
+                    spdlog::info("SSE client disconnected while sending calibration event");
+                    return false;
+                }
+            }
+
             // Get current sensor data
             const auto data_json = get_sensor_data_json();
 
@@ -293,6 +334,22 @@ void ApiServer::handle_openapi_json(const httplib::Request & /*req*/, httplib::R
     catch (const std::exception &e)
     {
         spdlog::error("Error serving OpenAPI JSON spec: {}", e.what());
+        res.status = 500;
+        res.set_content(R"({"error": "Internal server error"})", "application/json");
+    }
+}
+
+void ApiServer::handle_calibration(const httplib::Request & /*req*/, httplib::Response &res) const noexcept
+{
+    try
+    {
+        const auto calibration_json = calibration_to_json();
+        res.set_content(calibration_json.dump(), "application/json");
+        spdlog::debug("Served calibration data");
+    }
+    catch (const std::exception &e)
+    {
+        spdlog::error("Error in handle_calibration: {}", e.what());
         res.status = 500;
         res.set_content(R"({"error": "Internal server error"})", "application/json");
     }
@@ -384,7 +441,9 @@ std::string ApiServer::get_sensor_data_json() const noexcept
 
     json response = {{"timestamp", timestamp_ms},
                      {"physical_input", to_json_object(current_input_)},
-                     {"physical_output", to_json_object(current_output_)}};
+                     {"physical_output", to_json_object(current_output_)},
+                     {"raw_voltages", voltages_to_json(current_ad_voltages_, current_da_voltages_)},
+                     {"control_state", control_state_to_json(current_control_step_, control_is_running_, control_elapsed_)}};
 
     return response.dump();
 }
@@ -418,6 +477,60 @@ nlohmann::json ApiServer::to_json_object(const control::PhysicalOutput<> &output
 {
     return json{
         {"front_ep_kpa", output.front_ep_kpa}, {"rear_ep_kpa", output.rear_ep_kpa}, {"motor_rpm", output.motor_rpm}};
+}
+
+nlohmann::json ApiServer::voltages_to_json(const std::array<float, 64> &ad_voltages,
+                                            const std::array<float, 8> &da_voltages) noexcept
+{
+    json ad_array = json::array();
+    for (size_t i = 0; i < ad_voltages.size(); ++i)
+    {
+        ad_array.push_back({{"channel", i}, {"voltage", ad_voltages[i]}});
+    }
+
+    json da_array = json::array();
+    for (size_t i = 0; i < da_voltages.size(); ++i)
+    {
+        da_array.push_back({{"channel", i}, {"voltage", da_voltages[i]}});
+    }
+
+    return json{{"ad_channels", ad_array}, {"da_channels", da_array}};
+}
+
+nlohmann::json ApiServer::control_state_to_json(const size_t step_index, const bool is_running,
+                                                 const std::chrono::steady_clock::duration elapsed) noexcept
+{
+    using namespace std::chrono;
+    const auto elapsed_ms = duration_cast<milliseconds>(elapsed).count();
+
+    return json{{"current_step", step_index}, {"is_running", is_running}, {"elapsed_ms", elapsed_ms}};
+}
+
+nlohmann::json ApiServer::calibration_to_json() noexcept
+{
+    using namespace variables;
+
+    json ad_calibration = json::array();
+    for (size_t i = 0; i < MAX_AI_CHANNELS; ++i)
+    {
+        // Only include channels with non-default calibration
+        if (Cal_a[i] != 0.0 || Cal_b[i] != 1.0 || Cal_c[i] != 0.0)
+        {
+            ad_calibration.push_back({{"channel", i}, {"cal_a", Cal_a[i]}, {"cal_b", Cal_b[i]}, {"cal_c", Cal_c[i]}});
+        }
+    }
+
+    json da_calibration = json::array();
+    for (size_t i = 0; i < MAX_DA_CHANNELS; ++i)
+    {
+        // Only include channels with non-default calibration
+        if (DA_Cal_a[i] != 0.0 || DA_Cal_b[i] != 0.0)
+        {
+            da_calibration.push_back({{"channel", i}, {"cal_a", DA_Cal_a[i]}, {"cal_b", DA_Cal_b[i]}});
+        }
+    }
+
+    return json{{"ad_channels", ad_calibration}, {"da_channels", da_calibration}};
 }
 
 ApiConfig ApiServer::load_config(const std::string &config_path) noexcept

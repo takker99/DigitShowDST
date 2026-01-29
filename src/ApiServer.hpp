@@ -110,6 +110,34 @@ class ApiServer
     void update_sensor_data(const control::PhysicalInput &input, const control::PhysicalOutput<> &output) noexcept;
 
     /**
+     * @brief Update raw voltage data to be served via API
+     * @param ad_voltages Raw A/D voltages (Vout array)
+     * @param da_voltages Raw D/A voltages (DAVout array)
+     *
+     * Thread-safe. Should be called from Timer 1 (50ms UI refresh).
+     */
+    void update_voltage_data(const std::array<float, 64> &ad_voltages,
+                             const std::array<float, 8> &da_voltages) noexcept;
+
+    /**
+     * @brief Update control state to be served via API
+     * @param step_index Current control step index
+     * @param is_running Whether control is currently running
+     * @param elapsed Control step elapsed time
+     *
+     * Thread-safe. Should be called from Timer 2 (500ms control loop).
+     */
+    void update_control_state(size_t step_index, bool is_running,
+                              std::chrono::steady_clock::duration elapsed) noexcept;
+
+    /**
+     * @brief Notify calibration data change
+     *
+     * Thread-safe. Should be called when calibration data is modified.
+     */
+    void notify_calibration_changed() noexcept;
+
+    /**
      * @brief Load configuration from JSON file
      * @param config_path Path to the configuration file
      * @return ApiConfig object with loaded settings, or default config on error
@@ -128,6 +156,18 @@ class ApiServer
     control::PhysicalOutput<> current_output_{};
     std::chrono::system_clock::time_point last_update_{};
 
+    // Raw voltage data (thread-safe, protected by data_mutex_)
+    std::array<float, 64> current_ad_voltages_{};
+    std::array<float, 8> current_da_voltages_{};
+
+    // Control state (thread-safe, protected by data_mutex_)
+    size_t current_control_step_{0};
+    bool control_is_running_{false};
+    std::chrono::steady_clock::duration control_elapsed_{};
+
+    // Calibration change notification
+    std::atomic<bool> calibration_changed_{false};
+
     // Configuration
     ApiConfig config_;
 
@@ -137,6 +177,7 @@ class ApiServer
     void handle_health(const httplib::Request &req, httplib::Response &res) const noexcept;
     void handle_sensor_data(const httplib::Request &req, httplib::Response &res) const noexcept;
     void handle_sensor_stream(const httplib::Request &req, httplib::Response &res) noexcept;
+    void handle_calibration(const httplib::Request &req, httplib::Response &res) const noexcept;
     void handle_openapi_yaml(const httplib::Request &req, httplib::Response &res) const noexcept;
     void handle_openapi_json(const httplib::Request &req, httplib::Response &res) const noexcept;
 
@@ -147,6 +188,11 @@ class ApiServer
     [[nodiscard]] static nlohmann::json to_json_object(const control::SpecimenSnapshot &specimen) noexcept;
     [[nodiscard]] static nlohmann::json to_json_object(const control::PhysicalInput &input) noexcept;
     [[nodiscard]] static nlohmann::json to_json_object(const control::PhysicalOutput<> &output) noexcept;
+    [[nodiscard]] static nlohmann::json voltages_to_json(const std::array<float, 64> &ad_voltages,
+                                                          const std::array<float, 8> &da_voltages) noexcept;
+    [[nodiscard]] static nlohmann::json control_state_to_json(size_t step_index, bool is_running,
+                                                               std::chrono::steady_clock::duration elapsed) noexcept;
+    [[nodiscard]] static nlohmann::json calibration_to_json() noexcept;
 };
 
 } // namespace api

@@ -200,6 +200,12 @@ void CCalibrationFactor::Update()
     }()))
     {
     };
+
+    // Notify API server that calibration data has changed
+    if (pDoc != nullptr)
+    {
+        pDoc->NotifyCalibrationChanged();
+    }
 }
 
 void CCalibrationFactor::OnBUTTONZero00()
@@ -256,6 +262,7 @@ void CCalibrationFactor::OnBUTTONAmp00()
     if (AmpID <= board::AdMaxCH)
     {
         CCalibrationAmp CalibrationAmp;
+        CalibrationAmp.pDoc = pDoc;
         if (CalibrationAmp.DoModal() == IDOK)
         {
             CF_Load();
@@ -269,6 +276,7 @@ void CCalibrationFactor::OnBUTTONAmp01()
     if (AmpID <= board::AdMaxCH)
     {
         CCalibrationAmp CalibrationAmp;
+        CalibrationAmp.pDoc = pDoc;
         if (CalibrationAmp.DoModal() == IDOK)
         {
             CF_Load();
@@ -282,6 +290,7 @@ void CCalibrationFactor::OnBUTTONAmp02()
     if (AmpID <= board::AdMaxCH)
     {
         CCalibrationAmp CalibrationAmp;
+        CalibrationAmp.pDoc = pDoc;
         if (CalibrationAmp.DoModal() == IDOK)
         {
             CF_Load();
@@ -295,6 +304,7 @@ void CCalibrationFactor::OnBUTTONAmp03()
     if (AmpID <= board::AdMaxCH)
     {
         CCalibrationAmp CalibrationAmp;
+        CalibrationAmp.pDoc = pDoc;
         if (CalibrationAmp.DoModal() == IDOK)
         {
             CF_Load();
@@ -308,6 +318,7 @@ void CCalibrationFactor::OnBUTTONAmp04()
     if (AmpID <= board::AdMaxCH)
     {
         CCalibrationAmp CalibrationAmp;
+        CalibrationAmp.pDoc = pDoc;
         if (CalibrationAmp.DoModal() == IDOK)
         {
             CF_Load();
@@ -321,6 +332,7 @@ void CCalibrationFactor::OnBUTTONAmp05()
     if (AmpID <= board::AdMaxCH)
     {
         CCalibrationAmp CalibrationAmp;
+        CalibrationAmp.pDoc = pDoc;
         if (CalibrationAmp.DoModal() == IDOK)
         {
             CF_Load();
@@ -334,6 +346,7 @@ void CCalibrationFactor::OnBUTTONAmp06()
     if (AmpID <= board::AdMaxCH)
     {
         CCalibrationAmp CalibrationAmp;
+        CalibrationAmp.pDoc = pDoc;
         if (CalibrationAmp.DoModal() == IDOK)
         {
             CF_Load();
@@ -347,6 +360,7 @@ void CCalibrationFactor::OnBUTTONAmp07()
     if (AmpID <= board::AdMaxCH)
     {
         CCalibrationAmp CalibrationAmp;
+        CalibrationAmp.pDoc = pDoc;
         if (CalibrationAmp.DoModal() == IDOK)
         {
             CF_Load();

@@ -51,6 +51,8 @@ class CCalibrationAmp : public CDialog
      */
     CCalibrationAmp(CWnd *pParent = NULL);
 
+    CDigitShowDSTDoc *pDoc{}; /**< Pointer to document */
+
     // ダイアログ データ
     //{{AFX_DATA(CCalibrationAmp)
     enum

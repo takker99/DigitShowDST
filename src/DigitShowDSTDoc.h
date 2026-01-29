@@ -123,6 +123,12 @@ class CDigitShowDSTDoc : public CDocument
      */
     void UpdateApiServerData() noexcept;
 
+    /**
+     * @brief Notify API server that calibration data has changed
+     * Should be called when calibration factors are modified
+     */
+    void NotifyCalibrationChanged() noexcept;
+
     /** @brief Destructor */
     ~CDigitShowDSTDoc() override = default;
 #ifdef _DEBUG
