@@ -578,18 +578,11 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
                 return;
             }
 
-            spdlog::debug("Initializing calibration factors to zero");
+            spdlog::debug(
+                "Initializing calibration factors from current globals; file entries will override present values");
 
-            // Initialize all channels to 0 (default for omitted channels)
-            m_CFA = {};
-            m_CFB = {};
-            m_CFC = {};
-            AmpPB = {};
-            AmpPO = {};
-
-            // Initialize D/A calibration factors to 0 (default for omitted channels)
-            m_DA_Cala = {};
-            m_DA_Calb = {};
+            // Leave existing member values intact; only override channels present in the file.
+            // Do not zero member arrays here to avoid overwriting global calibration when the file omits sections.
 
             // Load only the channels present in the file
             int loaded_channels = 0;
@@ -649,7 +642,8 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
                         ch["da_cal_a"] >> m_DA_Cala[idx];
                         ch["da_cal_b"] >> m_DA_Calb[idx];
                         loaded_da_channels++;
-                        spdlog::trace("Loaded D/A calibration for channel {}: a={}, b={}", idx, m_DA_Cala[idx], m_DA_Calb[idx]);
+                        spdlog::trace("Loaded D/A calibration for channel {}: a={}, b={}", idx, m_DA_Cala[idx],
+                                      m_DA_Calb[idx]);
                     }
                 }
                 spdlog::info("D/A calibration data loaded successfully: {} channels", loaded_da_channels);
