@@ -221,14 +221,19 @@ void CCalibrationFactor::CF_Load()
 
 void CCalibrationFactor::Update()
 {
+    // Read UI values into members first, then apply
     UpdateData(TRUE);
+    SaveMembersToGlobals();
+}
 
-    // Save calibration factors for channels 0-7
+void CCalibrationFactor::SaveMembersToGlobals() noexcept
+{
+    // Apply calibration coefficients to global arrays
     std::ranges::copy(m_CFA, Cal_a.begin());
     std::ranges::copy(m_CFB, Cal_b.begin());
     std::ranges::copy(m_CFC, Cal_c.begin());
 
-    // Save initial specimen data and reset latest_physical_input specimen
+    // Update specimen snapshot atomically
     auto expected = variables::physical::latest_physical_input.load();
     while (!variables::physical::latest_physical_input.compare_exchange_weak(expected, [&]() {
         auto desired = expected;
@@ -239,7 +244,10 @@ void CCalibrationFactor::Update()
     {
     };
 
-    // Disable Update button after successful update
+    // Refresh derived snapshots so UI reflects new specimen immediately
+    variables::physical::update();
+
+    // Disable Update button after applying changes
     EnableUpdateButton(false);
 }
 
@@ -563,9 +571,21 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
                 ch["channel"] >> idx;
                 if (idx < 64)
                 {
-                    ch["cal_a"] >> m_CFA[idx];
-                    ch["cal_b"] >> m_CFB[idx];
-                    ch["cal_c"] >> m_CFC[idx];
+                    // If channel is within the UI-covered range (0..CHANNELS_CAL-1), store in dialog buffers
+                    if (idx < CHANNELS_CAL)
+                    {
+                        ch["cal_a"] >> m_CFA[idx];
+                        ch["cal_b"] >> m_CFB[idx];
+                        ch["cal_c"] >> m_CFC[idx];
+                    }
+                    else
+                    {
+                        // Channels beyond the UI range are written directly to the global calibration arrays
+                        ch["cal_a"] >> Cal_a[idx];
+                        ch["cal_b"] >> Cal_b[idx];
+                        ch["cal_c"] >> Cal_c[idx];
+                    }
+
                     if (ch.has_child("amp_pb"))
                     {
                         ch["amp_pb"] >> AmpPB[idx];
@@ -579,8 +599,7 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
                     {
                         channel_list << "CH" << idx << " ";
                     }
-                    spdlog::trace("Loaded calibration for channel {}: a={}, b={}, c={}", idx, m_CFA[idx], m_CFB[idx],
-                                  m_CFC[idx]);
+                    spdlog::trace("Loaded calibration for channel {}", idx);
                 }
             }
 
@@ -615,7 +634,9 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
                 spdlog::debug("No initial_specimen section in calibration file");
             }
 
-            Update();
+            // Update UI from loaded members and apply to globals
+            UpdateData(FALSE);
+            SaveMembersToGlobals();
 
             // Show appropriate message based on what was loaded
             if (loaded_channels == 0)

@@ -138,6 +138,9 @@ class CCalibrationFactor : public CDialog
   private:
     /** @brief Enable or disable the Update button */
     void EnableUpdateButton(const bool enable) noexcept;
+
+    /** @brief Apply member variables to global state (calibration arrays, specimen snapshot) */
+    void SaveMembersToGlobals() noexcept;
 };
 
 //{{AFX_INSERT_LOCATION}}
