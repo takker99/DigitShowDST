@@ -54,20 +54,32 @@ inline constexpr double CYLINDER_AREA_MM2 =
 //---Array---
 inline std::array<float, MAX_AI_CHANNELS> Vout = {};    // Output Voltage from A/D board
 inline std::array<double, MAX_AI_CHANNELS> Phyout = {}; // Physical Value Calculated from Vout
-inline std::array<double, MAX_AI_CHANNELS> Cal_a = {};  // A/D Calibration Factor
-inline std::array<double, MAX_AI_CHANNELS>
-    Cal_b = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
-             1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
-             1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
-             1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0}; // A/D Calibration Factor
-inline std::array<double, MAX_AI_CHANNELS> Cal_c = {};                                        // A/D Calibration Factor
+// A/D calibration stored as polynomial-ordered arrays per channel: f[0]=constant, f[1]=linear, f[2]=quadratic
+inline constinit std::array<std::array<double, 3>, MAX_AI_CHANNELS> AD_Cal = []() {
+    std::array<std::array<double, 3>, MAX_AI_CHANNELS> a{};
+    // Default: f0=0.0 (const), f1=1.0 (linear), f2=0.0 (quadratic) to match previous Cal_b defaults
+    for (auto &entry : a)
+    {
+        entry = {0.0, 1.0, 0.0};
+    }
+    return a;
+}();
+
 inline std::array<float, MAX_AI_CHANNELS> AmpPB = {};  // Physical value at base point
 inline std::array<float, MAX_AI_CHANNELS> AmpPO = {};  // Physical value at offset point
 inline std::array<float, MAX_DA_CHANNELS> DAVout = {}; // Output Voltage to D/A board
-inline std::array<double, MAX_DA_CHANNELS> DA_Cal_a = {0.0,         0.0, 0.0033333, 0.017854906,
-                                                       0.018384256, 0.0, 0.0,       0.0}; // D/A Calibration Factor
-inline std::array<double, MAX_DA_CHANNELS> DA_Cal_b = {0.0,          0.0, 0.0, -0.286962967,
-                                                       -0.335375138, 0.0, 0.0, 0.0}; // D/A Calibration Factor
+// D/A calibration stored as polynomial-ordered arrays per channel: f[0]=constant (b), f[1]=linear (a)
+inline constinit std::array<std::array<double, 2>, MAX_DA_CHANNELS> DA_Cal = []() {
+    std::array<std::array<double, 2>, MAX_DA_CHANNELS> a{};
+    // Initialize with previous DA_Cal_b (const) and DA_Cal_a (linear) mapping
+    a[0] = {0.0, 0.0};
+    a[1] = {0.0, 0.0};
+    a[2] = {0.0, 0.0033333};
+    a[3] = {-0.286962967, 0.017854906};
+    a[4] = {-0.335375138, 0.018384256};
+    // Remaining channels default to {0.0, 0.0}
+    return a;
+}();
 
 inline constexpr float MAX_VOLTAGE_OUTPUT = 9.9999f;
 
@@ -91,7 +103,9 @@ inline constexpr void calc_physical() noexcept
 
     for (size_t i = 0; i < MAX_AI_CHANNELS; ++i)
     {
-        Phyout[i] = Cal_a[i] * Vout[i] * Vout[i] + Cal_b[i] * Vout[i] + Cal_c[i];
+        // Polynomial order: f0 + f1*x + f2*x^2
+        const double v = static_cast<double>(Vout[i]);
+        Phyout[i] = AD_Cal[i][0] + AD_Cal[i][1] * v + AD_Cal[i][2] * v * v;
     }
 }
 } // namespace variables

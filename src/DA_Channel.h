@@ -58,10 +58,9 @@ class CDA_Channel : public CDialog
     // Array size for D/A channels
     static constexpr int CHANNELS_DA = 8; /**< Number of D/A channels */
 
-    // D/A calibration coefficients consolidated into arrays
-    std::array<double, CHANNELS_DA> m_DA_Cala{}; /**< D/A linear coefficient a for channels 0-7 */
-    std::array<double, CHANNELS_DA> m_DA_Calb{}; /**< D/A linear coefficient b for channels 0-7 */
-                                                 //}}AFX_DATA
+    // Consolidated D/A calibration members: m_DACal[i] = {f0=constant(b), f1=linear(a)}
+    std::array<std::array<double, 2>, CHANNELS_DA> m_DACal{}; /**< Per-channel D/A factors f[0..1] */
+                                                              //}}AFX_DATA
 
     // オーバーライド
     // ClassWizard は仮想関数のオーバーライドを生成します。

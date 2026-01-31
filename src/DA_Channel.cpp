@@ -35,11 +35,11 @@ using namespace variables;
 
 CDA_Channel::CDA_Channel(CWnd *pParent /*=NULL*/) : CDialog(CDA_Channel::IDD, pParent)
 {
-    // Initialize arrays with current DA_Cal values
+    // Initialize arrays with current DA_Cal values (DA_Cal: [const, linear])
     for (size_t i = 0; i < CHANNELS_DA; ++i)
     {
-        m_DA_Cala[i] = DA_Cal_a[i];
-        m_DA_Calb[i] = DA_Cal_b[i];
+        m_DACal[i][0] = DA_Cal[i][0]; // constant (b)
+        m_DACal[i][1] = DA_Cal[i][1]; // linear (a)
     }
 }
 
@@ -60,8 +60,9 @@ void CDA_Channel::DoDataExchange(CDataExchange *pDX)
     // Use loops for array-based DDX
     for (size_t i = 0; i < CHANNELS_DA; ++i)
     {
-        DDX_Text(pDX, IDS_CALA[i], m_DA_Cala[i]);
-        DDX_Text(pDX, IDS_CALB[i], m_DA_Calb[i]);
+        // Map UI: CALA (a) -> m_DACal[i][1], CALB (b) -> m_DACal[i][0]
+        DDX_Text(pDX, IDS_CALA[i], m_DACal[i][1]);
+        DDX_Text(pDX, IDS_CALB[i], m_DACal[i][0]);
     }
     //}}AFX_DATA_MAP
 }
@@ -80,8 +81,8 @@ void CDA_Channel::OnOK()
     UpdateData(TRUE);
     for (size_t i = 0; i < CHANNELS_DA; ++i)
     {
-        DA_Cal_a[i] = m_DA_Cala[i];
-        DA_Cal_b[i] = m_DA_Calb[i];
+        DA_Cal[i][1] = m_DACal[i][1]; // linear (a)
+        DA_Cal[i][0] = m_DACal[i][0]; // constant (b)
     }
     CDialog::OnOK();
 }

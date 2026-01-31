@@ -29,39 +29,44 @@ Added new `da_calibration_data` field:
   "maxItems": 8,
   "items": {
     "type": "object",
-    "required": ["channel", "da_cal_a", "da_cal_b"],
+    "required": ["channel", "factors"],
     "properties": {
       "channel": { "type": "integer", "minimum": 0, "maximum": 7 },
-      "da_cal_a": { "type": "number" },
-      "da_cal_b": { "type": "number" }
+      "factors": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 2,
+        "items": { "type": "number" },
+        "description": "Polynomial-ordered factors: [f0 (constant b), f1 (linear a)]"
+      }
     }
   }
 }
 ```
 
-**Formula:** `Output_Voltage = da_cal_a * Physical_Value + da_cal_b`
+**Formula:** `Output_Voltage = a * Physical_Value + b` (stored in files as `factors: [b, a]`, i.e. `f0 = b (constant)`, `f1 = a (linear)`)
 
 ### 2. Code Changes
 
 #### CalibrationFactor.h
 - Added `CHANNELS_DA` constant (8)
 - Added member variables:
-  - `std::array<double, CHANNELS_DA> m_DA_Cala{}`
-  - `std::array<double, CHANNELS_DA> m_DA_Calb{}`
+  - `std::array<std::array<double, 3>, CHANNELS_CAL> m_Cal{}` — per-channel A/D polynomial factors (`f[0]=const, f[1]=linear, f[2]=quadratic`)
+  - `std::array<std::array<double, 2>, CHANNELS_DA> m_DACal{}` — per-channel D/A factors (`f[0]=const (b), f[1]=linear (a)`)
 
 #### CalibrationFactor.cpp
 
 **CF_Load() function:**
-- Loads D/A calibration factors from global arrays (`DA_Cal_a`, `DA_Cal_b`)
-- Populates dialog member variables
+- Loads D/A calibration factors from the consolidated global `DA_Cal` (pairs `{b,a}`)
+- Populates dialog member variables `m_DACal` (mapping: `m_DACal[i][0]=b`, `m_DACal[i][1]=a`)
 
 **Update() function:**
-- Saves D/A calibration factors back to global arrays
+- Saves D/A calibration factors from `m_DACal` back to global `DA_Cal`
 - Called when user clicks "Update" button
 
 **OnBUTTONCFSaveConfig() function:**
 - Creates `da_calibration_data` YAML node
-- Saves D/A factors for channels where `DA_Cal_a[i] != 0.0 || DA_Cal_b[i] != 0.0`
+- Saves D/A factors for channels where `DA_Cal[i][0] != 0.0 || DA_Cal[i][1] != 0.0` (i.e., `b` or `a` non-zero)
 - Writes to YAML/JSON file along with A/D calibration data
 
 **OnBUTTONCFLoadConfig() function:**
@@ -76,20 +81,15 @@ Added new `da_calibration_data` field:
 ```yaml
 calibration_data:
   - channel: 0
-    cal_a: 0.0
-    cal_b: 1.0
-    cal_c: 0.0
+    factors: [0.0, 1.0, 0.0]  # c, b, a (polynomial order f0,f1,f2)
 
 da_calibration_data:
   - channel: 2
-    da_cal_a: 0.0033333
-    da_cal_b: 0.0
+    factors: [0.0, 0.0033333]   # b, a
   - channel: 3
-    da_cal_a: 0.017854906
-    da_cal_b: -0.286962967
+    factors: [-0.286962967, 0.017854906]
   - channel: 4
-    da_cal_a: 0.018384256
-    da_cal_b: -0.335375138
+    factors: [-0.335375138, 0.018384256]
 
 initial_specimen:
   height_mm: 120.0

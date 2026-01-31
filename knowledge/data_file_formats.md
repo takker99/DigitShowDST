@@ -231,7 +231,8 @@ print(dat.index)  # 新形式: DatetimeIndex、旧形式: Index
 
 - A/D 読み取りは「1チャネルおき」（偶数インデックス）を使用
   - 例: `AdData0[AdChannels[0] * j + 2 * i]`
-  - `Vout[k]` は `BinaryToVolt(...)` で電圧へ変換後、`Phyout[k]` に対して `Cal_a[k] * V^2 + Cal_b[k] * V + Cal_c[k]` で物理量へ
+  - `Vout[k]` は `BinaryToVolt(...)` で電圧へ変換後、`Phyout[k]` は `AD_Cal[k]` の多項式で計算されます：
+  `Phyout[k] = AD_Cal[k][0] + AD_Cal[k][1] * V + AD_Cal[k][2] * V^2` (配列順は `[const, linear, quadratic]`)
 - 出力列は `NUMAD` 個のボード分を逐次結合（ボード0→ボード1 の順）
 - 実運用は 16ch 相当（CH00～CH15）を前提にヘッダ固定。構成変更時はヘッダ不一致が起き得るため注意
 
