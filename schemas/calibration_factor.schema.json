@@ -18,73 +18,139 @@
       "minItems": 0,
       "maxItems": 64,
       "items": {
-        "type": "object",
-        "required": [
-          "channel",
-          "cal_a",
-          "cal_b",
-          "cal_c"
-        ],
-        "properties": {
-          "channel": {
-            "type": "integer",
-            "description": "Channel number (0-63)",
-            "minimum": 0,
-            "maximum": 63
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "channel",
+              "factors"
+            ],
+            "properties": {
+              "channel": {
+                "type": "integer",
+                "description": "Channel number (0-63)",
+                "minimum": 0,
+                "maximum": 63
+              },
+              "factors": {
+                "type": "array",
+                "description": "Array of three coefficients [a, b, c] representing a*V^2 + b*V + c",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "type": "number"
+                }
+              },
+              "amp_pb": {
+                "type": "number",
+                "description": "Physical value at base point for amplifier calibration (optional, omitted if 0)"
+              },
+              "amp_po": {
+                "type": "number",
+                "description": "Physical value at offset point for amplifier calibration (optional, omitted if 0)"
+              }
+            },
+            "additionalProperties": false
           },
-          "cal_a": {
-            "type": "number",
-            "description": "Quadratic coefficient (a) in: Physical Value = a*V^2 + b*V + c"
-          },
-          "cal_b": {
-            "type": "number",
-            "description": "Linear coefficient (b) in: Physical Value = a*V^2 + b*V + c"
-          },
-          "cal_c": {
-            "type": "number",
-            "description": "Constant coefficient (c) in: Physical Value = a*V^2 + b*V + c"
-          },
-          "amp_pb": {
-            "type": "number",
-            "description": "Physical value at base point for amplifier calibration (optional, omitted if 0)"
-          },
-          "amp_po": {
-            "type": "number",
-            "description": "Physical value at offset point for amplifier calibration (optional, omitted if 0)"
+          {
+            "type": "object",
+            "required": [
+              "channel",
+              "cal_a",
+              "cal_b",
+              "cal_c"
+            ],
+            "properties": {
+              "channel": {
+                "type": "integer",
+                "description": "Channel number (0-63)",
+                "minimum": 0,
+                "maximum": 63
+              },
+              "cal_a": {
+                "type": "number",
+                "description": "Quadratic coefficient (a) in: Physical Value = a*V^2 + b*V + c"
+              },
+              "cal_b": {
+                "type": "number",
+                "description": "Linear coefficient (b) in: Physical Value = a*V^2 + b*V + c"
+              },
+              "cal_c": {
+                "type": "number",
+                "description": "Constant coefficient (c) in: Physical Value = a*V^2 + b*V + c"
+              },
+              "amp_pb": {
+                "type": "number",
+                "description": "Physical value at base point for amplifier calibration (optional, omitted if 0)"
+              },
+              "amp_po": {
+                "type": "number",
+                "description": "Physical value at offset point for amplifier calibration (optional, omitted if 0)"
+              }
+            },
+            "additionalProperties": false
           }
-        },
-        "additionalProperties": false
+        ]
       }
     },
     "da_calibration_data": {
       "type": "array",
-      "description": "Array of D/A (output) calibration coefficients for each channel (0-8 items). Omitted channels default to a=0, b=0.",
+      "description": "Array of D/A (output) calibration coefficients for each channel (0-8 items). Omitted channels default to a=0, b=0. Supports new 'factors' array [a,b] or legacy 'da_cal_a'/'da_cal_b' fields.",
       "minItems": 0,
       "maxItems": 8,
       "items": {
-        "type": "object",
-        "required": [
-          "channel",
-          "da_cal_a",
-          "da_cal_b"
-        ],
-        "properties": {
-          "channel": {
-            "type": "integer",
-            "description": "D/A channel number (0-7)",
-            "minimum": 0,
-            "maximum": 7
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "channel",
+              "factors"
+            ],
+            "properties": {
+              "channel": {
+                "type": "integer",
+                "description": "D/A channel number (0-7)",
+                "minimum": 0,
+                "maximum": 7
+              },
+              "factors": {
+                "type": "array",
+                "description": "Array of two coefficients [a, b] representing Output = a*Physical + b",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "type": "number"
+                }
+              }
+            },
+            "additionalProperties": false
           },
-          "da_cal_a": {
-            "type": "number",
-            "description": "Linear coefficient (a) in: Output Value = a*Physical + b"
-          },
-          "da_cal_b": {
-            "type": "number",
-            "description": "Constant coefficient (b) in: Output Value = a*Physical + b"
+          {
+            "type": "object",
+            "required": [
+              "channel",
+              "da_cal_a",
+              "da_cal_b"
+            ],
+            "properties": {
+              "channel": {
+                "type": "integer",
+                "description": "D/A channel number (0-7)",
+                "minimum": 0,
+                "maximum": 7
+              },
+              "da_cal_a": {
+                "type": "number",
+                "description": "Linear coefficient (a) in: Output Value = a*Physical + b"
+              },
+              "da_cal_b": {
+                "type": "number",
+                "description": "Constant coefficient (b) in: Output Value = a*Physical + b"
+              }
+            },
+            "additionalProperties": false
           }
-        },
-        "additionalProperties": false
+        ]
       }
     },
     "initial_specimen": {
@@ -127,27 +193,35 @@
       "calibration_data": [
         {
           "channel": 0,
-          "cal_a": 0.0,
-          "cal_b": 1.0,
-          "cal_c": 0.0
+          "factors": [
+            0.0,
+            1.0,
+            0.0
+          ]
         },
         {
           "channel": 1,
-          "cal_a": 0.0,
-          "cal_b": 1.0,
-          "cal_c": 0.0
+          "factors": [
+            0.0,
+            1.0,
+            0.0
+          ]
         }
       ],
       "da_calibration_data": [
         {
           "channel": 2,
-          "da_cal_a": 0.0033333,
-          "da_cal_b": 0.0
+          "factors": [
+            0.0033333,
+            0.0
+          ]
         },
         {
           "channel": 3,
-          "da_cal_a": 0.017854906,
-          "da_cal_b": -0.286962967
+          "factors": [
+            0.017854906,
+            -0.286962967
+          ]
         }
       ],
       "initial_specimen": {

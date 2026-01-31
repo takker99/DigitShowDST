@@ -466,9 +466,14 @@ void CCalibrationFactor::OnBUTTONCFSaveConfig()
                     ryml::NodeRef ch = channels.append_child();
                     ch |= ryml::MAP;
                     ch["channel"] << i;
-                    ch["cal_a"] << Cal_a[i];
-                    ch["cal_b"] << Cal_b[i];
-                    ch["cal_c"] << Cal_c[i];
+
+                    // New format: store coefficients as an array 'factors': [a, b, c]
+                    ryml::NodeRef factors = ch["factors"];
+                    factors |= ryml::SEQ;
+                    factors.append_child() << Cal_a[i];
+                    factors.append_child() << Cal_b[i];
+                    factors.append_child() << Cal_c[i];
+
                     if (AmpPB[i] != 0.0 || AmpPO[i] != 0.0)
                     {
                         ch["amp_pb"] << AmpPB[i];
@@ -489,8 +494,11 @@ void CCalibrationFactor::OnBUTTONCFSaveConfig()
                     ryml::NodeRef ch = da_channels.append_child();
                     ch |= ryml::MAP;
                     ch["channel"] << i;
-                    ch["da_cal_a"] << DA_Cal_a[i];
-                    ch["da_cal_b"] << DA_Cal_b[i];
+                    // New format: store DA coefficients as an array 'factors': [a, b]
+                    ryml::NodeRef factors = ch["factors"];
+                    factors |= ryml::SEQ;
+                    factors.append_child() << DA_Cal_a[i];
+                    factors.append_child() << DA_Cal_b[i];
                 }
             }
             spdlog::debug("Saving {} D/A channel calibration factors", da_channels.num_children());
@@ -595,18 +603,50 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
                 if (idx < 64)
                 {
                     // If channel is within the UI-covered range (0..CHANNELS_CAL-1), store in dialog buffers
-                    if (idx < CHANNELS_CAL)
+                    if (ch.has_child("factors") && ch["factors"].is_seq())
                     {
-                        ch["cal_a"] >> m_CFA[idx];
-                        ch["cal_b"] >> m_CFB[idx];
-                        ch["cal_c"] >> m_CFC[idx];
+                        // New format: 'factors' is a sequence [a, b, c]
+                        size_t j = 0;
+                        for (const auto &valnode : ch["factors"])
+                        {
+                            double v = 0.0;
+                            valnode >> v;
+                            if (idx < CHANNELS_CAL)
+                            {
+                                if (j == 0)
+                                    m_CFA[idx] = v;
+                                else if (j == 1)
+                                    m_CFB[idx] = v;
+                                else if (j == 2)
+                                    m_CFC[idx] = v;
+                            }
+                            else
+                            {
+                                if (j == 0)
+                                    Cal_a[idx] = v;
+                                else if (j == 1)
+                                    Cal_b[idx] = v;
+                                else if (j == 2)
+                                    Cal_c[idx] = v;
+                            }
+                            ++j;
+                        }
                     }
                     else
                     {
-                        // Channels beyond the UI range are written directly to the global calibration arrays
-                        ch["cal_a"] >> Cal_a[idx];
-                        ch["cal_b"] >> Cal_b[idx];
-                        ch["cal_c"] >> Cal_c[idx];
+                        if (idx < CHANNELS_CAL)
+                        {
+                            ch["cal_a"] >> m_CFA[idx];
+                            ch["cal_b"] >> m_CFB[idx];
+                            ch["cal_c"] >> m_CFC[idx];
+                        }
+                        else
+                        {
+                            // Channels beyond the UI range are written directly to the global calibration arrays
+                            ch["cal_a"] >> Cal_a[idx];
+                            ch["cal_b"] >> Cal_b[idx];
+                            ch["cal_c"] >> Cal_c[idx];
+                        }
                     }
 
                     if (ch.has_child("amp_pb"))
@@ -639,8 +679,26 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
                     ch["channel"] >> idx;
                     if (idx < CHANNELS_DA)
                     {
-                        ch["da_cal_a"] >> m_DA_Cala[idx];
-                        ch["da_cal_b"] >> m_DA_Calb[idx];
+                        // Support new 'factors' array [a, b] or legacy 'da_cal_a'/'da_cal_b'
+                        if (ch.has_child("factors") && ch["factors"].is_seq())
+                        {
+                            size_t j = 0;
+                            for (const auto &valnode : ch["factors"])
+                            {
+                                double v = 0.0;
+                                valnode >> v;
+                                if (j == 0)
+                                    m_DA_Cala[idx] = v;
+                                else if (j == 1)
+                                    m_DA_Calb[idx] = v;
+                                ++j;
+                            }
+                        }
+                        else
+                        {
+                            ch["da_cal_a"] >> m_DA_Cala[idx];
+                            ch["da_cal_b"] >> m_DA_Calb[idx];
+                        }
                         loaded_da_channels++;
                         spdlog::trace("Loaded D/A calibration for channel {}: a={}, b={}", idx, m_DA_Cala[idx],
                                       m_DA_Calb[idx]);
