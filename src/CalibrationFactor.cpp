@@ -467,12 +467,13 @@ void CCalibrationFactor::OnBUTTONCFSaveConfig()
                     ch |= ryml::MAP;
                     ch["channel"] << i;
 
-                    // New format: store coefficients as an array 'factors': [a, b, c]
+                    // New format: store coefficients as polynomial-ordered array 'factors': [c, b, a]
+                    // i.e., y = f[0] + f[1]*x + f[2]*x^2
                     ryml::NodeRef factors = ch["factors"];
                     factors |= ryml::SEQ;
-                    factors.append_child() << Cal_a[i];
-                    factors.append_child() << Cal_b[i];
                     factors.append_child() << Cal_c[i];
+                    factors.append_child() << Cal_b[i];
+                    factors.append_child() << Cal_a[i];
 
                     if (AmpPB[i] != 0.0 || AmpPO[i] != 0.0)
                     {
@@ -494,11 +495,12 @@ void CCalibrationFactor::OnBUTTONCFSaveConfig()
                     ryml::NodeRef ch = da_channels.append_child();
                     ch |= ryml::MAP;
                     ch["channel"] << i;
-                    // New format: store DA coefficients as an array 'factors': [a, b]
+                    // New format: store DA coefficients as polynomial-ordered array 'factors': [b, a]
+                    // i.e., y = f[0] + f[1]*x
                     ryml::NodeRef factors = ch["factors"];
                     factors |= ryml::SEQ;
-                    factors.append_child() << DA_Cal_a[i];
                     factors.append_child() << DA_Cal_b[i];
+                    factors.append_child() << DA_Cal_a[i];
                 }
             }
             spdlog::debug("Saving {} D/A channel calibration factors", da_channels.num_children());
@@ -605,29 +607,30 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
                     // If channel is within the UI-covered range (0..CHANNELS_CAL-1), store in dialog buffers
                     if (ch.has_child("factors") && ch["factors"].is_seq())
                     {
-                        // New format: 'factors' is a sequence [a, b, c]
+                        // New format: 'factors' is a sequence [c, b, a] (polynomial order)
                         size_t j = 0;
                         for (const auto &valnode : ch["factors"])
                         {
                             double v = 0.0;
                             valnode >> v;
+                            // map: j==0 -> c (constant), j==1 -> b (linear), j==2 -> a (quadratic)
                             if (idx < CHANNELS_CAL)
                             {
                                 if (j == 0)
-                                    m_CFA[idx] = v;
+                                    m_CFC[idx] = v;
                                 else if (j == 1)
                                     m_CFB[idx] = v;
                                 else if (j == 2)
-                                    m_CFC[idx] = v;
+                                    m_CFA[idx] = v;
                             }
                             else
                             {
                                 if (j == 0)
-                                    Cal_a[idx] = v;
+                                    Cal_c[idx] = v;
                                 else if (j == 1)
                                     Cal_b[idx] = v;
                                 else if (j == 2)
-                                    Cal_c[idx] = v;
+                                    Cal_a[idx] = v;
                             }
                             ++j;
                         }
