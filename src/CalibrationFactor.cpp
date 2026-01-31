@@ -191,6 +191,10 @@ void CCalibrationFactor::CF_Load()
     std::ranges::copy(Cal_b | std::views::take(CHANNELS_CAL), m_CFB.begin());
     std::ranges::copy(Cal_c | std::views::take(CHANNELS_CAL), m_CFC.begin());
 
+    // Load D/A calibration factors for channels 0-7
+    std::ranges::copy(DA_Cal_a | std::views::take(CHANNELS_DA), m_DA_Cala.begin());
+    std::ranges::copy(DA_Cal_b | std::views::take(CHANNELS_DA), m_DA_Calb.begin());
+
     for (auto &&[p, phyout] : std::views::zip(m_CFP, Phyout))
     {
         p.Format(_T("%11.5f"), phyout);
@@ -233,6 +237,11 @@ void CCalibrationFactor::SaveMembersToGlobals() noexcept
     std::ranges::copy(m_CFB, Cal_b.begin());
     std::ranges::copy(m_CFC, Cal_c.begin());
 
+    // Save D/A calibration factors for channels 0-7
+    std::ranges::copy(m_DA_Cala, DA_Cal_a.begin());
+    std::ranges::copy(m_DA_Calb, DA_Cal_b.begin());
+
+    // Save initial specimen data and reset latest_physical_input specimen
     // Update specimen snapshot atomically
     auto expected = variables::physical::latest_physical_input.load();
     while (!variables::physical::latest_physical_input.compare_exchange_weak(expected, [&]() {
@@ -469,6 +478,23 @@ void CCalibrationFactor::OnBUTTONCFSaveConfig()
             }
             spdlog::debug("Saving {} channel calibration factors", channels.num_children());
 
+            // Save D/A calibration data (only save non-zero data)
+            ryml::NodeRef da_channels = root["da_calibration_data"];
+            da_channels |= ryml::SEQ;
+
+            for (size_t i = 0; i < CHANNELS_DA; i++)
+            {
+                if (DA_Cal_a[i] != 0.0 || DA_Cal_b[i] != 0.0)
+                {
+                    ryml::NodeRef ch = da_channels.append_child();
+                    ch |= ryml::MAP;
+                    ch["channel"] << i;
+                    ch["da_cal_a"] << DA_Cal_a[i];
+                    ch["da_cal_b"] << DA_Cal_b[i];
+                }
+            }
+            spdlog::debug("Saving {} D/A channel calibration factors", da_channels.num_children());
+
             // Save initial specimen data
             ryml::NodeRef specimen = root["initial_specimen"];
             specimen |= ryml::MAP;
@@ -552,14 +578,11 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
                 return;
             }
 
-            spdlog::debug("Initializing calibration factors to zero");
+            spdlog::debug(
+                "Initializing calibration factors from current globals; file entries will override present values");
 
-            // Initialize all channels to 0 (default for omitted channels)
-            m_CFA = {};
-            m_CFB = {};
-            m_CFC = {};
-            AmpPB = {};
-            AmpPO = {};
+            // Leave existing member values intact; only override channels present in the file.
+            // Do not zero member arrays here to avoid overwriting global calibration when the file omits sections.
 
             // Load only the channels present in the file
             int loaded_channels = 0;
@@ -604,6 +627,31 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
             }
 
             spdlog::info("Calibration data loaded successfully: {} channels", loaded_channels);
+
+            // Load D/A calibration data if present
+            int loaded_da_channels = 0;
+            if (root.has_child("da_calibration_data") && root["da_calibration_data"].is_seq())
+            {
+                ryml::ConstNodeRef da_channels = root["da_calibration_data"];
+                for (const auto &ch : da_channels)
+                {
+                    size_t idx = 0;
+                    ch["channel"] >> idx;
+                    if (idx < CHANNELS_DA)
+                    {
+                        ch["da_cal_a"] >> m_DA_Cala[idx];
+                        ch["da_cal_b"] >> m_DA_Calb[idx];
+                        loaded_da_channels++;
+                        spdlog::trace("Loaded D/A calibration for channel {}: a={}, b={}", idx, m_DA_Cala[idx],
+                                      m_DA_Calb[idx]);
+                    }
+                }
+                spdlog::info("D/A calibration data loaded successfully: {} channels", loaded_da_channels);
+            }
+            else
+            {
+                spdlog::debug("No da_calibration_data section in calibration file");
+            }
 
             // Load initial specimen data if present
             if (root.has_child("initial_specimen") && root["initial_specimen"].is_map())

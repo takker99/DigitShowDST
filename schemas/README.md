@@ -6,24 +6,37 @@
 
 ### 1. calibration_factor.schema.json
 
-A/Dチャンネルの較正係数を定義するスキーマ。
+A/DチャンネルおよびD/Aチャンネルの較正係数を定義するスキーマ。
 
 **用途:**
-- 64チャンネル分の較正係数(a, b, c)を保存
-- 物理量 = a×V² + b×V + c の関係を定義
+- A/D: 64チャンネル分の較正係数(a, b, c)を保存
+- A/D物理量 = a×V² + b×V + c の関係を定義
+- D/A: 8チャンネル分の較正係数(da_cal_a, da_cal_b)を保存
+- D/A出力 = da_cal_a×物理量 + da_cal_b の関係を定義
 
 **主要フィールド:**
 - `version`: スキーマバージョン (例: "1.0")
-- `channels`: チャンネル数 (固定値: 64)
-- `calibration_data`: 各チャンネルの較正データ配列
+- `calibration_data`: A/Dチャンネルの較正データ配列 (最大64チャンネル)
   - `channel`: チャンネル番号 (0-63)
   - `cal_a`: 二次係数
   - `cal_b`: 一次係数
   - `cal_c`: 定数項
+  - `amp_pb`: アンプ較正基準点の物理量 (オプション)
+  - `amp_po`: アンプ較正オフセット点の物理量 (オプション)
+- `da_calibration_data`: D/Aチャンネルの較正データ配列 (最大8チャンネル) **NEW**
+  - `channel`: チャンネル番号 (0-7)
+  - `da_cal_a`: 線形係数 (物理量から電圧への変換)
+  - `da_cal_b`: 定数項 (オフセット電圧)
+- `initial_specimen`: 初期供試体データ
+  - `height_mm`: 高さ [mm]
+  - `area_mm2`: 断面積 [mm²]
+  - `weight_g`: 重量 [g]
+  - `box_weight_g`: ボックス重量 [g]
 
 **バリデーション:**
-- 必ず64チャンネル分のデータが必要
-- チャンネル番号は0-63の範囲内
+- `calibration_data`は0〜64チャンネル (省略可能、省略時はa=0, b=0, c=0)
+- `da_calibration_data`は0〜8チャンネル (省略可能、省略時はa=0, b=0)
+- チャンネル番号は範囲内 (A/D: 0-63, D/A: 0-7)
 - すべての係数は数値型
 
 ### 2. specimen_data.schema.json
