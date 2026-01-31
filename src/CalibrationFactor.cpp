@@ -126,6 +126,38 @@ ON_BN_CLICKED(IDC_BUTTON_Amp06, &CCalibrationFactor::OnBUTTONAmp06)
 ON_BN_CLICKED(IDC_BUTTON_Amp07, &CCalibrationFactor::OnBUTTONAmp07)
 ON_BN_CLICKED(IDC_BUTTON_CFLoadConfig, &CCalibrationFactor::OnBUTTONCFLoadConfig)
 ON_BN_CLICKED(IDC_BUTTON_CFSaveConfig, &CCalibrationFactor::OnBUTTONCFSaveConfig)
+
+// EN_CHANGE message handlers for calibration factors
+ON_EN_CHANGE(IDC_EDIT_CFA00, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFB00, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFC00, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFA01, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFB01, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFC01, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFA02, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFB02, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFC02, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFA03, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFB03, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFC03, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFA04, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFB04, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFC04, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFA05, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFB05, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFC05, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFA06, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFB06, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFC06, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFA07, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFB07, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_CFC07, &CCalibrationFactor::OnEditChange)
+
+// EN_CHANGE message handlers for specimen data
+ON_EN_CHANGE(IDC_EDIT_InitSpecHeight, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_InitSpecArea, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_InitSpecWeight, &CCalibrationFactor::OnEditChange)
+ON_EN_CHANGE(IDC_EDIT_InitSpecBoxWeight, &CCalibrationFactor::OnEditChange)
 //}}AFX_MSG_MAP
 END_MESSAGE_MAP_IGNORE_UNUSED_LOCAL_TYPEDEF()
 
@@ -139,6 +171,9 @@ BOOL CCalibrationFactor::OnInitDialog()
 
     // Initialize status control
     SetDlgItemText(IDC_STATIC_STATUS, _T(""));
+
+    // Disable Update button by default - will be enabled when changes are made
+    EnableUpdateButton(false);
 
     // TODO: この位置に初期化の補足処理を追加してください
 
@@ -182,14 +217,22 @@ void CCalibrationFactor::CF_Load()
     m_InitSpecBoxWeight = variables::SpecimenData.box_weight_g();
 
     UpdateData(false);
+
+    // Disable Update button after loading data
+    EnableUpdateButton(false);
     // NOLINTEND(*-pro-type-vararg)
 }
 
 void CCalibrationFactor::Update()
 {
-    UpdateData(false);
+    // Read UI values into members first, then apply
+    UpdateData(TRUE);
+    SaveMembersToGlobals();
+}
 
-    // Save calibration factors for channels 0-7
+void CCalibrationFactor::SaveMembersToGlobals() noexcept
+{
+    // Apply calibration coefficients to global arrays
     std::ranges::copy(m_CFA, Cal_a.begin());
     std::ranges::copy(m_CFB, Cal_b.begin());
     std::ranges::copy(m_CFC, Cal_c.begin());
@@ -199,6 +242,7 @@ void CCalibrationFactor::Update()
     std::ranges::copy(m_DA_Calb, DA_Cal_b.begin());
 
     // Save initial specimen data and reset latest_physical_input specimen
+    // Update specimen snapshot atomically
     auto expected = variables::physical::latest_physical_input.load();
     while (!variables::physical::latest_physical_input.compare_exchange_weak(expected, [&]() {
         auto desired = expected;
@@ -208,6 +252,26 @@ void CCalibrationFactor::Update()
     }()))
     {
     };
+
+    // Refresh derived snapshots so UI reflects new specimen immediately
+    variables::physical::update();
+
+    // Disable Update button after applying changes
+    EnableUpdateButton(false);
+}
+
+void CCalibrationFactor::EnableUpdateButton(const bool enable) noexcept
+{
+    if (auto *pButton = GetDlgItem(IDC_BUTTON_CFUpdate))
+    {
+        pButton->EnableWindow(enable ? TRUE : FALSE);
+    }
+}
+
+void CCalibrationFactor::OnEditChange()
+{
+    // Enable Update button when any calibration factor or specimen field changes
+    EnableUpdateButton(true);
 }
 
 void CCalibrationFactor::OnBUTTONZero00()
@@ -417,7 +481,7 @@ void CCalibrationFactor::OnBUTTONCFSaveConfig()
             // Save D/A calibration data (only save non-zero data)
             ryml::NodeRef da_channels = root["da_calibration_data"];
             da_channels |= ryml::SEQ;
-            
+
             for (size_t i = 0; i < CHANNELS_DA; i++)
             {
                 if (DA_Cal_a[i] != 0.0 || DA_Cal_b[i] != 0.0)
@@ -522,7 +586,7 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
             m_CFC = {};
             AmpPB = {};
             AmpPO = {};
-            
+
             // Initialize D/A calibration factors to 0 (default for omitted channels)
             m_DA_Cala = {};
             m_DA_Calb = {};
@@ -537,9 +601,21 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
                 ch["channel"] >> idx;
                 if (idx < 64)
                 {
-                    ch["cal_a"] >> m_CFA[idx];
-                    ch["cal_b"] >> m_CFB[idx];
-                    ch["cal_c"] >> m_CFC[idx];
+                    // If channel is within the UI-covered range (0..CHANNELS_CAL-1), store in dialog buffers
+                    if (idx < CHANNELS_CAL)
+                    {
+                        ch["cal_a"] >> m_CFA[idx];
+                        ch["cal_b"] >> m_CFB[idx];
+                        ch["cal_c"] >> m_CFC[idx];
+                    }
+                    else
+                    {
+                        // Channels beyond the UI range are written directly to the global calibration arrays
+                        ch["cal_a"] >> Cal_a[idx];
+                        ch["cal_b"] >> Cal_b[idx];
+                        ch["cal_c"] >> Cal_c[idx];
+                    }
+
                     if (ch.has_child("amp_pb"))
                     {
                         ch["amp_pb"] >> AmpPB[idx];
@@ -553,8 +629,7 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
                     {
                         channel_list << "CH" << idx << " ";
                     }
-                    spdlog::trace("Loaded calibration for channel {}: a={}, b={}, c={}", idx, m_CFA[idx], m_CFB[idx],
-                                  m_CFC[idx]);
+                    spdlog::trace("Loaded calibration for channel {}", idx);
                 }
             }
 
@@ -613,7 +688,9 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
                 spdlog::debug("No initial_specimen section in calibration file");
             }
 
-            Update();
+            // Update UI from loaded members and apply to globals
+            UpdateData(FALSE);
+            SaveMembersToGlobals();
 
             // Show appropriate message based on what was loaded
             if (loaded_channels == 0)
