@@ -129,8 +129,18 @@ class CCalibrationFactor : public CDialog
      * @return TRUE if initialization succeeds
      */
     BOOL OnInitDialog() override;
+
+    /** @brief Handle text change events to enable Update button */
+    afx_msg void OnEditChange();
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
+
+  private:
+    /** @brief Enable or disable the Update button */
+    void EnableUpdateButton(const bool enable) noexcept;
+
+    /** @brief Apply member variables to global state (calibration arrays, specimen snapshot) */
+    void SaveMembersToGlobals() noexcept;
 };
 
 //{{AFX_INSERT_LOCATION}}
