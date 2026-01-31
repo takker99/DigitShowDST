@@ -50,15 +50,14 @@ For each of the 8 D/A channels, add:
 - "CH7 (-----------)"
 
 #### Edit Controls (already defined in resource.h):
-**For DA_Cal_a** (linear coefficient):
-- IDC_EDIT_DA_Cala00 through IDC_EDIT_DA_Cala07
+**D/A UI binding note**
+- The D/A controls already exist (IDC_EDIT_DA_Cala00..07, IDC_EDIT_DA_Calb00..07). In code we now bind them to `m_DACal` with polynomial ordering:
+  - `m_DACal[i][0]` = constant term (b)
+  - `m_DACal[i][1]` = linear term (a)
 
-**For DA_Cal_b** (constant coefficient):
-- IDC_EDIT_DA_Calb00 through IDC_EDIT_DA_Calb07
-
-#### Layout Suggestion:
+#### Layout Suggestion (unchanged visual layout):
 ```
-   Label          DA_Cal_a     DA_Cal_b
+   Label          a (linear)   b (const)
    --------       --------     --------
    CH0 (Motor)    [edit]       [edit]
    CH1 (...)      [edit]       [edit]
@@ -66,7 +65,7 @@ For each of the 8 D/A channels, add:
 ```
 
 ### Step 5: Add Column Headers
-Add static text labels above the edit controls:
+Add static text labels above the edit controls (text is unchanged):
 - "DA_Cal_a" - Linear coefficient (a) in: Output = a*Physical + b
 - "DA_Cal_b" - Constant coefficient (b)
 
@@ -76,8 +75,8 @@ Adjust the following controls:
 - Move status text (IDC_STATIC_STATUS) down accordingly
 - Ensure Load/Save buttons are accessible
 
-### Step 7: Add DDX Code (Already Done)
-The DoDataExchange code will need to be uncommented once UI controls are added. Add this code to `CalibrationFactor.cpp` in `DoDataExchange()`:
+### Step 7: DDX Code (Already Done)
+The `DoDataExchange()` code binds the existing resource IDs to the new members like this:
 
 ```cpp
 // D/A calibration factors (8 channels)
@@ -94,8 +93,10 @@ static constexpr std::array<int, CHANNELS_DA> IDS_DA_CALB = {
 // Bind D/A calibration factors
 for (size_t i = 0; i < CHANNELS_DA; ++i)
 {
-    DDX_Text(pDX, IDS_DA_CALA[i], m_DA_Cala[i]);
-    DDX_Text(pDX, IDS_DA_CALB[i], m_DA_Calb[i]);
+    // Note: UI label DA_Cal_a (a) maps to m_DACal[i][1]
+    //       UI label DA_Cal_b (b) maps to m_DACal[i][0]
+    DDX_Text(pDX, IDS_DA_CALA[i], m_DACal[i][1]);
+    DDX_Text(pDX, IDS_DA_CALB[i], m_DACal[i][0]);
 }
 ```
 
@@ -128,10 +129,23 @@ After UI integration:
 - Only the UI layout needs to be created manually
 
 ## Default Values
-The default D/A calibration values (from Variables.hpp):
+The default D/A calibration values (from `Variables.hpp`) are stored in `DA_Cal` as pairs `{b, a}` (constant, linear):
+
 ```cpp
-DA_Cal_a = {0.0, 0.0, 0.0033333, 0.017854906, 0.018384256, 0.0, 0.0, 0.0}
-DA_Cal_b = {0.0, 0.0, 0.0, -0.286962967, -0.335375138, 0.0, 0.0, 0.0}
+DA_Cal = {
+  {0.0, 0.0},
+  {0.0, 0.0},
+  {0.0, 0.0033333},
+  {-0.286962967, 0.017854906},
+  {-0.335375138, 0.018384256},
+  {0.0, 0.0},
+  {0.0, 0.0},
+  {0.0, 0.0}
+};
 ```
 
-These will be displayed when the dialog opens and can be edited by the user.
+When bound to the UI:
+- UI `DA_Cal_a` (label) maps to `m_DACal[i][1]` (linear term `a`)
+- UI `DA_Cal_b` (label) maps to `m_DACal[i][0]` (constant term `b`)
+
+These values will be displayed when the dialog opens and can be edited by the user.

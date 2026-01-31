@@ -68,14 +68,15 @@ class CCalibrationFactor : public CDialog
 
     // Calibration data consolidated into arrays
     std::array<CStringW, CHANNELS_CAL> m_CFP; /**< Physical quantity names for channels 0-7 */
-    std::array<double, CHANNELS_CAL> m_CFA{}; /**< Calibration coefficient 'a' (quadratic term) */
-    std::array<double, CHANNELS_CAL> m_CFB{}; /**< Calibration coefficient 'b' (linear term) */
-    std::array<double, CHANNELS_CAL> m_CFC{}; /**< Calibration coefficient 'c' (constant term) */
-    std::array<CStringW, CHANNELS_CAL> m_C;   /**< Current voltage values [V] */
 
-    // D/A calibration data
-    std::array<double, CHANNELS_DA> m_DA_Cala{}; /**< D/A calibration coefficient 'a' (linear term) */
-    std::array<double, CHANNELS_DA> m_DA_Calb{}; /**< D/A calibration coefficient 'b' (constant term) */
+    // Consolidated A/D calibration members: polynomial-ordered
+    // m_Cal[i] = {f0, f1, f2} where f0 = constant (c), f1 = linear (b), f2 = quadratic (a)
+    std::array<std::array<double, 3>, CHANNELS_CAL> m_Cal{}; /**< Per-channel calibration factors f[0..2] */
+
+    std::array<CStringW, CHANNELS_CAL> m_C; /**< Current voltage values [V] */
+
+    // D/A calibration data consolidated: m_DACal[i] = {f0, f1} where f0 = constant (b), f1 = linear (a)
+    std::array<std::array<double, 2>, CHANNELS_DA> m_DACal{}; /**< Per-channel D/A factors f[0..1] */
 
     // Initial specimen data
     double m_InitSpecHeight{};    /**< Initial specimen height [mm] */

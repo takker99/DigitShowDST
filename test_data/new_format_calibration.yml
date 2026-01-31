@@ -1,0 +1,14 @@
+version: "test"
+calibration_data:
+  - channel: 0
+    factors: [0.0, 1.0, 0.0]
+  - channel: 1
+    factors: [0.0, 1.0, 0.0]
+da_calibration_data:
+  - channel: 3
+    factors: [-0.286962967, 0.017854906]
+initial_specimen:
+  height_mm: 120.0
+  area_mm2: 14400.0
+  weight_g: 0.0
+  box_weight_g: 10000.0

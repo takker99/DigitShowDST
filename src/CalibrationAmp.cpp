@@ -102,8 +102,9 @@ void CCalibrationAmp::OnBUTTONAmpUpdate()
     }
     else
     {
-        Cal_b[AmpID] = (m_AmpPO - m_AmpPB) / (m_AmpVO - m_AmpVB);
-        Cal_c[AmpID] = m_AmpPB - Cal_b[AmpID] * m_AmpVB;
+        // Store into AD_Cal polynomial-ordered fields: Cal_b -> AD_Cal[*][1], Cal_c -> AD_Cal[*][0]
+        AD_Cal[AmpID][1] = (m_AmpPO - m_AmpPB) / (m_AmpVO - m_AmpVB); // linear (b)
+        AD_Cal[AmpID][0] = m_AmpPB - AD_Cal[AmpID][1] * m_AmpVB;      // constant (c)
         AmpPB[AmpID] = m_AmpPB;
         AmpPO[AmpID] = m_AmpPO;
         set_status_text_and_fit_dialog(*this, IDC_STATIC_STATUS, "Calibration factors computed.");

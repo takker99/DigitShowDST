@@ -58,18 +58,18 @@ struct ControlOutput
     static double max_front_ep_kpa() noexcept
     {
         using namespace variables;
-        return control::fromVoltage(MAX_VOLTAGE_OUTPUT, DA_Cal_a[CH_EP_Cell_f], DA_Cal_b[CH_EP_Cell_f]);
+        return control::fromVoltage(MAX_VOLTAGE_OUTPUT, DA_Cal[CH_EP_Cell_f][1], DA_Cal[CH_EP_Cell_f][0]);
     }
 
     static double max_rear_ep_kpa() noexcept
     {
         using namespace variables;
-        return control::fromVoltage(MAX_VOLTAGE_OUTPUT, DA_Cal_a[CH_EP_Cell_r], DA_Cal_b[CH_EP_Cell_r]);
+        return control::fromVoltage(MAX_VOLTAGE_OUTPUT, DA_Cal[CH_EP_Cell_r][1], DA_Cal[CH_EP_Cell_r][0]);
     }
     static double max_motor_rpm() noexcept
     {
         using namespace variables;
-        return control::fromIISMotorVoltage(5.0f, 0.0f, MAX_VOLTAGE_OUTPUT, DA_Cal_a[CH_MotorSpeed],
-                                            DA_Cal_b[CH_MotorSpeed]);
+        return control::fromIISMotorVoltage(5.0f, 0.0f, MAX_VOLTAGE_OUTPUT, DA_Cal[CH_MotorSpeed][1],
+                                            DA_Cal[CH_MotorSpeed][0]);
     }
 };

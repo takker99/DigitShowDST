@@ -91,10 +91,12 @@ void CCalibrationFactor::DoDataExchange(CDataExchange *pDX)
     {
         DDX_Text(pDX, id, value);
     }
-    for (const auto &&[id, value] : std::views::join(std::array{
-             std::views::zip(IDS_CFA, m_CFA), std::views::zip(IDS_CFB, m_CFB), std::views::zip(IDS_CFC, m_CFC)}))
+    // Map UI fields to consolidated m_Cal: CFA -> m_Cal[*][2], CFB -> m_Cal[*][1], CFC -> m_Cal[*][0]
+    for (size_t i = 0; i < CHANNELS_CAL; ++i)
     {
-        DDX_Text(pDX, id, value);
+        DDX_Text(pDX, IDS_CFA[i], m_Cal[i][2]);
+        DDX_Text(pDX, IDS_CFB[i], m_Cal[i][1]);
+        DDX_Text(pDX, IDS_CFC[i], m_Cal[i][0]);
     }
 
     // Initial specimen data
@@ -186,14 +188,21 @@ void CCalibrationFactor::CF_Load()
     calc_physical();
 
     // NOLINTBEGIN(*-pro-type-vararg)
-    // Load calibration factors for channels 0-7
-    std::ranges::copy(Cal_a | std::views::take(CHANNELS_CAL), m_CFA.begin());
-    std::ranges::copy(Cal_b | std::views::take(CHANNELS_CAL), m_CFB.begin());
-    std::ranges::copy(Cal_c | std::views::take(CHANNELS_CAL), m_CFC.begin());
+    // Load calibration factors for channels 0-7 from globals into dialog buffers
+    for (size_t i = 0; i < CHANNELS_CAL; ++i)
+    {
+        // AD_Cal is polynomial-ordered: [const, linear, quadratic]
+        m_Cal[i][0] = AD_Cal[i][0];
+        m_Cal[i][1] = AD_Cal[i][1];
+        m_Cal[i][2] = AD_Cal[i][2];
+    }
 
     // Load D/A calibration factors for channels 0-7
-    std::ranges::copy(DA_Cal_a | std::views::take(CHANNELS_DA), m_DA_Cala.begin());
-    std::ranges::copy(DA_Cal_b | std::views::take(CHANNELS_DA), m_DA_Calb.begin());
+    for (size_t i = 0; i < CHANNELS_DA; ++i)
+    {
+        m_DACal[i][0] = DA_Cal[i][0]; // constant
+        m_DACal[i][1] = DA_Cal[i][1]; // linear
+    }
 
     for (auto &&[p, phyout] : std::views::zip(m_CFP, Phyout))
     {
@@ -233,13 +242,21 @@ void CCalibrationFactor::Update()
 void CCalibrationFactor::SaveMembersToGlobals() noexcept
 {
     // Apply calibration coefficients to global arrays
-    std::ranges::copy(m_CFA, Cal_a.begin());
-    std::ranges::copy(m_CFB, Cal_b.begin());
-    std::ranges::copy(m_CFC, Cal_c.begin());
+    // Pack UI A/D members into polynomial-ordered AD_Cal: [f0=const, f1=linear, f2=quadratic]
+    for (size_t i = 0; i < CHANNELS_CAL; ++i)
+    {
+        AD_Cal[i][0] = m_Cal[i][0]; // constant
+        AD_Cal[i][1] = m_Cal[i][1]; // linear
+        AD_Cal[i][2] = m_Cal[i][2]; // quadratic
+    }
 
     // Save D/A calibration factors for channels 0-7
-    std::ranges::copy(m_DA_Cala, DA_Cal_a.begin());
-    std::ranges::copy(m_DA_Calb, DA_Cal_b.begin());
+    // Pack UI D/A members into DA_Cal: [f0=constant, f1=linear]
+    for (size_t i = 0; i < CHANNELS_DA; ++i)
+    {
+        DA_Cal[i][0] = m_DACal[i][0]; // constant term
+        DA_Cal[i][1] = m_DACal[i][1]; // linear term
+    }
 
     // Save initial specimen data and reset latest_physical_input specimen
     // Update specimen snapshot atomically
@@ -276,49 +293,49 @@ void CCalibrationFactor::OnEditChange()
 
 void CCalibrationFactor::OnBUTTONZero00()
 {
-    m_CFC[0] -= Phyout[0];
+    m_Cal[0][0] -= Phyout[0];
     Update();
 }
 
 void CCalibrationFactor::OnBUTTONZero01()
 {
-    m_CFC[1] -= Phyout[1];
+    m_Cal[1][0] -= Phyout[1];
     Update();
 }
 
 void CCalibrationFactor::OnBUTTONZero02()
 {
-    m_CFC[2] -= Phyout[2];
+    m_Cal[2][0] -= Phyout[2];
     Update();
 }
 
 void CCalibrationFactor::OnBUTTONZero03()
 {
-    m_CFC[3] -= Phyout[3];
+    m_Cal[3][0] -= Phyout[3];
     Update();
 }
 
 void CCalibrationFactor::OnBUTTONZero04()
 {
-    m_CFC[4] -= Phyout[4];
+    m_Cal[4][0] -= Phyout[4];
     Update();
 }
 
 void CCalibrationFactor::OnBUTTONZero05()
 {
-    m_CFC[5] -= Phyout[5];
+    m_Cal[5][0] -= Phyout[5];
     Update();
 }
 
 void CCalibrationFactor::OnBUTTONZero06()
 {
-    m_CFC[6] -= Phyout[6];
+    m_Cal[6][0] -= Phyout[6];
     Update();
 }
 
 void CCalibrationFactor::OnBUTTONZero07()
 {
-    m_CFC[7] -= Phyout[7];
+    m_Cal[7][0] -= Phyout[7];
     Update();
 }
 
@@ -461,14 +478,20 @@ void CCalibrationFactor::OnBUTTONCFSaveConfig()
             // Only save non-zero calibration data
             for (size_t i = 0; i < CHANNELS_CAL; i++)
             {
-                if (Cal_a[i] != 0.0 || Cal_b[i] != 0.0 || Cal_c[i] != 0.0)
+                if (AD_Cal[i][0] != 0.0 || AD_Cal[i][1] != 0.0 || AD_Cal[i][2] != 0.0)
                 {
                     ryml::NodeRef ch = channels.append_child();
                     ch |= ryml::MAP;
                     ch["channel"] << i;
-                    ch["cal_a"] << Cal_a[i];
-                    ch["cal_b"] << Cal_b[i];
-                    ch["cal_c"] << Cal_c[i];
+
+                    // New format: store coefficients as polynomial-ordered array 'factors': [f0, f1, f2]
+                    // i.e., y = f[0] + f[1]*x + f[2]*x^2
+                    ryml::NodeRef factors = ch["factors"];
+                    factors |= ryml::SEQ;
+                    factors.append_child() << AD_Cal[i][0];
+                    factors.append_child() << AD_Cal[i][1];
+                    factors.append_child() << AD_Cal[i][2];
+
                     if (AmpPB[i] != 0.0 || AmpPO[i] != 0.0)
                     {
                         ch["amp_pb"] << AmpPB[i];
@@ -484,13 +507,17 @@ void CCalibrationFactor::OnBUTTONCFSaveConfig()
 
             for (size_t i = 0; i < CHANNELS_DA; i++)
             {
-                if (DA_Cal_a[i] != 0.0 || DA_Cal_b[i] != 0.0)
+                if (DA_Cal[i][0] != 0.0 || DA_Cal[i][1] != 0.0)
                 {
                     ryml::NodeRef ch = da_channels.append_child();
                     ch |= ryml::MAP;
                     ch["channel"] << i;
-                    ch["da_cal_a"] << DA_Cal_a[i];
-                    ch["da_cal_b"] << DA_Cal_b[i];
+                    // New format: store DA coefficients as polynomial-ordered array 'factors': [f0, f1]
+                    // i.e., y = f[0] + f[1]*x
+                    ryml::NodeRef factors = ch["factors"];
+                    factors |= ryml::SEQ;
+                    factors.append_child() << DA_Cal[i][0];
+                    factors.append_child() << DA_Cal[i][1];
                 }
             }
             spdlog::debug("Saving {} D/A channel calibration factors", da_channels.num_children());
@@ -595,18 +622,45 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
                 if (idx < 64)
                 {
                     // If channel is within the UI-covered range (0..CHANNELS_CAL-1), store in dialog buffers
-                    if (idx < CHANNELS_CAL)
+                    if (ch.has_child("factors") && ch["factors"].is_seq())
                     {
-                        ch["cal_a"] >> m_CFA[idx];
-                        ch["cal_b"] >> m_CFB[idx];
-                        ch["cal_c"] >> m_CFC[idx];
+                        // New format: 'factors' is a sequence [c, b, a] (polynomial order)
+                        size_t j = 0;
+                        for (const auto &valnode : ch["factors"])
+                        {
+                            double v = 0.0;
+                            valnode >> v;
+                            // map: j==0 -> f0 (constant), j==1 -> f1 (linear), j==2 -> f2 (quadratic)
+                            if (idx < CHANNELS_CAL)
+                            {
+                                // store into local dialog buffer in polynomial order
+                                if (j <= 2)
+                                    m_Cal[idx][j] = v;
+                            }
+                            else
+                            {
+                                if (j <= 2)
+                                    AD_Cal[idx][j] = v; // store directly to globals for out-of-range channels
+                            }
+                            ++j;
+                        }
                     }
                     else
                     {
-                        // Channels beyond the UI range are written directly to the global calibration arrays
-                        ch["cal_a"] >> Cal_a[idx];
-                        ch["cal_b"] >> Cal_b[idx];
-                        ch["cal_c"] >> Cal_c[idx];
+                        if (idx < CHANNELS_CAL)
+                        {
+                            // Map legacy fields into polynomial-ordered m_Cal: a -> [2], b -> [1], c -> [0]
+                            ch["cal_a"] >> m_Cal[idx][2];
+                            ch["cal_b"] >> m_Cal[idx][1];
+                            ch["cal_c"] >> m_Cal[idx][0];
+                        }
+                        else
+                        {
+                            // Channels beyond the UI range are written directly to the global calibration arrays
+                            ch["cal_a"] >> AD_Cal[idx][2];
+                            ch["cal_b"] >> AD_Cal[idx][1];
+                            ch["cal_c"] >> AD_Cal[idx][0];
+                        }
                     }
 
                     if (ch.has_child("amp_pb"))
@@ -639,11 +693,31 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
                     ch["channel"] >> idx;
                     if (idx < CHANNELS_DA)
                     {
-                        ch["da_cal_a"] >> m_DA_Cala[idx];
-                        ch["da_cal_b"] >> m_DA_Calb[idx];
+                        // Support new 'factors' array [f0, f1] (constant, linear) or legacy 'da_cal_a'/'da_cal_b'
+                        if (ch.has_child("factors") && ch["factors"].is_seq())
+                        {
+                            // factors: [f0=f_const, f1=f_linear]
+                            size_t j = 0;
+                            for (const auto &valnode : ch["factors"])
+                            {
+                                double v = 0.0;
+                                valnode >> v;
+                                if (j == 0)
+                                    m_DACal[idx][0] = v; // constant
+                                else if (j == 1)
+                                    m_DACal[idx][1] = v; // linear
+                                ++j;
+                            }
+                        }
+                        else
+                        {
+                            // legacy fields: da_cal_a = linear, da_cal_b = constant
+                            ch["da_cal_a"] >> m_DACal[idx][1];
+                            ch["da_cal_b"] >> m_DACal[idx][0];
+                        }
                         loaded_da_channels++;
-                        spdlog::trace("Loaded D/A calibration for channel {}: a={}, b={}", idx, m_DA_Cala[idx],
-                                      m_DA_Calb[idx]);
+                        spdlog::trace("Loaded D/A calibration for channel {}: a={}, b={}", idx, m_DACal[idx][1],
+                                      m_DACal[idx][0]);
                     }
                 }
                 spdlog::info("D/A calibration data loaded successfully: {} channels", loaded_da_channels);

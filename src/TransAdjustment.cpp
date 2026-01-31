@@ -86,7 +86,8 @@ void CTransAdjustment::OnBUTTONUpdateDisp()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     UpdateData(TRUE);
-    variables::Cal_c[1] = variables::Cal_c[1] + (m_InitialDisp - m_FinalDisp);
+    // AD_Cal[*][0] is the constant (c)
+    variables::AD_Cal[1][0] = variables::AD_Cal[1][0] + (m_InitialDisp - m_FinalDisp);
     GetDlgItem(IDC_BUTTON_UpdateDisp)->EnableWindow(FALSE);
 }
 
@@ -110,6 +111,7 @@ void CTransAdjustment::OnBUTTONUpdateBullet()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     UpdateData(TRUE);
-    variables::Cal_c[4] = variables::Cal_c[4] + (m_InitialBullet - m_FinalBullet);
+    // AD_Cal[*][0] is the constant (c)
+    variables::AD_Cal[4][0] = variables::AD_Cal[4][0] + (m_InitialBullet - m_FinalBullet);
     GetDlgItem(IDC_BUTTON_UpdateBullet)->EnableWindow(FALSE);
 }
