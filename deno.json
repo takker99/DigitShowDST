@@ -1,7 +1,7 @@
 {
   "tasks": {
-    "dev": "deno serve --watch --allow-net=localhost:8080 --allow-read=./scripts/sample-viewer.html ./proxy-server/main.tsx",
-    "start": "deno serve ./proxy-server/main.tsx"
+    "dev": "deno serve --watch --allow-net=localhost:8080 --allow-read=./scripts/sample-viewer.html --port 8000 ./proxy-server/main.tsx",
+    "start": "deno serve --allow-net=localhost:8080 --allow-read=./scripts/sample-viewer.html --port 8000 ./proxy-server/main.tsx"
   },
   "lint": {
     "rules": {
