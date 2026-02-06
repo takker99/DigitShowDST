@@ -270,6 +270,21 @@
       });
     }
 
+    function resolveDefaultApiUrl() {
+      const hostname = window?.location?.hostname ?? '';
+      const isLocalhost = hostname === 'localhost'
+        || hostname === '127.0.0.1'
+        || hostname === '::1'
+        || hostname === '[::1]';
+      const isDenoNet = hostname.endsWith('.deno.net');
+
+      if (isLocalhost || isDenoNet) {
+        return window.location.origin;
+      }
+
+      return 'http://localhost:8080';
+    }
+
     function UPlotChart({ data, options }) {
       const containerRef = useRef(null);
       const plotRef = useRef(null);
@@ -329,7 +344,7 @@
         motorRpm: [], frontEp: [], rearEp: [], frontFriction: [], rearFriction: [],
       });
       const [displayWindowSec, setDisplayWindowSec] = useState(60);
-      const [apiUrl, setApiUrl] = useState('http://localhost:8080');
+      const [apiUrl, setApiUrl] = useState(resolveDefaultApiUrl);
       const [enableSmoothing, setEnableSmoothing] = useState(false);
       const [filterType, setFilterType] = useState('lowpass');
       const [cutoffFrequencyHz, setCutoffFrequencyHz] = useState(2.0);
