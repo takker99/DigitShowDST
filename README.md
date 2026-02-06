@@ -1,16 +1,17 @@
 # DigitShowDST
 
-![Github License](https://img.shields.io/github/license/takker99/DigitShowDST)  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+![Github License](https://img.shields.io/github/license/takker99/DigitShowDST)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 <img alt="image"  src="./assets/main_window.png" />
 <img alt="image" style="max-width:1002px;" src="./assets/frontend.png" />
 
-
-
 ## 簡単な説明
+
 [mkt-kuno/DigitShowBasic](https://github.com/mkt-kuno/DigitShowBasic)をベースに、ClaudeやGPTとリファクタリング・機能追加を行った一面せん断試験機制御ソフトウェアです。
 
 変更点：
+
 - UI/UX
   - 不要なダイアログをばっさり削る
   - キーボードショートカット対応 (一部のみ)
@@ -43,15 +44,18 @@
 以下、fork元のREADMEをベースに加筆修正しています。
 
 ## 動作環境
+
 - Windows 11
   - x64のみ, ARM64不可
   - Win32ビルドも可能ですが、実機テストはx64しかしていません。
 - Visual Studio 2026
   - Community版やBuild ToolsでOK
 - CONTEC API-AIO(WDM) Ver.8.90
-  - 適宜、CAIO.H, CAIO.LIBを置き換えて使用するDLLバージョン一致させれば最新版でも可。
+  - 適宜、CAIO.H,
+    CAIO.LIBを置き換えて使用するDLLバージョン一致させれば最新版でも可。
 - CPU: x64 Intel/AMD問わず
-  - [Passmark性能(マルチスレッド)](https://www.cpubenchmark.net/multithread/) 最低5000 推奨8000以上
+  - [Passmark性能(マルチスレッド)](https://www.cpubenchmark.net/multithread/)
+    最低5000 推奨8000以上
 - RAM: 最低4GB 推奨8GB以上
   - 他に動かすアプリケーション次第。MS Officeは重い。
 - GPU: 依存なし、iGPU/dGPU/APU いずれも可
@@ -61,8 +65,9 @@
   - 容量はビルドPCと動作PCが同じなら最低128GB 推奨256GB
 
 本家と違ってヘッダーファイルを量産しまくったので、ビルド時間がかなり長いです。
-CPUとRAMはそれなりに積んだほうが良いです。8GBは結構きつい。
-本当はC++ Modulesを使いたいのですが、Visual Studio CodeのC++ Modulesサポートがまだ不安定なので見送りました。
+CPUとRAMはそれなりに積んだほうが良いです。8GBは結構きつい。 本当はC++
+Modulesを使いたいのですが、Visual Studio CodeのC++
+Modulesサポートがまだ不安定なので見送りました。
 
 ## Getting Started
 
@@ -70,11 +75,35 @@ GitHub Releasesからexeファイルをダウンロードして実行してく�
 CONTECのversionを変えたい場合は、各自でビルドしてください。
 
 ## Notice
+
 - 本ソフトウェアの動作について、一切の保証を行いません。
 - 本ソフトウェアの使用により発生したいかなる損害についても、一切の責任を負いません。
 - 本ソフトウェアを使用する場合は、自己責任で行ってください。
 - 本ソフトウェアの動作または初期設定についてのサポートは行いません。
 - 本ソフトウェアの改変、再配布はGPLv3の条件に従って行ってください。
+
+## Usage
+
+そのうち書くかもしれない（書かないフラグ）。
+
+### Deno tunnelを介したセンサーデータのリアルタイム配信
+
+という機能を実験的に https://github.com/takker99/DigitShowDST/pull/20
+で実装しました。 Denoについては説明しません。自分で調べてください。
+詳しい人向けに説明すると、Deno tunnelはDeno
+Deployを使ったngrokみたいなものです。
+これによって、試験機のデータを実験室の外から、それこそ電車の中でも家の中でもリアルタイムで見られるようになります。
+たぶん三軸班の人が一番ほしかったやつ。まあこれは一面特化なのですぐには転用できませんが。
+
+現状は自分しか使えない状況になっています。ほかの人は、
+`deno.json`の`deploy`のとこの`org`と`app`を各自のDeno
+Deployのorganization/app名に書き換えてください。
+
+Firewall設定は不要です。ただし、Deno
+v2.6.8だとAddrNotAvailableエラーが発生してtunnelを確立できないバグがあります。
+https://github.com/denoland/deno_tunnel/pull/4
+で修正済みですが、2026-02-06時点ではまだリリースされていません。 おそらく Deno
+v2.6.9以降に入ると思うので、それを待ってください。待てない人は`deno upgrade --canary`でcanary版にアップグレードしてください。自分は待てなかったのでcanary版を使いました。
 
 ## Build instructions
 
@@ -92,7 +121,9 @@ CONTECのversionを変えたい場合は、各自でビルドしてください�
     ```powershell
     winget install Microsoft.VisualStudio.Community --override "--passive --add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.VC.ATL --add Microsoft.VisualStudio.Component.VC.ATLMFC --add Microsoft.VisualStudio.Component.VC.CLI.Support --add Microsoft.VisualStudio.Component.VC.Llvm.Clang --add Microsoft.VisualStudio.Component.VC.Llvm.ClangToolset --includeRecommended"
     ```
-  すでにVisual Studioをインストールしている場合は、このコマンドを実行してもworkloadが追加されないので、Visual Studio Installerから手動で追加してください。
+  すでにVisual
+  Studioをインストールしている場合は、このコマンドを実行してもworkloadが追加されないので、Visual
+  Studio Installerから手動で追加してください。
 
   ClではなくLLVM/Clangを使っているのは趣味です。MFCなんて化石技術でもClangでコンパイルできるんですね。本当はMSBuildもCMakeに変えたかったのですが、リンカー回りの問題が解決できず断念しました。
 
@@ -103,7 +134,9 @@ CONTECのversionを変えたい場合は、各自でビルドしてください�
 
   大丈夫大丈夫、~~洗脳されると~~慣れるとリソースエディタを使うより手書きのほうが楽になりますよ。
 
-  もちろん、Visual Studioのリソースエディタでも編集できます。ただし、おそらく文字コードの問題で、Visual Studioで保存すると日本語コメントが文字化けします。そこだけ注意。
+  もちろん、Visual
+  Studioのリソースエディタでも編集できます。ただし、おそらく文字コードの問題で、Visual
+  Studioで保存すると日本語コメントが文字化けします。そこだけ注意。
 
 ### Build Steps
 
@@ -125,11 +158,13 @@ cd DigitShowDST
 git submodule update --init --recursive
 ```
 
-そのあとお好みのエディタ(Visual Studio, VS Code, Windows Terminal など)で開いてください。
+そのあとお好みのエディタ(Visual Studio, VS Code, Windows Terminal
+など)で開いてください。
 
 #### 3. `.env` ファイルを作成
 
-`.env.example` をコピーして `.env` を作成し、Visual Studio のインストールパスを指定します:
+`.env.example` をコピーして `.env` を作成し、Visual Studio
+のインストールパスを指定します:
 
 ```powershell
 # リポジトリルートで実行
@@ -140,6 +175,7 @@ Copy-Item .env.example .env
 ```
 
 **`.env` 例:**
+
 ```
 VS_INSTALL_PATH=C:\Program Files\Microsoft Visual Studio\18\Community
 ```
@@ -147,12 +183,12 @@ VS_INSTALL_PATH=C:\Program Files\Microsoft Visual Studio\18\Community
 なんでこんな作業が必要かというと、MSBuildのパスが環境によって異なるためです。
 環境変数などで特定する方法もMicrosoftは提供していないため、仕方なく手動で指定してもらう形にしています。文句はMicrosoftに言ってください。これでもかなりマシな方法です。
 
-(推測するに、一つのマシンに複数のVisual Studioバージョンがインストールされている場合があり、環境変数で一意に特定できないためだと思います。でもそれならnvmみたいなバージョン管理ツール作ってほしい......)
+(推測するに、一つのマシンに複数のVisual
+Studioバージョンがインストールされている場合があり、環境変数で一意に特定できないためだと思います。でもそれならnvmみたいなバージョン管理ツール作ってほしい......)
 
 #### 3. Build
 
-MSBuildを使ってビルドします。
-vcpkgの設定はビルド時に自動で行われます。
+MSBuildを使ってビルドします。 vcpkgの設定はビルド時に自動で行われます。
 
 ビルド構成はRlease/Debug, x64/Win32の組み合わせを用意しています。
 ただし、Debugビルドはリンカが配置newの重複シンボル警告を出すほか、文字化けするバグがあるため、あまり推奨しません。
@@ -173,7 +209,9 @@ VS Code を開き、`Ctrl+Shift+B` を押して Build タスクを実行しま�
 
 **知らん**
 
-まあたぶん `ファイル > 開く > プロジェクト/ソリューション` で `DigitShowDST.vcxproj` を開いて、`ビルド > ソリューションのビルド` でいけると思います。
+まあたぶん `ファイル > 開く > プロジェクト/ソリューション` で
+`DigitShowDST.vcxproj` を開いて、`ビルド > ソリューションのビルド`
+でいけると思います。
 
 ##### via PowerShell
 
@@ -189,17 +227,17 @@ msbuild .\DigitShowDST.vcxproj -t:Build -p:Configuration=Debug -p:Platform=x64
 ```
 
 ## ライセンスについて
+
 (以下、original READMEママ)
 
 > 一部の大学・企業・研究所では秘伝のタレ状態のDigitShowBasicをお持ちだと思います。
-当時(2010年頃)配布されたDigitShowBasicのソースコードは何もライセンスが決められていませんでした。
-そのため、お持ちの古いDigitShowBasicは高確率でライセンスフリーのハズです。
-ですが、このリポジトリはGPLv3です。このコードを安易に参考・参照・引用した場合GPLv3に感染するので、
-GPLv3とは何か知ったうえで、覚悟して使い始めてください。
-ざっくりといえば、改変部分がある場合、ソースコードを公開する必要があります。
+> 当時(2010年頃)配布されたDigitShowBasicのソースコードは何もライセンスが決められていませんでした。
+> そのため、お持ちの古いDigitShowBasicは高確率でライセンスフリーのハズです。
+> ですが、このリポジトリはGPLv3です。このコードを安易に参考・参照・引用した場合GPLv3に感染するので、
+> GPLv3とは何か知ったうえで、覚悟して使い始めてください。
+> ざっくりといえば、改変部分がある場合、ソースコードを公開する必要があります。
 
 (ここまで)
-
 
 ## リポジトリの運用方針について
 
@@ -214,20 +252,25 @@ GitHub - takker99/DigitShowDST
 
 コードを読めば察しが付くかもしれませんが、dst-tempブランチは[mkt-kuno/DigitShowBasic](https://github.com/mkt-kuno/DigitShowBasic)からcommitを積み上げて作ったのではなく、東京理科大学の地盤研で使っていた秘伝のタレDigitShowBasicを魔改造して作ったものです。本来ならそちらを公開すべきなのですが、ライセンスが不明瞭なため、mkt-kunoさんのOSS版DigitShowBasicをベースに作り直す形にしました。
 
-卒論締め切りまで時間が無いため、公開して卒論で参照できる状態を最優先し、private repoで開発していたDgitShowDSTをハードコピーしたのがdst-tempブランチです。
+卒論締め切りまで時間が無いため、公開して卒論で参照できる状態を最優先し、private
+repoで開発していたDgitShowDSTをハードコピーしたのがdst-tempブランチです。
 厳密にはOSS版を改変したものではないので公開していいか怪しいところが若干ありますが......まあたぶん大丈夫でしょう。怒られたら消します。
 
-dst-tempはcommit履歴がなく、どのよう変更を積み上げたか分からないため、将来的にはdstブランチでcommit履歴を整理していくつもりです (余裕があればだけど......)。
+dst-tempはcommit履歴がなく、どのよう変更を積み上げたか分からないため、将来的にはdstブランチでcommit履歴を整理していくつもりです
+(余裕があればだけど......)。
 ある程度形になったらdstブランチをdefaultに切り替えます。
 
-またDigitShowDSTで加えた機能や修正をmkt-kuno/DigitShowBasicに還元することも考えています。その際はmainブランチをベースにPull Requestを送ります。
+またDigitShowDSTで加えた機能や修正をmkt-kuno/DigitShowBasicに還元することも考えています。その際はmainブランチをベースにPull
+Requestを送ります。
 
 ## バグ報告やPull Requestについて
 
 本家同様、「初期設定や困った部分を文章化したので載せてほしい」「AIOボードの初期化を自動にしたコードをマージしてほしい」など、貢献する意思のある、オープンソースの理念に沿った要求は大歓迎します。
 
 注意点など
-- Pull Requestを送る場合は、簡単で良いので動作確認を行い、変更点を記載してください。
+
+- Pull
+  Requestを送る場合は、簡単で良いので動作確認を行い、変更点を記載してください。
 - AIによるVibe codingを禁止しませんが、推奨もしません。
 - バグなどのIssueを送る場合は、必ず考えつく限り詳細な、問題を再現するのに必要な情報を提供してください。
 - commitは何となく変更点が分かればいいです。コメントの書き方も自由で良いです。日本語でもOKです。
@@ -235,11 +278,15 @@ dst-tempはcommit履歴がなく、どのよう変更を積み上げたか分か
   - てかCoding Agentも時々守ってくれないし......。
 
 「根幹設計から新しいの作りたい」というやる気とコーディング能力のある方は、
-[ぜひこちら](https://github.com/mkt-kuno/DSMng)、もしくは東大地盤研か@takker99 までご連絡を。
+[ぜひこちら](https://github.com/mkt-kuno/DSMng)、もしくは東大地盤研か@takker99
+までご連絡を。
 
 ## Acknowledgements
 
-DigitShowBasicは、国立研究開発法人 土木研究所で作成されたDigitShowを参考に、東京大学 本郷地盤研の本田剛さんが開発され、その後、桑野研究室の@mkt-kuno さんによりOSS化されました。
-ここに改めて感謝申し上げます。
+DigitShowBasicは、国立研究開発法人
+土木研究所で作成されたDigitShowを参考に、東京大学
+本郷地盤研の本田剛さんが開発され、その後、桑野研究室の@mkt-kuno
+さんによりOSS化されました。 ここに改めて感謝申し上げます。
 
-(ref. [DigitShowBasic オープンソース版 - 桑野研究室 Kuwano Lab. IIS, The Univ of Tokyo](https://geo.iis.u-tokyo.ac.jp/archives/7629))
+(ref.
+[DigitShowBasic オープンソース版 - 桑野研究室 Kuwano Lab. IIS, The Univ of Tokyo](https://geo.iis.u-tokyo.ac.jp/archives/7629))
