@@ -86,6 +86,25 @@ CONTECのversionを変えたい場合は、各自でビルドしてください�
 
 そのうち書くかもしれない（書かないフラグ）。
 
+### 設定ファイル (api_config.json)
+
+アプリケーションは起動時に`api_config.json`から設定を読み込みます。
+ファイルが存在しない場合は、デフォルト値で自動作成されます。
+
+主な設定項目：
+- **sampling_time_ms**: データロギングの間隔（ミリ秒）
+  - UIで変更すると自動的に保存されます
+  - 範囲: 50〜600000 ms (0.05秒〜10分)
+  
+- **last_calibration_file**: 最後に読み込んだキャリブレーションファイルのパス
+  - キャリブレーションファイルを読み込むと自動的に保存されます
+  - 次回起動時の参考として使用できます
+
+- **enabled**: REST APIサーバーの有効/無効
+- その他のAPI設定（host, port, update_interval_ms, など）
+
+例: `api_config.example.json` を参照してください。
+
 ### Deno tunnelを介したセンサーデータのリアルタイム配信
 
 という機能を実験的に https://github.com/takker99/DigitShowDST/pull/20
