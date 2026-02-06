@@ -1,8 +1,12 @@
 {
+  "[typescript][typescriptreact][javascript][javascriptreact][json][jsonc][markdown]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
   // Keep resource-related files in UTF-8 with BOM as well
   "[cpp][*.rc][*.rc2]": {
     "files.encoding": "utf8bom"
   },
+  "deno.enable": true,
   "C_Cpp.codeAnalysis.clangTidy.enabled": true,
   "C_Cpp.experimentalFeatures": "enabled",
   "C_Cpp.codeAnalysis.exclude": {
