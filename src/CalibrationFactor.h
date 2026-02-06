@@ -147,6 +147,9 @@ class CCalibrationFactor : public CDialog
 
     /** @brief Apply member variables to global state (calibration arrays, specimen snapshot) */
     void SaveMembersToGlobals() noexcept;
+
+    /** @brief Apply zero adjustment to the specified channel */
+    void ApplyZeroAdjustment(const size_t channel) noexcept;
 };
 
 //{{AFX_INSERT_LOCATION}}

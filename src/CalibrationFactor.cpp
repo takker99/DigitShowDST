@@ -277,6 +277,19 @@ void CCalibrationFactor::SaveMembersToGlobals() noexcept
     EnableUpdateButton(false);
 }
 
+void CCalibrationFactor::ApplyZeroAdjustment(const size_t channel) noexcept
+{
+    if (channel >= CHANNELS_CAL)
+    {
+        return;
+    }
+
+    UpdateData(TRUE);
+    m_Cal[channel][0] -= Phyout[channel];
+    SaveMembersToGlobals();
+    UpdateData(FALSE);
+}
+
 void CCalibrationFactor::EnableUpdateButton(const bool enable) noexcept
 {
     if (auto *pButton = GetDlgItem(IDC_BUTTON_CFUpdate))
@@ -293,50 +306,42 @@ void CCalibrationFactor::OnEditChange()
 
 void CCalibrationFactor::OnBUTTONZero00()
 {
-    m_Cal[0][0] -= Phyout[0];
-    Update();
+    ApplyZeroAdjustment(0);
 }
 
 void CCalibrationFactor::OnBUTTONZero01()
 {
-    m_Cal[1][0] -= Phyout[1];
-    Update();
+    ApplyZeroAdjustment(1);
 }
 
 void CCalibrationFactor::OnBUTTONZero02()
 {
-    m_Cal[2][0] -= Phyout[2];
-    Update();
+    ApplyZeroAdjustment(2);
 }
 
 void CCalibrationFactor::OnBUTTONZero03()
 {
-    m_Cal[3][0] -= Phyout[3];
-    Update();
+    ApplyZeroAdjustment(3);
 }
 
 void CCalibrationFactor::OnBUTTONZero04()
 {
-    m_Cal[4][0] -= Phyout[4];
-    Update();
+    ApplyZeroAdjustment(4);
 }
 
 void CCalibrationFactor::OnBUTTONZero05()
 {
-    m_Cal[5][0] -= Phyout[5];
-    Update();
+    ApplyZeroAdjustment(5);
 }
 
 void CCalibrationFactor::OnBUTTONZero06()
 {
-    m_Cal[6][0] -= Phyout[6];
-    Update();
+    ApplyZeroAdjustment(6);
 }
 
 void CCalibrationFactor::OnBUTTONZero07()
 {
-    m_Cal[7][0] -= Phyout[7];
-    Update();
+    ApplyZeroAdjustment(7);
 }
 
 void CCalibrationFactor::OnBUTTONAmp00()
