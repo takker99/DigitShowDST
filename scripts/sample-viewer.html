@@ -766,10 +766,10 @@
                 </select>
                 ${filterType === 'lowpass' ? html`
                   <${Fragment}>
-                    <select key="preset" value=${smoothingPreset} onChange=${(e) => { const val = e.target.value; setSmoothingPreset(val); const presets = { light: 5.0, medium: 2.0, heavy: 0.5 }; setCutoffFrequencyHz(presets[val] || 2.0); }} style=${{ width: 'auto', minWidth: '150px' }}>
-                      <option key="light" value="light">Light (5 Hz)</option>
-                      <option key="medium" value="medium">Medium (2 Hz)</option>
-                      <option key="heavy" value="heavy">Heavy (0.5 Hz)</option>
+                    <select key="preset" value=${smoothingPreset} onChange=${(e) => { const val = e.target.value; setSmoothingPreset(val); const presets = { light: 1.0, medium: 0.5, heavy: 0.1 }; setCutoffFrequencyHz(presets[val] || 2.0); }} style=${{ width: 'auto', minWidth: '150px' }}>
+                      <option key="light" value="light">Light (1 Hz)</option>
+                      <option key="medium" value="medium">Medium (0.5 Hz)</option>
+                      <option key="heavy" value="heavy">Heavy (0.1 Hz)</option>
                       <option key="custom" value="custom">Custom</option>
                     </select>
                     ${smoothingPreset === 'custom' ? html`<label key="cutoff">Cutoff (Hz): <input type="number" value=${cutoffFrequencyHz} onChange=${(e) => { const val = Math.max(0.1, Math.min(50, parseFloat(e.target.value) || 2.0)); setCutoffFrequencyHz(val); setSmoothingPreset('custom'); }} min="0.1" max="50" step="0.1" style=${{ width: 'auto', minWidth: '80px' }} /></label>` : null}
