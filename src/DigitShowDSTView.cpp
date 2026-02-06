@@ -28,6 +28,7 @@
 #include "StdAfx.h"
 
 #include "../generated/git_version.hpp"
+#include "ApiServer.hpp"
 #include "Board.hpp"
 #include "Constants.h"
 #include "DigitShowDSTDoc.h"
@@ -648,5 +649,24 @@ void CDigitShowDSTView::OnBUTTONSetTimeInterval()
     {
         KillTimer(timer::kTimerId_Log);
         SetTimer(timer::kTimerId_Log, static_cast<UINT>(timer::TimeInterval_3.count()), NULL);
+    }
+    
+    // Save the new sampling time to config file
+    try
+    {
+        auto config = api::ApiServer::load_config("api_config.json");
+        config.sampling_time_ms = static_cast<int>(timer::TimeInterval_3.count());
+        if (api::ApiServer::save_config("api_config.json", config))
+        {
+            spdlog::info("Saved sampling time to config: {} ms", config.sampling_time_ms);
+        }
+        else
+        {
+            spdlog::warn("Failed to save sampling time to config");
+        }
+    }
+    catch (const std::exception &e)
+    {
+        spdlog::error("Exception while saving sampling time: {}", e.what());
     }
 }

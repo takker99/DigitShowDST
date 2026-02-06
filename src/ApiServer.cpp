@@ -440,7 +440,14 @@ ApiConfig ApiServer::load_config(const std::string &config_path) noexcept
                                  {"port", config.port},
                                  {"update_interval_ms", config.update_interval_ms},
                                  {"cors_enabled", config.cors_enabled},
-                                 {"max_connections", config.max_connections}};
+                                 {"max_connections", config.max_connections},
+                                 {"sampling_time_ms", config.sampling_time_ms}};
+
+            // Add last_calibration_file only if not empty
+            if (!config.last_calibration_file.empty())
+            {
+                default_json["last_calibration_file"] = config.last_calibration_file;
+            }
 
             // Add version information (git commit hash)
             const auto version = version_info::get_version_string();
@@ -489,6 +496,10 @@ ApiConfig ApiServer::load_config(const std::string &config_path) noexcept
             config.cors_enabled = j["cors_enabled"];
         if (j.contains("max_connections"))
             config.max_connections = j["max_connections"];
+        if (j.contains("sampling_time_ms"))
+            config.sampling_time_ms = j["sampling_time_ms"];
+        if (j.contains("last_calibration_file"))
+            config.last_calibration_file = j["last_calibration_file"];
 
         spdlog::info("Loaded API config from: {}", config_path);
     }
@@ -498,6 +509,56 @@ ApiConfig ApiServer::load_config(const std::string &config_path) noexcept
     }
 
     return config;
+}
+
+bool ApiServer::save_config(const std::string &config_path, const ApiConfig &config) noexcept
+{
+    try
+    {
+        const std::filesystem::path path(config_path);
+
+        // Build JSON object
+        json config_json = {{"$schema", "schemas/api_config.schema.json"},
+                            {"enabled", config.enabled},
+                            {"host", config.host},
+                            {"port", config.port},
+                            {"update_interval_ms", config.update_interval_ms},
+                            {"cors_enabled", config.cors_enabled},
+                            {"max_connections", config.max_connections},
+                            {"sampling_time_ms", config.sampling_time_ms}};
+
+        // Add last_calibration_file only if not empty
+        if (!config.last_calibration_file.empty())
+        {
+            config_json["last_calibration_file"] = config.last_calibration_file;
+        }
+
+        // Add version information (git commit hash)
+        const auto version = version_info::get_version_string();
+        if (!version.empty())
+        {
+            config_json["version"] = version;
+        }
+
+        // Write to file
+        std::ofstream out_file(path);
+        if (!out_file.is_open())
+        {
+            spdlog::error("Failed to open config file for writing: {}", config_path);
+            return false;
+        }
+
+        out_file << config_json.dump(2) << "\n"; // Pretty print with 2-space indent
+        out_file.close();
+
+        spdlog::info("Saved config to: {}", config_path);
+        return true;
+    }
+    catch (const std::exception &e)
+    {
+        spdlog::error("Error saving config to {}: {}", config_path, e.what());
+        return false;
+    }
 }
 
 } // namespace api

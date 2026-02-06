@@ -27,6 +27,7 @@
 #pragma warning(disable : 4800 4866)
 
 #include "Board.hpp"
+#include "ApiServer.hpp"
 #include "CalibrationAmp.h"
 #include "CalibrationFactor.h"
 #include "Variables.hpp"
@@ -779,6 +780,25 @@ void CCalibrationFactor::OnBUTTONCFLoadConfig()
                         : std::format(
                               "Calibration data loaded successfully.\nLoaded {} channel(s): {}... (and {} more)",
                               loaded_channels, channel_list.str(), loaded_channels - 10));
+                
+                // Save the calibration file path to config
+                try
+                {
+                    auto config = api::ApiServer::load_config("api_config.json");
+                    config.last_calibration_file = path_u8;
+                    if (api::ApiServer::save_config("api_config.json", config))
+                    {
+                        spdlog::info("Saved calibration file path to config: {}", path_u8);
+                    }
+                    else
+                    {
+                        spdlog::warn("Failed to save calibration file path to config");
+                    }
+                }
+                catch (const std::exception &e)
+                {
+                    spdlog::error("Exception while saving calibration file path: {}", e.what());
+                }
             }
         }
         catch (const std::exception &e)
