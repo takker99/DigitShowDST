@@ -535,8 +535,9 @@ void CCalibrationFactor::OnBUTTONCFSaveConfig()
 
             // Detect format from file extension
             const auto format = DetectFormat(std::filesystem::path(wpath));
+            const auto schema_url = version_info::build_schema_url("schemas/calibration_factor.schema.json");
 
-            if (!SaveConfigFile(std::filesystem::path(wpath), tree, format))
+            if (!SaveConfigFile(std::filesystem::path(wpath), tree, format, schema_url))
             {
                 spdlog::error("Failed to save calibration config file: {}", path_u8);
                 AfxMessageBox(_T("Failed to save calibration config file."), MB_ICONEXCLAMATION | MB_OK);

@@ -344,12 +344,16 @@ void CControl_File::OnButtonExport()
 
     const std::wstring wpath = std::wstring(dlg.GetPathName().GetString());
     const auto format = DetectFormat(std::filesystem::path(wpath));
+    const auto schema_url = version_info::build_schema_url("schemas/control_script.schema.json");
     try
     {
         ryml::Tree tree;
         ryml::NodeRef root = tree.rootref();
         root |= ryml::MAP;
-        root["$schema"] << "../schemas/control_script.schema.json";
+        if (format == FileFormat::JSON)
+        {
+            root["$schema"] << "../schemas/control_script.schema.json";
+        }
 
         // Add version information (git commit hash)
         const auto version = version_info::get_version_string();
@@ -394,7 +398,7 @@ void CControl_File::OnButtonExport()
             }
         }
 
-        if (!SaveConfigFile(std::filesystem::path(wpath), tree, format))
+        if (!SaveConfigFile(std::filesystem::path(wpath), tree, format, schema_url))
         {
             const auto path_u8 = to_utf8(wpath.c_str());
             spdlog::error("Failed to save control config file: {}", path_u8);
