@@ -172,6 +172,8 @@ concept PhysicalOutputLike = requires(T output) {
     { output.front_ep_kpa } -> std::convertible_to<Value>;
     { output.rear_ep_kpa } -> std::convertible_to<Value>;
     { output.motor_rpm } -> std::convertible_to<Value>;
+    { T::can_output_front_ep(static_cast<Value>(0)) } -> std::convertible_to<bool>;
+    { T::can_output_rear_ep(static_cast<Value>(0)) } -> std::convertible_to<bool>;
 };
 
 [[nodiscard]] constexpr SpecimenSnapshot present_specimen(const PhysicalInput &input) noexcept

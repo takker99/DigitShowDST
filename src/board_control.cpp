@@ -294,7 +294,7 @@ std::expected<void, std::string> WriteAnalogOutputs() noexcept
         std::array<long, 8> daData = {0};
         for (size_t j = 0; std::cmp_less(j, DaChannels[i]); j++)
         {
-            DAVout[k] = std::clamp(DAVout[k], 0.0f, MAX_VOLTAGE_OUTPUT);
+            DAVout[k] = std::clamp(DAVout[k], MIN_VOLTAGE_OUTPUT, MAX_VOLTAGE_OUTPUT);
             daData[j] = VoltToBinary(daRangeMax[i], daRangeMin[i], DaResolution[i], DAVout[k]);
             k++;
         }
