@@ -38,20 +38,20 @@ void update() noexcept
     {
     }
 
-    latest_physical_output.store(
-        {control::fromVoltage(static_cast<double>(DAVout[CH_EP_Cell_f]), DA_Cal[CH_EP_Cell_f][1],
-                              DA_Cal[CH_EP_Cell_f][0]),
-         control::fromVoltage(static_cast<double>(DAVout[CH_EP_Cell_r]), DA_Cal[CH_EP_Cell_r][1],
-                              DA_Cal[CH_EP_Cell_r][0]),
-         control::fromIISMotorVoltage(DAVout[CH_Motor], DAVout[CH_MotorCruch], DAVout[CH_MotorSpeed],
-                                      DA_Cal[CH_MotorSpeed][1], DA_Cal[CH_MotorSpeed][0])});
+    latest_physical_output.store({control::fromVoltage(static_cast<double>(DAVout[CH_EP_Cell_f]),
+                                                       DA_Cal[CH_EP_Cell_f]),
+                                  control::fromVoltage(static_cast<double>(DAVout[CH_EP_Cell_r]),
+                                                       DA_Cal[CH_EP_Cell_r]),
+                                  control::fromIISMotorVoltage(DAVout[CH_Motor], DAVout[CH_MotorCruch],
+                                                               DAVout[CH_MotorSpeed],
+                                                               DA_Cal[CH_MotorSpeed])});
 }
 
 std::expected<void, std::string> set_output(const control::PhysicalOutput<> &physical) noexcept
 {
     // Convert physical values to voltages
     const auto [motor_on_voltage, motor_clutch_voltage, motor_speed_voltage] =
-        control::toIISMotorVoltage(physical.motor_rpm, DA_Cal[CH_MotorSpeed][1], DA_Cal[CH_MotorSpeed][0]);
+        control::toIISMotorVoltage(physical.motor_rpm, DA_Cal[CH_MotorSpeed]);
 
     // クラッチの消耗を抑えるため、モーターが回転していないときはクラッチを操作しない
     if (motor_speed_voltage > 0.f)
@@ -61,10 +61,8 @@ std::expected<void, std::string> set_output(const control::PhysicalOutput<> &phy
     }
     DAVout[CH_MotorSpeed] = motor_speed_voltage;
 
-    DAVout[CH_EP_Cell_f] =
-        static_cast<float>(control::toVoltage(physical.front_ep_kpa, DA_Cal[CH_EP_Cell_f][1], DA_Cal[CH_EP_Cell_f][0]));
-    DAVout[CH_EP_Cell_r] =
-        static_cast<float>(control::toVoltage(physical.rear_ep_kpa, DA_Cal[CH_EP_Cell_r][1], DA_Cal[CH_EP_Cell_r][0]));
+    DAVout[CH_EP_Cell_f] = static_cast<float>(control::toVoltage(physical.front_ep_kpa, DA_Cal[CH_EP_Cell_f]));
+    DAVout[CH_EP_Cell_r] = static_cast<float>(control::toVoltage(physical.rear_ep_kpa, DA_Cal[CH_EP_Cell_r]));
 
     if (auto result = digitshow::write_analog_outputs(); !result)
     {

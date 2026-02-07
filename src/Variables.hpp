@@ -27,6 +27,12 @@
 #include <numbers>
 #include <string>
 
+namespace control
+{
+inline constexpr std::size_t kVoltageCalibrationTerms = 2;
+using VoltageCalibration = std::array<double, kVoltageCalibrationTerms>;
+}
+
 namespace variables
 {
 
@@ -69,8 +75,8 @@ inline std::array<float, MAX_AI_CHANNELS> AmpPB = {};  // Physical value at base
 inline std::array<float, MAX_AI_CHANNELS> AmpPO = {};  // Physical value at offset point
 inline std::array<float, MAX_DA_CHANNELS> DAVout = {}; // Output Voltage to D/A board
 // D/A calibration stored as polynomial-ordered arrays per channel: f[0]=constant (b), f[1]=linear (a)
-inline constinit std::array<std::array<double, 2>, MAX_DA_CHANNELS> DA_Cal = []() {
-    std::array<std::array<double, 2>, MAX_DA_CHANNELS> a{};
+inline constinit std::array<control::VoltageCalibration, MAX_DA_CHANNELS> DA_Cal = []() {
+    std::array<control::VoltageCalibration, MAX_DA_CHANNELS> a{};
     // Initialize with previous DA_Cal_b (const) and DA_Cal_a (linear) mapping
     a[0] = {0.0, 0.0};
     a[1] = {0.0, 0.0};
