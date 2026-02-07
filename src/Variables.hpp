@@ -82,6 +82,7 @@ inline constinit std::array<std::array<double, 2>, MAX_DA_CHANNELS> DA_Cal = [](
 }();
 
 inline constexpr float MAX_VOLTAGE_OUTPUT = 9.9999f;
+inline constexpr float MIN_VOLTAGE_OUTPUT = 0.0f;
 
 //---SpecimenData---
 // Structure of Initial Specimen Data
