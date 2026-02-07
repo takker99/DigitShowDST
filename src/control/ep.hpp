@@ -116,18 +116,22 @@ inline constexpr Output apply_ep_constant_volume_control(const control::ControlP
                                                   std::chrono::seconds_d{control::CtrlStepTime}.count());
 
     auto front_ep_delta_kpa =
-        std::clamp(disp_params.ki_kpa_per_mm * disp_ave_error + tilt_params.ki_kpa_per_mm * tilt_error, -max_pressure, max_pressure);
+        std::clamp(disp_params.ki_kpa_per_mm * disp_ave_error + tilt_params.ki_kpa_per_mm * tilt_error, -max_pressure,
+                   max_pressure);
     auto rear_ep_delta_kpa =
-        std::clamp(disp_params.ki_kpa_per_mm * disp_ave_error - tilt_params.ki_kpa_per_mm * tilt_error, -max_pressure, max_pressure);
+        std::clamp(disp_params.ki_kpa_per_mm * disp_ave_error - tilt_params.ki_kpa_per_mm * tilt_error, -max_pressure,
+                   max_pressure);
     // どちらかのEPが飽和していると、垂直変位差制御が逆にノイズになってしまうため、飽和時は制御を無効化する
     const auto can_control_tilt = Output::can_output_front_ep(output.front_ep_kpa + front_ep_delta_kpa) &&
                                   Output::can_output_rear_ep(output.rear_ep_kpa + rear_ep_delta_kpa);
 
     auto new_output = output;
     new_output.front_ep_kpa +=
-        can_control_tilt ? front_ep_delta_kpa : std::clamp(disp_params.ki_kpa_per_mm * disp_ave_error, -max_pressure, max_pressure);
-    new_output.rear_ep_kpa +=
-        can_control_tilt ? rear_ep_delta_kpa : std::clamp(disp_params.ki_kpa_per_mm * disp_ave_error, -max_pressure, max_pressure);
+        can_control_tilt ? front_ep_delta_kpa
+                         : std::clamp(disp_params.ki_kpa_per_mm * disp_ave_error, -max_pressure, max_pressure);
+    new_output.rear_ep_kpa += can_control_tilt
+                                  ? rear_ep_delta_kpa
+                                  : std::clamp(disp_params.ki_kpa_per_mm * disp_ave_error, -max_pressure, max_pressure);
 
     if !consteval
     {
