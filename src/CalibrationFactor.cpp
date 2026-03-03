@@ -207,7 +207,9 @@ void CCalibrationFactor::CF_Load()
 
     for (size_t i = 0; i < CHANNELS_CAL; ++i)
     {
-        m_CFP[i].Format(_T("%11.5f"), display_lpf::phyout_filtered[i]);
+        // Fall back to raw Phyout if the LPF state has not been seeded yet.
+        const double value = display_lpf::initialized ? display_lpf::phyout_filtered[i] : Phyout[i];
+        m_CFP[i].Format(_T("%11.5f"), value);
     }
 
     // Channel labels for CH0-CH7

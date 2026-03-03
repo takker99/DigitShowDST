@@ -391,13 +391,22 @@ void CDigitShowDSTView::ShowData()
 
     // Sync LPF cutoff from the edit control so UpdateData(FALSE) does not
     // overwrite what the user is currently typing (the 50ms timer would clobber it otherwise).
+    // Use wcstod (not _wtof) to validate the entire string and avoid silently accepting
+    // partial/invalid inputs (e.g., empty string, "-", ".") that _wtof maps to 0.0.
     if (const auto *pEdit = GetDlgItem(IDC_EDIT_LPF_CUTOFF); pEdit && pEdit->IsWindowEnabled())
     {
         CString cutoffStr;
         pEdit->GetWindowText(cutoffStr);
-        const double parsed = _wtof(cutoffStr);
-        if (parsed >= 0.0)
-            m_LpfCutoff = parsed;
+        cutoffStr.Trim();
+        if (!cutoffStr.IsEmpty())
+        {
+            const wchar_t *start = static_cast<const wchar_t *>(cutoffStr);
+            wchar_t *end = nullptr;
+            errno = 0;
+            const double parsed = wcstod(start, &end);
+            if (errno == 0 && end != nullptr && *end == L'\0' && parsed >= 0.0)
+                m_LpfCutoff = parsed;
+        }
     }
 
     // Update LPF state (passthrough when disabled)

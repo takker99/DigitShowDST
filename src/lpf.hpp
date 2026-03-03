@@ -63,6 +63,9 @@ inline std::array<double, variables::MAX_AI_CHANNELS> phyout_filtered = {};
 ///   [4] tilt (mm)
 inline std::array<double, 5> para_filtered = {};
 
+/// @brief True once the filter arrays have been seeded from raw values at least once.
+inline bool initialized = false;
+
 /// @brief Compute the IIR smoothing factor alpha from cutoff frequency and sample interval.
 /// @param fc Cutoff frequency [Hz]; must be > 0.
 /// @param dt Sample interval [s]; must be > 0.
@@ -76,17 +79,20 @@ inline std::array<double, 5> para_filtered = {};
 
 /// @brief Update all filtered arrays for one Timer 1 tick.
 ///
-/// When @p enabled is false, filtered arrays are set to the raw input values
-/// (passthrough). When enabled, a first-order IIR filter is applied using
-/// the configured cutoff_hz.
+/// When @p enabled is false, filtered arrays are seeded from raw input values
+/// (passthrough) so that enabling the filter later starts from the current
+/// reading rather than zero-initialized arrays.
+/// When enabled, a first-order IIR filter is applied using the configured cutoff_hz.
+/// On the first enabled call (before any passthrough), the arrays are seeded from
+/// raw values to avoid a transient ramp from zero.
 ///
 /// @param para_raw  Raw physical-input parameter values (5 elements: tau, shear_disp,
 ///                  sigma, normal_disp, tilt).
 /// @param dt_s      Timer 1 interval in seconds (typically 0.05).
 inline void update(const std::array<double, 5> &para_raw, const double dt_s) noexcept
 {
-    if (!enabled)
-    {
+    // Helper: copy raw values into the filter state arrays.
+    const auto seed_from_raw = [&]() noexcept {
         for (size_t i = 0; i < variables::MAX_AI_CHANNELS; ++i)
         {
             vout_filtered[i] = static_cast<double>(variables::Vout[i]);
@@ -94,6 +100,19 @@ inline void update(const std::array<double, 5> &para_raw, const double dt_s) noe
         }
         for (size_t i = 0; i < para_filtered.size(); ++i)
             para_filtered[i] = para_raw[i];
+        initialized = true;
+    };
+
+    if (!enabled)
+    {
+        seed_from_raw();
+        return;
+    }
+
+    // On the first enabled call, seed from raw to avoid a ramp from zero.
+    if (!initialized)
+    {
+        seed_from_raw();
         return;
     }
 
