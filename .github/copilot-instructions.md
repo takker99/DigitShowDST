@@ -42,6 +42,8 @@ DigitShowDST is a **legacy MFC single-document/single-view C++ application** for
 ## Build & Runtime
 - Build through VS Code tasks (`MSBuild: Build Release`, `MSBuild: Build Debug`), which bootstrap `Load-DevEnv.ps1` automatically.
 - Manual builds: `msbuild .\DigitShowDST.vcxproj /t:Build /p:Configuration=Release` (requires VS Dev Shell initialized via `Load-DevEnv.ps1`).
+- In Copilot coding agent sessions, environment setup is handled by `.github/workflows/copilot-setup-steps.yml` at agent startup.
+- Do **not** run `Load-DevEnv.ps1` in coding agent workflows; `microsoft/setup-msbuild` already configures `msbuild` in `PATH`.
 - No automated test harness yet; validate by exercising the GUI. Add hardware fallbacks (check `Flag_SetBoard`) whenever touching real I/O so agents can run without boards.
 
 ## Python Tooling
