@@ -228,7 +228,7 @@ BEGIN
     EDITTEXT        IDC_EDIT_Para12,498,127,56,14,ES_RIGHT | ES_AUTOHSCROLL | ES_READONLY
 
     // Consolidated Control & Sampling section
-    GROUPBOX        "Control & Sampling",IDC_STATIC,7,180,550,100
+    GROUPBOX        "Control & Sampling",IDC_STATIC,7,180,403,100
 
     // Control fields (left area)
     LTEXT           "Control No.",IDC_STATIC,15,193,40,8
@@ -254,6 +254,12 @@ BEGIN
     EDITTEXT        IDC_EDIT_NowTime,238,211,77,14,ES_CENTER | ES_AUTOHSCROLL | ES_READONLY
     LTEXT           "File Name:",IDC_STATIC,190,228,36,8
     EDITTEXT        IDC_EDIT_FileName,238,228,77,14,ES_CENTER | ES_AUTOHSCROLL | ES_READONLY
+
+    // LPF settings section
+    GROUPBOX        "LPF",IDC_STATIC,412,180,145,100
+    AUTOCHECKBOX    "Enable LPF",IDC_CHECK_LPF,420,193,130,10
+    LTEXT           "Cutoff (Hz):",IDC_STATIC,420,211,52,8
+    EDITTEXT        IDC_EDIT_LPF_CUTOFF,475,209,75,14,ES_RIGHT | ES_AUTOHSCROLL
 END
 
 IDD_BoardSettings DIALOG 0, 0, 299, 103

@@ -42,6 +42,7 @@
 #include "chrono_alias.hpp"
 #include "control/control.hpp"
 #include "digitshow_operations.hpp"
+#include "lpf.hpp"
 #include "physical_variables.hpp"
 #include "resource.h"
 #include "timer.hpp"
@@ -80,6 +81,7 @@ ON_BN_CLICKED(IDC_BUTTON_CtrlOn, &CDigitShowDSTView::OnBUTTONCtrlOn)
 ON_WM_DESTROY()
 ON_BN_CLICKED(IDC_BUTTON_InterceptSave, &CDigitShowDSTView::OnBUTTONInterceptSave)
 ON_BN_CLICKED(IDC_BUTTON_SetTimeInterval, &CDigitShowDSTView::OnBUTTONSetTimeInterval)
+ON_BN_CLICKED(IDC_CHECK_LPF, &CDigitShowDSTView::OnBNClickedCheckLpf)
 //}}AFX_MSG_MAP
 END_MESSAGE_MAP_IGNORE_UNUSED_LOCAL_TYPEDEF()
 
@@ -146,6 +148,9 @@ void CDigitShowDSTView::DoDataExchange(CDataExchange *pDX)
     DDX_Text(pDX, IDC_EDIT_SamplingTime, m_SamplingTime);
     DDV_MinMaxLongLong(pDX, m_SamplingTime, 100, 86400000);
     DDX_Text(pDX, IDC_EDIT_FileName, m_FileName);
+    DDX_Check(pDX, IDC_CHECK_LPF, m_LpfEnabled);
+    DDX_Text(pDX, IDC_EDIT_LPF_CUTOFF, m_LpfCutoff);
+    DDV_MinMaxDouble(pDX, m_LpfCutoff, 0.0, 10000.0);
     //}}AFX_DATA_MAP
 }
 
@@ -187,6 +192,7 @@ void CDigitShowDSTView::OnInitialUpdate()
     ResizeParentToFit();
     GetDlgItem(IDC_BUTTON_CtrlOff)->EnableWindow(FALSE);
     GetDlgItem(IDC_BUTTON_InterceptSave)->EnableWindow(FALSE);
+    GetDlgItem(IDC_EDIT_LPF_CUTOFF)->EnableWindow(FALSE); // disabled until LPF checkbox is checked
 #pragma warning(push)
 #pragma warning(disable : 4946)
     CComboBox *m_Combo2 = reinterpret_cast<CComboBox *>(
@@ -374,28 +380,50 @@ void CDigitShowDSTView::OnTimer(UINT_PTR nIDEvent)
 
 void CDigitShowDSTView::ShowData()
 {
-    // Format voltage output display strings
-    for (size_t i = 0; i < CHANNELS_VOUT; ++i)
-    {
-        m_Vout[i].Format(_T("%11.4f"), Vout[i]);
-    }
-
-    // Format physical output display strings
-    for (size_t i = 0; i < CHANNELS_PHYOUT; ++i)
-    {
-        m_Phyout[i].Format(_T("%11.4f"), Phyout[i]);
-    }
-
-    // Format calculated parameter display strings using the latest snapshots
+    // Compute raw physical input parameters for LPF input
     const auto physical_input = variables::physical::latest_physical_input.load();
     const auto physical_output = variables::physical::latest_physical_output.load();
+    const std::array<double, 5> para_raw = {static_cast<double>(physical_input.shear_stress_kpa()),
+                                            static_cast<double>(physical_input.shear_displacement_mm),
+                                            static_cast<double>(physical_input.vertical_stress_kpa()),
+                                            static_cast<double>(physical_input.normal_displacement_mm()),
+                                            static_cast<double>(physical_input.tilt_mm())};
 
-    // Map each parameter shown in the UI to the corresponding physical snapshot
-    m_Para[0].Format(_T("%11.4f"), static_cast<double>(physical_input.shear_stress_kpa()));
-    m_Para[1].Format(_T("%11.4f"), static_cast<double>(physical_input.shear_displacement_mm));
-    m_Para[2].Format(_T("%11.4f"), static_cast<double>(physical_input.vertical_stress_kpa()));
-    m_Para[3].Format(_T("%11.4f"), static_cast<double>(physical_input.normal_displacement_mm()));
-    m_Para[4].Format(_T("%11.4f"), static_cast<double>(physical_input.tilt_mm()));
+    // Sync LPF cutoff from the edit control so UpdateData(FALSE) does not
+    // overwrite what the user is currently typing (the 50ms timer would clobber it otherwise).
+    if (const auto *pEdit = GetDlgItem(IDC_EDIT_LPF_CUTOFF); pEdit && pEdit->IsWindowEnabled())
+    {
+        CString cutoffStr;
+        pEdit->GetWindowText(cutoffStr);
+        const double parsed = _wtof(cutoffStr);
+        if (parsed >= 0.0)
+            m_LpfCutoff = parsed;
+    }
+
+    // Update LPF state (passthrough when disabled)
+    constexpr double kTimerDt_s = static_cast<double>(timer::TimeInterval_1.count()) / 1000.0;
+    display_lpf::enabled = (m_LpfEnabled != FALSE);
+    display_lpf::cutoff_hz = m_LpfCutoff;
+    display_lpf::update(para_raw, kTimerDt_s);
+
+    // Format voltage output display strings using filtered values
+    for (size_t i = 0; i < CHANNELS_VOUT; ++i)
+    {
+        m_Vout[i].Format(_T("%11.4f"), display_lpf::vout_filtered[i]);
+    }
+
+    // Format physical output display strings using filtered values
+    for (size_t i = 0; i < CHANNELS_PHYOUT; ++i)
+    {
+        m_Phyout[i].Format(_T("%11.4f"), display_lpf::phyout_filtered[i]);
+    }
+
+    // Map each parameter shown in the UI: physical input params use filtered values
+    m_Para[0].Format(_T("%11.4f"), display_lpf::para_filtered[0]); // shear_stress_kpa
+    m_Para[1].Format(_T("%11.4f"), display_lpf::para_filtered[1]); // shear_displacement_mm
+    m_Para[2].Format(_T("%11.4f"), display_lpf::para_filtered[2]); // vertical_stress_kpa
+    m_Para[3].Format(_T("%11.4f"), display_lpf::para_filtered[3]); // normal_displacement_mm
+    m_Para[4].Format(_T("%11.4f"), display_lpf::para_filtered[4]); // tilt_mm
     m_Para[5].Format(_T("%11.4f"), static_cast<double>(physical_output.motor_rpm));
     m_Para[6].Format(_T("%11.4f"), static_cast<double>(physical_output.front_ep_kpa));
     m_Para[7].Format(_T("%11.4f"), static_cast<double>(physical_output.rear_ep_kpa));
@@ -649,4 +677,10 @@ void CDigitShowDSTView::OnBUTTONSetTimeInterval()
         KillTimer(timer::kTimerId_Log);
         SetTimer(timer::kTimerId_Log, static_cast<UINT>(timer::TimeInterval_3.count()), NULL);
     }
+}
+
+void CDigitShowDSTView::OnBNClickedCheckLpf()
+{
+    UpdateData(TRUE);
+    GetDlgItem(IDC_EDIT_LPF_CUTOFF)->EnableWindow(m_LpfEnabled);
 }

@@ -26,6 +26,7 @@
 
 #include "CalibrationAmp.h"
 #include "Variables.hpp"
+#include "lpf.hpp"
 #include "resource.h"
 #include "ui_helpers.hpp"
 
@@ -80,7 +81,7 @@ void CCalibrationAmp::OnBUTTONAmpBase()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     UpdateData(TRUE);
-    m_AmpVB = Vout[AmpID];
+    m_AmpVB = static_cast<float>(display_lpf::vout_filtered[AmpID]);
     UpdateData(FALSE);
 }
 
@@ -88,7 +89,7 @@ void CCalibrationAmp::OnBUTTONAmpOffset()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     UpdateData(TRUE);
-    m_AmpVO = Vout[AmpID];
+    m_AmpVO = static_cast<float>(display_lpf::vout_filtered[AmpID]);
     UpdateData(FALSE);
 }
 

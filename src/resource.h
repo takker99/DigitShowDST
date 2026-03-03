@@ -407,6 +407,8 @@
 #define IDC_BUTTON_Stop 1860
 #define IDC_BUTTON_Pause 1861
 #define IDC_BUTTON_Resume 1862
+#define IDC_CHECK_LPF 1863
+#define IDC_EDIT_LPF_CUTOFF 1864
 #define IDD_AppInfo 2000
 #define IDC_AppInfo_FreeText 2001
 #define IDC_AppInfo_CopyDiff2ClipBoard 2002
@@ -429,7 +431,7 @@
 #define _APS_3D_CONTROLS 1
 #define _APS_NEXT_RESOURCE_VALUE 152
 #define _APS_NEXT_COMMAND_VALUE 32803
-#define _APS_NEXT_CONTROL_VALUE 1863
+#define _APS_NEXT_CONTROL_VALUE 1865
 #define _APS_NEXT_SYMED_VALUE 101
 #endif
 #endif
