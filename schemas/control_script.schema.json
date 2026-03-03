@@ -112,6 +112,7 @@
     },
     "vertical_stress_parameters": {
       "type": "object",
+      "description": "Vertical stress (confining pressure) control parameters. NOTE: In dual-vertical-LC configuration, target_sigma_kPa is derived from the combined front and rear load cells: vertical_force_N = Phyout[CH_VERTICAL_FRONT_LC] + Phyout[CH_VERTICAL_REAR_LC]. Ensure both load cell calibration coefficients are matched for accurate stress calculation. This field is backward-compatible with single-LC configurations.",
       "required": [
         "target_sigma_kPa"
       ],
@@ -119,7 +120,7 @@
         "target_sigma_kPa": {
           "type": "number",
           "minimum": 0,
-          "description": "Radial effective stress (σ). Units: kPa."
+          "description": "Target normal stress in kPa (calculated from sum of front and rear vertical load cells). In dual-LC mode, this is the total vertical force divided by specimen area."
         },
         "vertical_stress_error_kpa": {
           "type": "number",

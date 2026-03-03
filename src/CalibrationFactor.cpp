@@ -211,13 +211,13 @@ void CCalibrationFactor::CF_Load()
 
     // Channel labels for CH0-CH7
     m_C[0] = _T("CH00, Shear LC");
-    m_C[1] = _T("CH01, Vertical LC");
-    m_C[2] = _T("CH02, H-LVDT");
-    m_C[3] = _T("CH03, V-front-LVDT");
-    m_C[4] = _T("CH04, V-rear-LVDT");
-    m_C[5] = _T("CH05, Front friction");
-    m_C[6] = _T("CH06, Rear friction");
-    m_C[7] = _T("CH07");
+    m_C[1] = _T("CH01, Vertical Front LC");
+    m_C[2] = _T("CH02, Vertical Rear LC");
+    m_C[3] = _T("CH03, H-LVDT");
+    m_C[4] = _T("CH04, V-front-LVDT");
+    m_C[5] = _T("CH05, V-rear-LVDT");
+    m_C[6] = _T("CH06, Front friction");
+    m_C[7] = _T("CH07, Rear friction");
 
     // Load initial specimen data
     m_InitSpecHeight = variables::SpecimenData.height_mm();

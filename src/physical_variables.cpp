@@ -26,7 +26,8 @@ void update() noexcept
 {
     const control::PhysicalInput initial_based_input{.specimen = SpecimenData,
                                                      .shear_force_N = Phyout[CH_SHEAR_LC],
-                                                     .vertical_force_N = Phyout[CH_VERTICAL_LC],
+                                                     .vertical_force_front_N = Phyout[CH_VERTICAL_FRONT_LC],
+                                                     .vertical_force_rear_N = Phyout[CH_VERTICAL_REAR_LC],
                                                      .shear_displacement_mm = Phyout[CH_SHEAR_DISP],
                                                      .front_vertical_disp_mm = Phyout[CH_VERTICAL_FRONT_DISP],
                                                      .rear_vertical_disp_mm = Phyout[CH_VERTICAL_REAR_DISP],

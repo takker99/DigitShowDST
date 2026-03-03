@@ -46,13 +46,14 @@ inline constexpr size_t CH_MotorSpeed = 2; // D/A Channel of Motor Speed
 inline constexpr size_t CH_EP_Cell_f = 3;  // D/A Channel of EP (Bellofram_f)
 inline constexpr size_t CH_EP_Cell_r = 4;  // D/A Channel of EP (Bellofram_r)
 
-inline constexpr size_t CH_SHEAR_LC = 0;            // A/D Channel of Shear Load Cell
-inline constexpr size_t CH_VERTICAL_LC = 1;         // A/D Channel of Vertical Load Cell
-inline constexpr size_t CH_SHEAR_DISP = 2;          // A/D Channel of Shear Displacement
-inline constexpr size_t CH_VERTICAL_FRONT_DISP = 3; // A/D Channel of Vertical Front Displacement
-inline constexpr size_t CH_VERTICAL_REAR_DISP = 4;  // A/D Channel of Vertical Rear Displacement
-inline constexpr size_t CH_FRONT_FRICTION_LC = 5;   // A/D Channel of Front Friction Load Cell
-inline constexpr size_t CH_REAR_FRICTION_LC = 6;    // A/D Channel of Rear Friction Load Cell
+inline constexpr size_t CH_SHEAR_LC = 0;              // A/D Channel of Shear Load Cell
+inline constexpr size_t CH_VERTICAL_FRONT_LC = 1;     // A/D Channel of Front Vertical Load Cell
+inline constexpr size_t CH_VERTICAL_REAR_LC = 2;      // A/D Channel of Rear Vertical Load Cell
+inline constexpr size_t CH_SHEAR_DISP = 3;            // A/D Channel of Shear Displacement
+inline constexpr size_t CH_VERTICAL_FRONT_DISP = 4;   // A/D Channel of Vertical Front Displacement
+inline constexpr size_t CH_VERTICAL_REAR_DISP = 5;    // A/D Channel of Vertical Rear Displacement
+inline constexpr size_t CH_FRONT_FRICTION_LC = 6;     // A/D Channel of Front Friction Load Cell
+inline constexpr size_t CH_REAR_FRICTION_LC = 7;      // A/D Channel of Rear Friction Load Cell
 
 inline constexpr double CYLINDER_AREA_MM2 =
     std::numbers::pi * 40.0 * 40.0; // Cylinder Area in mm² (use Fujikura BF Cylinder SCD-80-108-B0)

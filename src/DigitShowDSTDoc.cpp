@@ -81,7 +81,8 @@ BOOL CDigitShowDSTDoc::OnNewDocument()
     variables::physical::latest_physical_input.store({
         SpecimenData,
         0.0, // shear_force_N
-        0.0, // vertical_force_N
+        0.0, // vertical_force_front_N
+        0.0, // vertical_force_rear_N
         0.0, // shear_displacement_mm
         0.0, // front_vertical_disp_mm
         0.0, // rear_vertical_disp_mm
@@ -159,8 +160,8 @@ bool CDigitShowDSTDoc::OpenSaveWriters(const std::filesystem::path &basePath)
         "UnixTime(ms)\tCH00_(V)\tCH01_(V)\tCH02_(V)\tCH03_(V)\tCH04_(V)\tCH05_(V)\tCH06_(V)\tCH07_(V)");
 
     // Physical file header
-    m_phyWriter.writeLine("UnixTime(ms)\tShear_load_(N)\tVertical_load_(N)\tShear_disp._(mm)\tV-front-disp._(mm)\tV-"
-                          "rear-disp._(mm)\tFront_friction_(N)\tRear_friction_(N)\tCH08");
+    m_phyWriter.writeLine("UnixTime(ms)\tShear_load_(N)\tVertical_load_Front_(N)\tVertical_load_Rear_(N)\tShear_disp._(mm)\t"
+                          "V-front-disp._(mm)\tV-rear-disp._(mm)\tFront_friction_(N)\tRear_friction_(N)");
 
     // Parameter file header
     m_paramWriter.writeLine("UnixTime(ms)\tTau_(kPa)\tShear_disp._(mm)\tSigma_(kPa)\tV-ave-disp._(mm)\tev_diff/"
