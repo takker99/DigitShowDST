@@ -275,6 +275,38 @@ namespace aio
 }
 
 /**
+ * @brief Set analog input scan clock
+ * @param id Device ID
+ * @param scanClock Scan clock period in microseconds
+ * @return Expected with void or UTF-8 error message
+ */
+[[nodiscard]] inline std::expected<void, std::string> setAiScanClock(const short id, const float scanClock) noexcept
+{
+    const auto ret = AioSetAiScanClock(id, scanClock);
+    if (ret != 0)
+    {
+        return std::unexpected(get_error_message(ret));
+    }
+    return {};
+}
+
+/**
+ * @brief Get analog input scan clock
+ * @param id Device ID
+ * @return Expected with scan clock or UTF-8 error message
+ */
+[[nodiscard]] inline std::expected<float, std::string> getAiScanClock(const short id) noexcept
+{
+    float scanClock = 0.0f;
+    const auto ret = AioGetAiScanClock(id, &scanClock);
+    if (ret != 0)
+    {
+        return std::unexpected(get_error_message(ret));
+    }
+    return scanClock;
+}
+
+/**
  * @brief Set analog input event sampling times
  * @param id Device ID
  * @param samplingTimes Number of sampling times
