@@ -342,6 +342,7 @@
         timestamps: [], shearForce: [], verticalForce: [], shearDisp: [], normalDisp: [],
         frontVerticalDisp: [], rearVerticalDisp: [], tiltMm: [], shearStress: [], verticalStress: [],
         motorRpm: [], frontEp: [], rearEp: [], frontFriction: [], rearFriction: [],
+        frontVerticalForce: [], rearVerticalForce: [], moment: [],
       });
       const [displayWindowSec, setDisplayWindowSec] = useState(60);
       const [apiUrl, setApiUrl] = useState(resolveDefaultApiUrl);
@@ -395,6 +396,11 @@
                 newHistory.rearEp = [...prev.rearEp, sensorData.physical_output.rear_ep_kpa];
                 newHistory.frontFriction = [...prev.frontFriction, sensorData.physical_input.front_friction_force_N];
                 newHistory.rearFriction = [...prev.rearFriction, sensorData.physical_input.rear_friction_force_N];
+                newHistory.frontVerticalForce = [...prev.frontVerticalForce, sensorData.physical_input.front_vertical_force_N];
+                newHistory.rearVerticalForce = [...prev.rearVerticalForce, sensorData.physical_input.rear_vertical_force_N];
+                const L = 0.12; // arm length in meters
+                const moment = 0.5 * L * sensorData.physical_input.front_vertical_force_N - 0.5 * L * sensorData.physical_input.rear_vertical_force_N;
+                newHistory.moment = [...prev.moment, moment];
 
                 const timeWindow = Math.max(displayWindowSecRef.current, 1);
                 const cutoffTime = relativeTime - timeWindow;
@@ -452,6 +458,7 @@
           timestamps: [], shearForce: [], verticalForce: [], shearDisp: [], normalDisp: [],
           frontVerticalDisp: [], rearVerticalDisp: [], tiltMm: [], shearStress: [], verticalStress: [],
           motorRpm: [], frontEp: [], rearEp: [], frontFriction: [], rearFriction: [],
+          frontVerticalForce: [], rearVerticalForce: [], moment: [],
         });
       }, []);
 
@@ -559,6 +566,27 @@
         [dataHistory.tiltMm, dataHistory.timestamps, enableSmoothing, filterType, filterParam]
       );
 
+      const filteredFrontVerticalForce = useMemo(() =>
+        enableSmoothing && filterParam > 0 && dataHistory.frontVerticalForce.length > 0
+          ? applyFilter(dataHistory.frontVerticalForce, dataHistory.timestamps, filterType, filterParam)
+          : dataHistory.frontVerticalForce,
+        [dataHistory.frontVerticalForce, dataHistory.timestamps, enableSmoothing, filterType, filterParam]
+      );
+
+      const filteredRearVerticalForce = useMemo(() =>
+        enableSmoothing && filterParam > 0 && dataHistory.rearVerticalForce.length > 0
+          ? applyFilter(dataHistory.rearVerticalForce, dataHistory.timestamps, filterType, filterParam)
+          : dataHistory.rearVerticalForce,
+        [dataHistory.rearVerticalForce, dataHistory.timestamps, enableSmoothing, filterType, filterParam]
+      );
+
+      const filteredMoment = useMemo(() =>
+        enableSmoothing && filterParam > 0 && dataHistory.moment.length > 0
+          ? applyFilter(dataHistory.moment, dataHistory.timestamps, filterType, filterParam)
+          : dataHistory.moment,
+        [dataHistory.moment, dataHistory.timestamps, enableSmoothing, filterType, filterParam]
+      );
+
       const shearForceData = useMemo(() =>
         enableSmoothing && filterParam > 0
           ? [dataHistory.timestamps, dataHistory.shearForce, dataHistory.frontFriction, dataHistory.rearFriction, totalFriction,
@@ -570,9 +598,9 @@
 
       const verticalForceData = useMemo(() =>
         enableSmoothing && filterParam > 0
-          ? [dataHistory.timestamps, dataHistory.verticalForce, filteredVerticalForce]
-          : [dataHistory.timestamps, dataHistory.verticalForce],
-        [dataHistory.timestamps, dataHistory.verticalForce, filteredVerticalForce, enableSmoothing, filterParam]
+          ? [dataHistory.timestamps, dataHistory.verticalForce, dataHistory.frontVerticalForce, dataHistory.rearVerticalForce, filteredVerticalForce, filteredFrontVerticalForce, filteredRearVerticalForce]
+          : [dataHistory.timestamps, dataHistory.verticalForce, dataHistory.frontVerticalForce, dataHistory.rearVerticalForce],
+        [dataHistory.timestamps, dataHistory.verticalForce, dataHistory.frontVerticalForce, dataHistory.rearVerticalForce, filteredVerticalForce, filteredFrontVerticalForce, filteredRearVerticalForce, enableSmoothing, filterParam]
       );
 
       const verticalStressData = useMemo(() =>
@@ -591,19 +619,15 @@
 
       const verticalDispTiltData = useMemo(() =>
         enableSmoothing && filterParam > 0
-          ? [dataHistory.timestamps, dataHistory.frontVerticalDisp, dataHistory.rearVerticalDisp, dataHistory.tiltMm,
-            filteredFrontVerticalDisp, filteredRearVerticalDisp, filteredTiltMm]
-          : [dataHistory.timestamps, dataHistory.frontVerticalDisp, dataHistory.rearVerticalDisp, dataHistory.tiltMm],
-        [dataHistory.timestamps, dataHistory.frontVerticalDisp, dataHistory.rearVerticalDisp, dataHistory.tiltMm,
-          filteredFrontVerticalDisp, filteredRearVerticalDisp, filteredTiltMm, enableSmoothing, filterParam]
+          ? [dataHistory.timestamps, dataHistory.frontVerticalDisp, dataHistory.rearVerticalDisp, dataHistory.tiltMm, dataHistory.moment,
+            filteredFrontVerticalDisp, filteredRearVerticalDisp, filteredTiltMm, filteredMoment]
+          : [dataHistory.timestamps, dataHistory.frontVerticalDisp, dataHistory.rearVerticalDisp, dataHistory.tiltMm, dataHistory.moment],
+        [dataHistory.timestamps, dataHistory.frontVerticalDisp, dataHistory.rearVerticalDisp, dataHistory.tiltMm, dataHistory.moment,
+          filteredFrontVerticalDisp, filteredRearVerticalDisp, filteredTiltMm, filteredMoment, enableSmoothing, filterParam]
       );
 
-      const epData = useMemo(() => [dataHistory.timestamps, dataHistory.frontEp, dataHistory.rearEp],
-        [dataHistory.timestamps, dataHistory.frontEp, dataHistory.rearEp]
-      );
-
-      const rpmData = useMemo(() => [dataHistory.timestamps, dataHistory.motorRpm],
-        [dataHistory.timestamps, dataHistory.motorRpm]
+      const epRpmData = useMemo(() => [dataHistory.timestamps, dataHistory.frontEp, dataHistory.rearEp, dataHistory.motorRpm],
+        [dataHistory.timestamps, dataHistory.frontEp, dataHistory.rearEp, dataHistory.motorRpm]
       );
 
       const palette = useMemo(() => ({
@@ -612,6 +636,7 @@
         epFront: '#0f766e', epRear: '#14b8a6', rpm: '#06b6d4',
         shearFront: '#1d4ed8', shearRear: '#60a5fa',
         frictionFront: '#7c3aed', frictionRear: '#a78bfa', frictionTotal: '#8b5cf6',
+        moment: '#f59e0b',
       }), []);
 
       const axisTheme = useMemo(() => ({
@@ -646,7 +671,13 @@
         series: [
           { label: "Time (s)" },
           { label: "Vertical Force (N)", stroke: enableSmoothing ? hexToRgba(palette.vertical, 0.3) : palette.vertical, width: 1.5 },
-          ...(enableSmoothing ? [{ label: "Smoothed", stroke: palette.vertical, width: 1.0 }] : [])
+          { label: "Front Vertical Force (N)", stroke: enableSmoothing ? hexToRgba(palette.verticalFront, 0.3) : palette.verticalFront, width: 1.5, show: false },
+          { label: "Rear Vertical Force (N)", stroke: enableSmoothing ? hexToRgba(palette.verticalRear, 0.3) : palette.verticalRear, width: 1.5, show: false },
+          ...(enableSmoothing ? [
+            { label: "Smoothed", stroke: palette.vertical, width: 1.0 },
+            { label: "Front Smoothed", stroke: palette.verticalFront, width: 1.0, show: false },
+            { label: "Rear Smoothed", stroke: palette.verticalRear, width: 1.0, show: false }
+          ] : [])
         ],
         axes: [
           { stroke: axisTheme.text, font: axisTheme.font, values: formatAxisValue, grid: { stroke: axisTheme.grid, width: 1 }, ticks: { stroke: axisTheme.text, width: 1 } },
@@ -697,43 +728,36 @@
           { label: "Front Disp (mm)", stroke: enableSmoothing ? hexToRgba(palette.verticalFront, 0.3) : palette.verticalFront, width: 1.5, scale: "disp", show: false },
           { label: "Rear Disp (mm)", stroke: enableSmoothing ? hexToRgba(palette.verticalRear, 0.3) : palette.verticalRear, width: 1.5, scale: "disp", show: false },
           { label: "Tilt (mm)", stroke: enableSmoothing ? hexToRgba(palette.tilt, 0.3) : palette.tilt, width: 1.5, scale: "tilt" },
+          { label: "Moment (N·m)", stroke: enableSmoothing ? hexToRgba(palette.moment, 0.3) : palette.moment, width: 1.5, scale: "moment" },
           ...(enableSmoothing ? [
             { label: "Front Smoothed", stroke: palette.verticalFront, width: 1.0, scale: "disp", show: false },
             { label: "Rear Smoothed", stroke: palette.verticalRear, width: 1.0, scale: "disp", show: false },
-            { label: "Tilt Smoothed", stroke: palette.tilt, width: 1.0, scale: "tilt" }
+            { label: "Tilt Smoothed", stroke: palette.tilt, width: 1.0, scale: "tilt" },
+            { label: "Moment Smoothed", stroke: palette.moment, width: 1.0, scale: "moment" }
           ] : [])
         ],
         axes: [
           { stroke: axisTheme.text, font: axisTheme.font, values: formatAxisValue, grid: { stroke: axisTheme.grid, width: 1 }, ticks: { stroke: axisTheme.text, width: 1 } },
           { scale: "disp", label: "Disp (mm)", labelSize: 30, stroke: axisTheme.text, font: axisTheme.font, labelFont: axisTheme.font, labelStroke: axisTheme.text, values: formatAxisValue, grid: { stroke: axisTheme.grid, width: 1 }, ticks: { stroke: axisTheme.text, width: 1 } },
-          { scale: "tilt", label: "Tilt (mm)", labelSize: 30, side: 1, stroke: axisTheme.text, font: axisTheme.font, labelFont: axisTheme.font, labelStroke: axisTheme.text, values: formatAxisValue, grid: { stroke: axisTheme.grid, width: 1 }, ticks: { stroke: axisTheme.text, width: 1 } }
+          { scale: "tilt", label: "Tilt (mm)", labelSize: 30, side: 1, stroke: axisTheme.text, font: axisTheme.font, labelFont: axisTheme.font, labelStroke: axisTheme.text, values: formatAxisValue, grid: { stroke: axisTheme.grid, width: 1 }, ticks: { stroke: axisTheme.text, width: 1 } },
+          { scale: "moment", label: "Moment (N·m)", labelSize: 30, side: 1, stroke: axisTheme.text, font: axisTheme.font, labelFont: axisTheme.font, labelStroke: axisTheme.text, values: formatAxisValue, grid: { stroke: axisTheme.grid, width: 1 }, ticks: { stroke: axisTheme.text, width: 1 } }
         ],
-        scales: { x: { time: false }, disp: {}, tilt: {} }
+        scales: { x: { time: false }, disp: {}, tilt: {}, moment: {} }
       }), [axisTheme, palette, enableSmoothing]);
 
-      const epOptions = useMemo(() => ({
+      const epRpmOptions = useMemo(() => ({
         series: [
-          { label: "Time (s)" },
-          { label: "Front EP (kPa)", stroke: palette.epFront, width: 1.5 },
-          { label: "Rear EP (kPa)", stroke: palette.epRear, width: 1.5 }
+          { label: "Time (s)", scale: "x" },
+          { label: "Front EP (kPa)", stroke: palette.epFront, width: 1.5, scale: "ep" },
+          { label: "Rear EP (kPa)", stroke: palette.epRear, width: 1.5, scale: "ep" },
+          { label: "Motor RPM", stroke: palette.rpm, width: 1.5, scale: "rpm" }
         ],
         axes: [
-          { stroke: axisTheme.text, font: axisTheme.font, grid: { stroke: axisTheme.grid, width: 1 }, ticks: { stroke: axisTheme.text, width: 1 } },
-          { label: "EP (kPa)", labelSize: 30, stroke: axisTheme.text, font: axisTheme.font, labelFont: axisTheme.font, labelStroke: axisTheme.text, grid: { stroke: axisTheme.grid, width: 1 }, ticks: { stroke: axisTheme.text, width: 1 } }
+          { stroke: axisTheme.text, font: axisTheme.font, values: formatAxisValue, grid: { stroke: axisTheme.grid, width: 1 }, ticks: { stroke: axisTheme.text, width: 1 } },
+          { scale: "ep", label: "EP (kPa)", labelSize: 30, stroke: axisTheme.text, font: axisTheme.font, labelFont: axisTheme.font, labelStroke: axisTheme.text, values: formatAxisValue, grid: { stroke: axisTheme.grid, width: 1 }, ticks: { stroke: axisTheme.text, width: 1 } },
+          { scale: "rpm", label: "Motor RPM", labelSize: 30, side: 1, stroke: axisTheme.text, font: axisTheme.font, labelFont: axisTheme.font, labelStroke: axisTheme.text, values: formatAxisValue, grid: { stroke: axisTheme.grid, width: 1 }, ticks: { stroke: axisTheme.text, width: 1 } }
         ],
-        scales: { x: { time: false }, y: {} }
-      }), [axisTheme, palette]);
-
-      const rpmOptions = useMemo(() => ({
-        series: [
-          { label: "Time (s)" },
-          { label: "Motor RPM", stroke: palette.rpm, width: 1.5 }
-        ],
-        axes: [
-          { stroke: axisTheme.text, font: axisTheme.font, grid: { stroke: axisTheme.grid, width: 1 }, ticks: { stroke: axisTheme.text, width: 1 } },
-          { label: "RPM", labelSize: 30, stroke: axisTheme.text, font: axisTheme.font, labelFont: axisTheme.font, labelStroke: axisTheme.text, grid: { stroke: axisTheme.grid, width: 1 }, ticks: { stroke: axisTheme.text, width: 1 } }
-        ],
-        scales: { x: { time: false }, y: {} }
+        scales: { x: { time: false }, ep: {}, rpm: {} }
       }), [axisTheme, palette]);
 
       return html`
@@ -804,8 +828,7 @@
             <div className="chart-container"><h3 className="chart-title">Shear Stress & Shear Disp.</h3><${UPlotChart} data=${shearStressData} options=${shearStressOptions} /></div>
             <div className="chart-container"><h3 className="chart-title">Vertical Stress & Normal Disp.</h3><${UPlotChart} data=${verticalStressData} options=${verticalStressOptions} /></div>
             <div className="chart-container"><h3 className="chart-title">Front/Rear Vertical Disp. & Tilt</h3><${UPlotChart} data=${verticalDispTiltData} options=${verticalDispTiltOptions} /></div>
-            <div className="chart-container"><h3 className="chart-title">EP (kPa)</h3><${UPlotChart} data=${epData} options=${epOptions} /></div>
-            <div className="chart-container"><h3 className="chart-title">Motor RPM</h3><${UPlotChart} data=${rpmData} options=${rpmOptions} /></div>
+            <div className="chart-container"><h3 className="chart-title">EP & Motor RPM</h3><${UPlotChart} data=${epRpmData} options=${epRpmOptions} /></div>
           </div>
         </main>
       `;
