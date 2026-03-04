@@ -50,7 +50,7 @@ namespace api
 {
 
 /**
- * @brief Configuration for the API server
+ * @brief Configuration for the API server and application state
  */
 struct ApiConfig
 {
@@ -60,6 +60,8 @@ struct ApiConfig
     int update_interval_ms = 100;
     bool cors_enabled = true;
     int max_connections = 10;
+    int sampling_time_ms = 1000;
+    std::string last_calibration_file = "";
 };
 
 /**
@@ -115,6 +117,14 @@ class ApiServer
      * @return ApiConfig object with loaded settings, or default config on error
      */
     [[nodiscard]] static ApiConfig load_config(const std::string &config_path) noexcept;
+
+    /**
+     * @brief Save configuration to JSON file
+     * @param config_path Path to the configuration file
+     * @param config Configuration object to save
+     * @return true if saved successfully, false otherwise
+     */
+    [[nodiscard]] static bool save_config(const std::string &config_path, const ApiConfig &config) noexcept;
 
   private:
     // Server implementation

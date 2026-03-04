@@ -339,6 +339,14 @@ bool CDigitShowDSTDoc::StartApiServer() noexcept
     try
     {
         const auto config = api::ApiServer::load_config("api_config.json");
+        
+        // Apply saved sampling time if present
+        if (config.sampling_time_ms >= 50 && config.sampling_time_ms <= 600000)
+        {
+            timer::TimeInterval_3 = std::chrono::milliseconds(config.sampling_time_ms);
+            spdlog::info("Applied saved sampling time: {} ms", config.sampling_time_ms);
+        }
+        
         if (!config.enabled)
         {
             spdlog::info("API server is disabled in configuration");
