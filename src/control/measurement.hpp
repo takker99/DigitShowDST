@@ -84,9 +84,7 @@ struct PhysicalInput
 
     [[nodiscard]] constexpr double vertical_force_N() const noexcept
     {
-        // Single-LC emulation: front and rear read the same sensor, so average to avoid doubling.
-        // Revert to `return front_vertical_force_N + rear_vertical_force_N;` when dual-LC hardware is installed.
-        return (front_vertical_force_N + rear_vertical_force_N) / 2.0;
+        return front_vertical_force_N + rear_vertical_force_N;
     }
     [[nodiscard]] constexpr double vertical_stress_kpa() const noexcept
     {

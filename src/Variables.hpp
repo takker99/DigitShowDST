@@ -46,10 +46,9 @@ inline constexpr size_t CH_MotorSpeed = 2;    // D/A Channel of Motor Speed
 inline constexpr size_t CH_FRONT_EP_CELL = 3; // D/A Channel of EP (Bellofram_f)
 inline constexpr size_t CH_REAR_EP_CELL = 4;  // D/A Channel of EP (Bellofram_r)
 
-inline constexpr size_t CH_SHEAR_LC = 0;          // A/D Channel of Shear Load Cell
-inline constexpr size_t CH_FRONT_VERTICAL_LC = 1; // A/D Channel of Front Vertical Load Cell
-inline constexpr size_t CH_REAR_VERTICAL_LC =
-    1; // A/D Channel of Rear Vertical Load Cell (= CH_FRONT_VERTICAL_LC: single-LC emulation mode)
+inline constexpr size_t CH_SHEAR_LC = 0;            // A/D Channel of Shear Load Cell
+inline constexpr size_t CH_FRONT_VERTICAL_LC = 1;   // A/D Channel of Front Vertical Load Cell
+inline constexpr size_t CH_REAR_VERTICAL_LC = 2;    // A/D Channel of Rear Vertical Load Cell
 inline constexpr size_t CH_SHEAR_DISP = 3;          // A/D Channel of Shear Displacement
 inline constexpr size_t CH_FRONT_VERTICAL_DISP = 4; // A/D Channel of Vertical Front Displacement
 inline constexpr size_t CH_REAR_VERTICAL_DISP = 5;  // A/D Channel of Vertical Rear Displacement
