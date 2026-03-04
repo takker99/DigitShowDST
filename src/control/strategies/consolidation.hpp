@@ -34,6 +34,7 @@
 #include "../patterns.hpp"
 #include "../strategy_types.hpp"
 #include "../utils.hpp"
+#include <algorithm>
 #include <spdlog/spdlog.h>
 
 namespace control::strategies
@@ -102,9 +103,13 @@ class ConstantTauConsolidationStrategy
         auto vertical_stress_params_ = p.vertical_stress_kpa;
         // target sigma rateを加味したsigmaの目標値を計算する
         // step開始からparams.consolidation_rateで変化したと仮定した場合のsigmaを目標値とする
-        vertical_stress_params_.setpoint =
+        // 中間目標値を最終目標値でクランプし、目標超過後も圧力が上昇し続けるバグを防ぐ
+        const auto ramp_setpoint =
             this->initial_sigma_ +
             sigma_rate * std::chrono::duration_cast<std::chrono::minutes_d>(ctx.elapsed_time).count();
+        vertical_stress_params_.setpoint =
+            std::clamp(ramp_setpoint, std::min(this->initial_sigma_, p.vertical_stress_kpa.setpoint),
+                       std::max(this->initial_sigma_, p.vertical_stress_kpa.setpoint));
 
         return apply_motor_tau_control(p.shear_stress_kpa, ctx.physical_input,
                                        apply_ep_constant_pressure_control(vertical_stress_params_, p.tilt_mm,
