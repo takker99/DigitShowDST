@@ -26,11 +26,11 @@ void update() noexcept
 {
     const control::PhysicalInput initial_based_input{.specimen = SpecimenData,
                                                      .shear_force_N = Phyout[CH_SHEAR_LC],
-                                                     .vertical_force_front_N = Phyout[CH_VERTICAL_FRONT_LC],
-                                                     .vertical_force_rear_N = Phyout[CH_VERTICAL_REAR_LC],
+                                                     .front_vertical_force_N = Phyout[CH_FRONT_VERTICAL_LC],
+                                                     .rear_vertical_force_N = Phyout[CH_REAR_VERTICAL_LC],
                                                      .shear_displacement_mm = Phyout[CH_SHEAR_DISP],
-                                                     .front_vertical_disp_mm = Phyout[CH_VERTICAL_FRONT_DISP],
-                                                     .rear_vertical_disp_mm = Phyout[CH_VERTICAL_REAR_DISP],
+                                                     .front_vertical_disp_mm = Phyout[CH_FRONT_VERTICAL_DISP],
+                                                     .rear_vertical_disp_mm = Phyout[CH_REAR_VERTICAL_DISP],
                                                      .front_friction_force_N = Phyout[CH_FRONT_FRICTION_LC],
                                                      .rear_friction_force_N = Phyout[CH_REAR_FRICTION_LC]};
 
@@ -39,10 +39,11 @@ void update() noexcept
     {
     }
 
-    latest_physical_output.store({control::fromVoltage(static_cast<double>(DAVout[CH_EP_Cell_f]), DA_Cal[CH_EP_Cell_f]),
-                                  control::fromVoltage(static_cast<double>(DAVout[CH_EP_Cell_r]), DA_Cal[CH_EP_Cell_r]),
-                                  control::fromIISMotorVoltage(DAVout[CH_Motor], DAVout[CH_MotorCruch],
-                                                               DAVout[CH_MotorSpeed], DA_Cal[CH_MotorSpeed])});
+    latest_physical_output.store(
+        {control::fromVoltage(static_cast<double>(DAVout[CH_FRONT_EP_CELL]), DA_Cal[CH_FRONT_EP_CELL]),
+         control::fromVoltage(static_cast<double>(DAVout[CH_REAR_EP_CELL]), DA_Cal[CH_REAR_EP_CELL]),
+         control::fromIISMotorVoltage(DAVout[CH_Motor], DAVout[CH_MotorCruch], DAVout[CH_MotorSpeed],
+                                      DA_Cal[CH_MotorSpeed])});
 }
 
 std::expected<void, std::string> set_output(const control::PhysicalOutput<> &physical) noexcept
@@ -59,8 +60,8 @@ std::expected<void, std::string> set_output(const control::PhysicalOutput<> &phy
     }
     DAVout[CH_MotorSpeed] = motor_speed_voltage;
 
-    DAVout[CH_EP_Cell_f] = static_cast<float>(control::toVoltage(physical.front_ep_kpa, DA_Cal[CH_EP_Cell_f]));
-    DAVout[CH_EP_Cell_r] = static_cast<float>(control::toVoltage(physical.rear_ep_kpa, DA_Cal[CH_EP_Cell_r]));
+    DAVout[CH_FRONT_EP_CELL] = static_cast<float>(control::toVoltage(physical.front_ep_kpa, DA_Cal[CH_FRONT_EP_CELL]));
+    DAVout[CH_REAR_EP_CELL] = static_cast<float>(control::toVoltage(physical.rear_ep_kpa, DA_Cal[CH_REAR_EP_CELL]));
 
     if (auto result = digitshow::write_analog_outputs(); !result)
     {

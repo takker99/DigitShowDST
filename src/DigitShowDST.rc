@@ -170,13 +170,13 @@ BEGIN
     EDITTEXT        IDC_EDIT_Vout02,147,28,56,14,ES_RIGHT | ES_AUTOHSCROLL | ES_READONLY
     LTEXT           "H-LVDT(CH3)",IDC_STATIC,207,19,71,8
     EDITTEXT        IDC_EDIT_Vout03,207,28,56,14,ES_RIGHT | ES_AUTOHSCROLL | ES_READONLY
-    LTEXT           "V-front-LVDT(CH4)",IDC_STATIC,267,19,63,8
+    LTEXT           "Front Vert LVDT (CH4)",IDC_STATIC,267,19,63,8
     EDITTEXT        IDC_EDIT_Vout04,267,28,56,14,ES_RIGHT | ES_AUTOHSCROLL | ES_READONLY
-    LTEXT           "V-rear-LVDT(CH5)",IDC_STATIC,327,19,71,8
+    LTEXT           "Rear Vert LVDT (CH5)",IDC_STATIC,327,19,71,8
     EDITTEXT        IDC_EDIT_Vout05,327,28,56,14,ES_RIGHT | ES_AUTOHSCROLL | ES_READONLY
-    LTEXT           "Front friction(CH6)",IDC_STATIC,387,19,65,8
+    LTEXT           "Front Friction (CH6)",IDC_STATIC,387,19,65,8
     EDITTEXT        IDC_EDIT_Vout06,387,28,56,14,ES_RIGHT | ES_AUTOHSCROLL | ES_READONLY
-    LTEXT           "Rear friction(CH7)",IDC_STATIC,447,19,14,8
+    LTEXT           "Rear Friction (CH7)",IDC_STATIC,447,19,14,8
     EDITTEXT        IDC_EDIT_Vout07,447,28,56,14,ES_RIGHT | ES_AUTOHSCROLL | ES_READONLY
 
     // Physical Input section (channels in left-to-right order)
@@ -189,13 +189,13 @@ BEGIN
     EDITTEXT        IDC_EDIT_Phyout02,147,79,56,14,ES_RIGHT | ES_AUTOHSCROLL | ES_READONLY
     LTEXT           "Shear disp. (mm)",IDC_STATIC,207,70,70,8
     EDITTEXT        IDC_EDIT_Phyout03,207,79,56,14,ES_RIGHT | ES_AUTOHSCROLL | ES_READONLY
-    LTEXT           "V-front-disp.(mm)",IDC_STATIC,267,70,54,8
+    LTEXT           "Front Vert Disp (mm)",IDC_STATIC,267,70,54,8
     EDITTEXT        IDC_EDIT_Phyout04,267,79,56,14,ES_RIGHT | ES_AUTOHSCROLL | ES_READONLY
-    LTEXT           "V-rear-disp.(mm)",IDC_STATIC,327,70,57,8
+    LTEXT           "Rear Vert Disp (mm)",IDC_STATIC,327,70,57,8
     EDITTEXT        IDC_EDIT_Phyout05,327,79,56,14,ES_RIGHT | ES_AUTOHSCROLL | ES_READONLY
-    LTEXT           "Front friction (N)",IDC_STATIC,387,70,56,8
+    LTEXT           "Front Friction (N)",IDC_STATIC,387,70,56,8
     EDITTEXT        IDC_EDIT_Phyout06,387,79,56,14,ES_RIGHT | ES_AUTOHSCROLL | ES_READONLY
-    LTEXT           "Rear friction (N)",IDC_STATIC,447,70,14,8
+    LTEXT           "Rear Friction (N)",IDC_STATIC,447,70,14,8
     EDITTEXT        IDC_EDIT_Phyout07,447,79,56,14,ES_RIGHT | ES_AUTOHSCROLL | ES_READONLY
 
     // Parameter sections (left-to-right order)

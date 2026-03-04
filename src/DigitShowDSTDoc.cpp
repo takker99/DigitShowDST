@@ -81,8 +81,8 @@ BOOL CDigitShowDSTDoc::OnNewDocument()
     variables::physical::latest_physical_input.store({
         SpecimenData,
         0.0, // shear_force_N
-        0.0, // vertical_force_front_N
-        0.0, // vertical_force_rear_N
+        0.0, // front_vertical_force_N
+        0.0, // rear_vertical_force_N
         0.0, // shear_displacement_mm
         0.0, // front_vertical_disp_mm
         0.0, // rear_vertical_disp_mm
@@ -160,13 +160,15 @@ bool CDigitShowDSTDoc::OpenSaveWriters(const std::filesystem::path &basePath)
         "UnixTime(ms)\tCH00_(V)\tCH01_(V)\tCH02_(V)\tCH03_(V)\tCH04_(V)\tCH05_(V)\tCH06_(V)\tCH07_(V)");
 
     // Physical file header
-    m_phyWriter.writeLine("UnixTime(ms)\tShear_load_(N)\tVertical_load_Front_(N)\tVertical_load_Rear_(N)\tShear_disp._(mm)\t"
-                          "V-front-disp._(mm)\tV-rear-disp._(mm)\tFront_friction_(N)\tRear_friction_(N)");
+    m_phyWriter.writeLine(
+        "UnixTime(ms)\tShear_load_(N)\tFront_Vertical_Force_(N)\tRear_Vertical_Force_(N)\tShear_disp._(mm)\t"
+        "Front_Vertical_Disp_(mm)\tRear_Vertical_Disp_(mm)\tFront_Friction_Force_(N)\tRear_Friction_Force_(N)");
 
     // Parameter file header
-    m_paramWriter.writeLine("UnixTime(ms)\tTau_(kPa)\tShear_disp._(mm)\tSigma_(kPa)\tV-ave-disp._(mm)\tev_diff/"
-                            "2_(mm)\tFront_friction_(N)\tRear_friction_(N)\tRPM\tFront_EP_(kPa)\tRear_EP_(kPa)\tRPM_(V)"
-                            "\tFront_EP_(V)\tRear_EP_(V)\tLoop_count\tControl_No\tStep_time_(s)");
+    m_paramWriter.writeLine(
+        "UnixTime(ms)\tTau_(kPa)\tShear_disp._(mm)\tSigma_(kPa)\tV-ave-disp._(mm)\tev_diff/"
+        "2_(mm)\tFront_Friction_Force_(N)\tRear_Friction_Force_(N)\tRPM\tFront_EP_(kPa)\tRear_EP_(kPa)\tRPM_(V)"
+        "\tFront_EP_(V)\tRear_EP_(V)\tLoop_count\tControl_No\tStep_time_(s)");
 
     spdlog::info("Opened TSV writers: vlt={}, phy={}, param={}",
                  reinterpret_cast<const char *>( // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
@@ -304,8 +306,8 @@ void CDigitShowDSTDoc::SaveToFile()
     std::format_to(std::back_inserter(m_writeScratch), "{:.6f}\t", physical_output.front_ep_kpa);         // param[8]
     std::format_to(std::back_inserter(m_writeScratch), "{:.6f}\t", physical_output.rear_ep_kpa);          // param[9]
     std::format_to(std::back_inserter(m_writeScratch), "{:.6f}\t", DAVout[CH_MotorSpeed]);                // param[10]
-    std::format_to(std::back_inserter(m_writeScratch), "{:.6f}\t", DAVout[CH_EP_Cell_f]);                 // param[11]
-    std::format_to(std::back_inserter(m_writeScratch), "{:.6f}\t", DAVout[CH_EP_Cell_r]);                 // param[12]
+    std::format_to(std::back_inserter(m_writeScratch), "{:.6f}\t", DAVout[CH_FRONT_EP_CELL]);             // param[11]
+    std::format_to(std::back_inserter(m_writeScratch), "{:.6f}\t", DAVout[CH_REAR_EP_CELL]);              // param[12]
     std::format_to(std::back_inserter(m_writeScratch), "{:.6f}\t",
                    static_cast<double>(control::num_cyclic)); // param[13]
     std::format_to(std::back_inserter(m_writeScratch), "{:.6f}\t",

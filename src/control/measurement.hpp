@@ -74,8 +74,8 @@ struct PhysicalInput
 {
     SpecimenSnapshot specimen{};
     double shear_force_N = 0.0;
-    double vertical_force_front_N = 0.0;  // 前側 LC 値
-    double vertical_force_rear_N = 0.0;   // 後ろ側 LC 値
+    double front_vertical_force_N = 0.0; // 前側 LC 値
+    double rear_vertical_force_N = 0.0;  // 後ろ側 LC 値
     double shear_displacement_mm = 0.0;
     double front_vertical_disp_mm = 0.0;
     double rear_vertical_disp_mm = 0.0;
@@ -85,8 +85,8 @@ struct PhysicalInput
     [[nodiscard]] constexpr double vertical_force_N() const noexcept
     {
         // Single-LC emulation: front and rear read the same sensor, so average to avoid doubling.
-        // Revert to `return vertical_force_front_N + vertical_force_rear_N;` when dual-LC hardware is installed.
-        return (vertical_force_front_N + vertical_force_rear_N) / 2.0;
+        // Revert to `return front_vertical_force_N + rear_vertical_force_N;` when dual-LC hardware is installed.
+        return (front_vertical_force_N + rear_vertical_force_N) / 2.0;
     }
     [[nodiscard]] constexpr double vertical_stress_kpa() const noexcept
     {
@@ -202,15 +202,15 @@ concept PhysicalOutputLike = requires(T output) {
     const double new_rear_disp = rebased_normal_mm - input.tilt_mm();
 
     return PhysicalInput{
-        .specimen                = reference,
-        .shear_force_N           = input.shear_force_N,
-        .vertical_force_front_N  = input.vertical_force_front_N,
-        .vertical_force_rear_N   = input.vertical_force_rear_N,
-        .shear_displacement_mm   = input.shear_displacement_mm,
-        .front_vertical_disp_mm  = new_front_disp,
-        .rear_vertical_disp_mm   = new_rear_disp,
-        .front_friction_force_N  = input.front_friction_force_N,
-        .rear_friction_force_N   = input.rear_friction_force_N,
+        .specimen = reference,
+        .shear_force_N = input.shear_force_N,
+        .front_vertical_force_N = input.front_vertical_force_N,
+        .rear_vertical_force_N = input.rear_vertical_force_N,
+        .shear_displacement_mm = input.shear_displacement_mm,
+        .front_vertical_disp_mm = new_front_disp,
+        .rear_vertical_disp_mm = new_rear_disp,
+        .front_friction_force_N = input.front_friction_force_N,
+        .rear_friction_force_N = input.rear_friction_force_N,
     };
 }
 

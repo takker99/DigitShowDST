@@ -24,20 +24,20 @@ for the JSON format and its mapping back to legacy helpers.
 | 定数名 | 値 | 用途 |
 |--------|-----|------|
 | `CH_SHEAR_LC` | 0 | せん断ロードセル |
-| `CH_VERTICAL_FRONT_LC` | 1 | 前側垂直ロードセル（旧 CH_VERTICAL_LC） |
-| `CH_VERTICAL_REAR_LC` | 2 | 後ろ側垂直ロードセル（新規） |
+| `CH_FRONT_VERTICAL_LC` | 1 | 前側垂直ロードセル（旧 CH_VERTICAL_LC） |
+| `CH_REAR_VERTICAL_LC` | 2 | 後ろ側垂直ロードセル（新規） |
 | `CH_SHEAR_DISP` | 3 | せん断変位計（旧 2） |
-| `CH_VERTICAL_FRONT_DISP` | 4 | 前側垂直変位計（旧 3） |
-| `CH_VERTICAL_REAR_DISP` | 5 | 後ろ側垂直変位計（旧 4） |
+| `CH_FRONT_VERTICAL_DISP` | 4 | 前側垂直変位計（旧 3） |
+| `CH_REAR_VERTICAL_DISP` | 5 | 後ろ側垂直変位計（旧 4） |
 | `CH_FRONT_FRICTION_LC` | 6 | 前側摩擦ロードセル（旧 5） |
 | `CH_REAR_FRICTION_LC` | 7 | 後ろ側摩擦ロードセル（旧 6） |
 
-**ハードウェア配線要件**: `board_control.cpp` の `ReadAnalogInputs()` は stride=2 ロジック（`AdData[b][AdChannels[b] * j + 2 * i]`）で実装済みのため、物理 CH4（CONTEC ボード）に後ろ側垂直 LC を接続するだけで `Phyout[2]`（= `CH_VERTICAL_REAR_LC`）に値が入る。ソフト側の修正は不要。
+**ハードウェア配線要件**: `board_control.cpp` の `ReadAnalogInputs()` は stride=2 ロジック（`AdData[b][AdChannels[b] * j + 2 * i]`）で実装済みのため、物理 CH4（CONTEC ボード）に後ろ側垂直 LC を接続するだけで `Phyout[2]`（= `CH_REAR_VERTICAL_LC`）に値が入る。ソフト側の修正は不要。
 
 **キャリブレーション注意**: チャネル番号シフトにより、旧キャリブレーション設定ファイルは CH2〜7 の係数が誤適用される。ハードウェア工事後は必ずキャリブレーションを再実施すること（ソフト側マイグレーションなし）。
 
 **制御スクリプトとの互換性**: 既存の制御スクリプト（JSON）は変更不要。
-`vertical_stress_kpa()` メソッドが前後 LC 値（`vertical_force_front_N + vertical_force_rear_N`）を自動合算するため、
+`vertical_stress_kpa()` メソッドが前後 LC 値（`front_vertical_force_N + rear_vertical_force_N`）を自動合算するため、
 `target_sigma_kPa` パラメータの意味は変わらない。
 
 ## File Structure

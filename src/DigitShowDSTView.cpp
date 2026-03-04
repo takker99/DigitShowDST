@@ -417,26 +417,26 @@ void CDigitShowDSTView::ShowData()
 
     // Format voltage output display strings using filtered values.
     // Use channel constants explicitly so the mapping stays correct when
-    // CH_VERTICAL_REAR_LC aliases the same index as CH_VERTICAL_FRONT_LC
+    // CH_REAR_VERTICAL_LC aliases the same index as CH_FRONT_VERTICAL_LC
     // (single-LC emulation mode) or differs in dual-LC hardware mode.
     const auto &vout_f = display_lpf::filter.vout_filtered();
     m_Vout[0].Format(_T("%11.4f"), vout_f[variables::CH_SHEAR_LC]);
-    m_Vout[1].Format(_T("%11.4f"), vout_f[variables::CH_VERTICAL_FRONT_LC]);
-    m_Vout[2].Format(_T("%11.4f"), vout_f[variables::CH_VERTICAL_REAR_LC]);
+    m_Vout[1].Format(_T("%11.4f"), vout_f[variables::CH_FRONT_VERTICAL_LC]);
+    m_Vout[2].Format(_T("%11.4f"), vout_f[variables::CH_REAR_VERTICAL_LC]);
     m_Vout[3].Format(_T("%11.4f"), vout_f[variables::CH_SHEAR_DISP]);
-    m_Vout[4].Format(_T("%11.4f"), vout_f[variables::CH_VERTICAL_FRONT_DISP]);
-    m_Vout[5].Format(_T("%11.4f"), vout_f[variables::CH_VERTICAL_REAR_DISP]);
+    m_Vout[4].Format(_T("%11.4f"), vout_f[variables::CH_FRONT_VERTICAL_DISP]);
+    m_Vout[5].Format(_T("%11.4f"), vout_f[variables::CH_REAR_VERTICAL_DISP]);
     m_Vout[6].Format(_T("%11.4f"), vout_f[variables::CH_FRONT_FRICTION_LC]);
     m_Vout[7].Format(_T("%11.4f"), vout_f[variables::CH_REAR_FRICTION_LC]);
 
     // Format physical output display strings using filtered values.
     const auto &phyout_f = display_lpf::filter.phyout_filtered();
     m_Phyout[0].Format(_T("%11.4f"), phyout_f[variables::CH_SHEAR_LC]);
-    m_Phyout[1].Format(_T("%11.4f"), phyout_f[variables::CH_VERTICAL_FRONT_LC]);
-    m_Phyout[2].Format(_T("%11.4f"), phyout_f[variables::CH_VERTICAL_REAR_LC]);
+    m_Phyout[1].Format(_T("%11.4f"), phyout_f[variables::CH_FRONT_VERTICAL_LC]);
+    m_Phyout[2].Format(_T("%11.4f"), phyout_f[variables::CH_REAR_VERTICAL_LC]);
     m_Phyout[3].Format(_T("%11.4f"), phyout_f[variables::CH_SHEAR_DISP]);
-    m_Phyout[4].Format(_T("%11.4f"), phyout_f[variables::CH_VERTICAL_FRONT_DISP]);
-    m_Phyout[5].Format(_T("%11.4f"), phyout_f[variables::CH_VERTICAL_REAR_DISP]);
+    m_Phyout[4].Format(_T("%11.4f"), phyout_f[variables::CH_FRONT_VERTICAL_DISP]);
+    m_Phyout[5].Format(_T("%11.4f"), phyout_f[variables::CH_REAR_VERTICAL_DISP]);
     m_Phyout[6].Format(_T("%11.4f"), phyout_f[variables::CH_FRONT_FRICTION_LC]);
     m_Phyout[7].Format(_T("%11.4f"), phyout_f[variables::CH_REAR_FRICTION_LC]);
 
@@ -451,8 +451,8 @@ void CDigitShowDSTView::ShowData()
     m_Para[7].Format(_T("%11.4f"), static_cast<double>(physical_output.rear_ep_kpa));
     // Raw D/A voltage analog values (these are not in the physical outputs)
     m_Para[8].Format(_T("%11.4f"), static_cast<double>(DAVout[CH_MotorSpeed]));
-    m_Para[9].Format(_T("%11.4f"), static_cast<double>(DAVout[CH_EP_Cell_f]));
-    m_Para[10].Format(_T("%11.4f"), static_cast<double>(DAVout[CH_EP_Cell_r]));
+    m_Para[9].Format(_T("%11.4f"), static_cast<double>(DAVout[CH_FRONT_EP_CELL]));
+    m_Para[10].Format(_T("%11.4f"), static_cast<double>(DAVout[CH_REAR_EP_CELL]));
 
     m_Para[11].Format(_T("%11d"), std::lround(static_cast<double>(control::current_step_index)));
     m_Para[12].Format(_T("%11.4f"), std::chrono::seconds_d{control::step_elapsed}.count());

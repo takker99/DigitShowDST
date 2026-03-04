@@ -403,8 +403,8 @@ nlohmann::json ApiServer::to_json_object(const control::PhysicalInput &input) no
 {
     return json{{"specimen", to_json_object(input.specimen)},
                 {"shear_force_N", input.shear_force_N},
-                {"vertical_force_front_N", input.vertical_force_front_N},
-                {"vertical_force_rear_N", input.vertical_force_rear_N},
+                {"front_vertical_force_N", input.front_vertical_force_N},
+                {"rear_vertical_force_N", input.rear_vertical_force_N},
                 {"vertical_force_N", input.vertical_force_N()},
                 {"shear_displacement_mm", input.shear_displacement_mm},
                 {"front_vertical_disp_mm", input.front_vertical_disp_mm},

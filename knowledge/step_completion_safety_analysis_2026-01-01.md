@@ -76,8 +76,8 @@ When the next step begins execution, `execute_control_step()` re-enters with:
 
 ```cpp
 // Line 181-184: Re-initialize from current hardware state
-control_output.front_ep_kpa = fromVoltage(DAVout[CH_EP_Cell_f], ...);
-control_output.rear_ep_kpa = fromVoltage(DAVout[CH_EP_Cell_r], ...);
+control_output.front_ep_kpa = fromVoltage(DAVout[CH_FRONT_EP_CELL], ...);
+control_output.rear_ep_kpa = fromVoltage(DAVout[CH_REAR_EP_CELL], ...);
 control_output.motor_rpm = fromIISMotorVoltage(DAVout[CH_Motor], ...);
 ```
 

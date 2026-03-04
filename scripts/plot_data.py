@@ -709,10 +709,18 @@ def plot_parameters(
     col_sources = []  # Track whether column comes from df_out or df_dat
     for pos in requested_positions:
         if pos == 100:  # Front vertical disp from df_dat
-            col_names.append("V-front-disp._(mm)")
+            col_names.append(
+                "Front_Vertical_Disp_(mm)"
+                if "Front_Vertical_Disp_(mm)" in df_dat.columns
+                else "V-front-disp._(mm)"
+            )
             col_sources.append("dat")
         elif pos == 101:  # Rear vertical disp from df_dat
-            col_names.append("V-rear-disp._(mm)")
+            col_names.append(
+                "Rear_Vertical_Disp_(mm)"
+                if "Rear_Vertical_Disp_(mm)" in df_dat.columns
+                else "V-rear-disp._(mm)"
+            )
             col_sources.append("dat")
         elif pos < len(df_out.columns):
             col_names.append(df_out.columns[pos])
