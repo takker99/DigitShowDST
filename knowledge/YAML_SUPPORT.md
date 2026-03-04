@@ -2,7 +2,9 @@
 
 ## Overview
 
-DigitShowDST now supports both JSON and YAML formats for calibration factors and control scripts. Users can seamlessly load and save configuration files in either format through the UI dialogs.
+DigitShowDST now supports both JSON and YAML formats for calibration factors and
+control scripts. Users can seamlessly load and save configuration files in
+either format through the UI dialogs.
 
 ## Supported File Extensions
 
@@ -14,25 +16,33 @@ DigitShowDST now supports both JSON and YAML formats for calibration factors and
 ### Automatic Format Detection
 
 The system automatically detects the file format based on the file extension:
+
 - `.json` files are parsed as JSON
 - `.yml` and `.yaml` files are parsed as YAML
 - Unknown extensions default to JSON
 
 ### Unified Loading
 
-Both calibration factor and control script dialogs can load files in either format:
-- **Calibration Factor Dialog**: Click "Load" button and select `.json`, `.yml`, or `.yaml` files
-- **Control Script Dialog**: Click "Load" button and select `.json`, `.yml`, or `.yaml` files
+Both calibration factor and control script dialogs can load files in either
+format:
+
+- **Calibration Factor Dialog**: Click "Load" button and select `.json`, `.yml`,
+  or `.yaml` files
+- **Control Script Dialog**: Click "Load" button and select `.json`, `.yml`, or
+  `.yaml` files
 
 ### Format-Specific Saving
 
-When saving, the file format is automatically determined by the chosen file extension in the save dialog:
+When saving, the file format is automatically determined by the chosen file
+extension in the save dialog:
+
 - Save as `.json` → JSON format
 - Save as `.yml` or `.yaml` → YAML format
 
 ### Data Preservation
 
 Round-trip conversion between JSON and YAML preserves all data:
+
 - Load a JSON file → Save as YAML → No data loss
 - Load a YAML file → Save as JSON → No data loss
 
@@ -41,6 +51,7 @@ Round-trip conversion between JSON and YAML preserves all data:
 ### Calibration Factor Files
 
 **JSON Format** (`calibration.json`):
+
 ```json
 {
   "calibration_data": [
@@ -61,7 +72,9 @@ Round-trip conversion between JSON and YAML preserves all data:
 ```
 
 **YAML Format** (`calibration.yaml`):
+
 ```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/takker99/DigitShowDST/<commit>/schemas/calibration_factor.schema.json
 calibration_data:
   - channel: 0
     cal_a: 0.0
@@ -77,6 +90,7 @@ initial_specimen:
 ### Control Script Files
 
 **JSON Format** (`control.json`):
+
 ```json
 {
   "$schema": "../schemas/control_script.schema.json",
@@ -97,7 +111,9 @@ initial_specimen:
 ```
 
 **YAML Format** (`control.yaml`):
+
 ```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/takker99/DigitShowDST/<commit>/schemas/control_script.schema.json
 steps:
   - name: Initial consolidation
     use: constant_tau_consolidation
@@ -113,7 +129,8 @@ steps:
 
 ### Core Functions
 
-The YAML support is implemented through three main functions in `control/json.hpp`:
+The YAML support is implemented through three main functions in
+`control/json.hpp`:
 
 1. **`DetectFormat(filepath)`**: Detects file format from extension
 2. **`LoadConfigFile(filepath)`**: Loads JSON or YAML file into a ryml tree
@@ -122,6 +139,7 @@ The YAML support is implemented through three main functions in `control/json.hp
 ### File Dialog Filters
 
 Both dialogs now use unified file filters:
+
 ```
 Config Files (*.json;*.yml;*.yaml)|*.json;*.yml;*.yaml|
 JSON Files (*.json)|*.json|
@@ -154,6 +172,7 @@ All Files (*.*)|*.*||
 ## Testing
 
 Comprehensive test suite (`test_yaml_support.cpp`) covers:
+
 - Format detection for all extensions
 - JSON file loading
 - YAML file loading
@@ -166,6 +185,7 @@ Comprehensive test suite (`test_yaml_support.cpp`) covers:
 ## Sample Files
 
 Example files are provided in `test_data/`:
+
 - `sample_calibration.json` / `sample_calibration.yaml`
 - `sample_control.json` / `sample_control.yaml`
 
@@ -186,13 +206,14 @@ Example files are provided in `test_data/`:
 ## Schema Support
 
 - JSON files can reference the schema via `$schema` field
-- YAML files don't require schema reference (but the same schema applies)
-- VS Code provides autocomplete for JSON files with schema
-- YAML validation follows the same schema rules
+- YAML files include a `# yaml-language-server: $schema=...` comment at the top
+  on save
+- The YAML schema URL is pinned to the build commit (the `version` commit id
+  without `-dirty`)
+- VS Code provides autocomplete/validation for both JSON and YAML formats
 
 ## Known Limitations
 
-- Schema reference (`$schema`) is preserved only in JSON format
 - YAML comments are not preserved when converting to JSON and back
 - File format is determined solely by extension (no content detection)
 
@@ -205,6 +226,7 @@ Example files are provided in `test_data/`:
 
 ## References
 
-- JSON Schema: `schemas/calibration_factor.schema.json`, `schemas/control_script.schema.json`
+- JSON Schema: `schemas/calibration_factor.schema.json`,
+  `schemas/control_script.schema.json`
 - Control specifications: `knowledge/control_specifications.md`
 - YAML migration guide: `knowledge/ctl_to_yaml_migration.md`

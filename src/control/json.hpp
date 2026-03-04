@@ -32,6 +32,7 @@
 #include <ryml/ryml_std.hpp>
 #include <spdlog/spdlog.h>
 #include <sstream>
+#include <string_view>
 #include <vector>
 
 namespace control
@@ -164,8 +165,8 @@ inline std::expected<ryml::Tree, control::ParseError> LoadConfigFile(const std::
  * This function writes the tree to the specified file in the requested format.
  * Errors are logged via spdlog.
  */
-inline bool SaveConfigFile(const std::filesystem::path &filepath, const ryml::Tree &tree,
-                           const FileFormat format) noexcept
+inline bool SaveConfigFile(const std::filesystem::path &filepath, const ryml::Tree &tree, const FileFormat format,
+                           const std::string_view yaml_schema_url = {}) noexcept
 {
     try
     {
@@ -178,6 +179,10 @@ inline bool SaveConfigFile(const std::filesystem::path &filepath, const ryml::Tr
 
         if (format == FileFormat::YAML)
         {
+            if (!yaml_schema_url.empty())
+            {
+                ofs << "# yaml-language-server: $schema=" << yaml_schema_url << "\n";
+            }
             ofs << tree;
         }
         else

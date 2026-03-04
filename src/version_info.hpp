@@ -30,11 +30,14 @@
 #pragma once
 
 #include "../generated/git_version.hpp"
+#include <format>
 #include <string>
 #include <string_view>
 
 namespace version_info
 {
+
+inline constexpr std::string_view kSchemaRepoBaseUrl = "https://raw.githubusercontent.com/takker99/DigitShowDST/";
 
 /**
  * @brief Get version string for configuration files
@@ -103,6 +106,16 @@ inline constexpr std::string_view get_commit_hash() noexcept
 inline constexpr std::string_view get_commit_hash_short() noexcept
 {
     return git_version::COMMIT_SHORT;
+}
+
+/**
+ * @brief Build a raw GitHub URL for a schema file at the build commit
+ * @param schema_path Repository-relative schema path (e.g., "schemas/control_script.schema.json")
+ * @return Raw GitHub URL pointing to the schema file at the build commit
+ */
+inline std::string build_schema_url(const std::string_view schema_path)
+{
+    return std::format("{}{}/{}", kSchemaRepoBaseUrl, get_commit_hash(), schema_path);
 }
 
 } // namespace version_info
