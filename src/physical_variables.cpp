@@ -39,13 +39,10 @@ void update() noexcept
     {
     }
 
-    latest_physical_output.store({control::fromVoltage(static_cast<double>(DAVout[CH_EP_Cell_f]),
-                                                       DA_Cal[CH_EP_Cell_f]),
-                                  control::fromVoltage(static_cast<double>(DAVout[CH_EP_Cell_r]),
-                                                       DA_Cal[CH_EP_Cell_r]),
+    latest_physical_output.store({control::fromVoltage(static_cast<double>(DAVout[CH_EP_Cell_f]), DA_Cal[CH_EP_Cell_f]),
+                                  control::fromVoltage(static_cast<double>(DAVout[CH_EP_Cell_r]), DA_Cal[CH_EP_Cell_r]),
                                   control::fromIISMotorVoltage(DAVout[CH_Motor], DAVout[CH_MotorCruch],
-                                                               DAVout[CH_MotorSpeed],
-                                                               DA_Cal[CH_MotorSpeed])});
+                                                               DAVout[CH_MotorSpeed], DA_Cal[CH_MotorSpeed])});
 }
 
 std::expected<void, std::string> set_output(const control::PhysicalOutput<> &physical) noexcept

@@ -24,6 +24,7 @@
 #include "StdAfx.h"
 
 #include "ApiServer.hpp"
+#include "control/json.hpp"
 #include "openapi_spec.hpp"
 #include "version_info.hpp"
 #include <chrono>
@@ -429,35 +430,35 @@ ApiConfig ApiServer::load_config(const std::string &config_path) noexcept
     try
     {
         const std::filesystem::path path(config_path);
+        const auto format = DetectFormat(path);
+        const auto schema_url = version_info::build_schema_url("schemas/api_config.schema.json");
 
         // Check if the file exists
         if (!std::filesystem::exists(path))
         {
             spdlog::warn("API config file not found: {}. Creating with default values.", config_path);
 
-            // Create default config JSON
-            json default_json = {{"$schema", "schemas/api_config.schema.json"},
-                                 {"enabled", config.enabled},
-                                 {"host", config.host},
-                                 {"port", config.port},
-                                 {"update_interval_ms", config.update_interval_ms},
-                                 {"cors_enabled", config.cors_enabled},
-                                 {"max_connections", config.max_connections}};
+            ryml::Tree tree;
+            ryml::NodeRef root = tree.rootref();
+            root |= ryml::MAP;
+            root["$schema"] << "schemas/api_config.schema.json";
+            root["enabled"] << config.enabled;
+            root["host"] << config.host;
+            root["port"] << config.port;
+            root["update_interval_ms"] << config.update_interval_ms;
+            root["cors_enabled"] << config.cors_enabled;
+            root["max_connections"] << config.max_connections;
 
             // Add version information (git commit hash)
             const auto version = version_info::get_version_string();
             if (!version.empty())
             {
-                default_json["version"] = version;
+                root["version"] << version;
                 spdlog::debug("Added version info to API config: {}", version);
             }
 
-            // Write default config to file
-            std::ofstream out_file(path);
-            if (out_file.is_open())
+            if (SaveConfigFile(path, tree, format, schema_url))
             {
-                out_file << default_json.dump(2) << "\n"; // Pretty print with 2-space indent
-                out_file.close();
                 spdlog::info("Created default API config file: {}", config_path);
             }
             else
@@ -477,7 +478,21 @@ ApiConfig ApiServer::load_config(const std::string &config_path) noexcept
         }
 
         json j;
-        file >> j;
+        if (format == FileFormat::YAML)
+        {
+            std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+            const auto json_content = yaml_to_json(content);
+            j = json::parse(json_content, nullptr, false);
+            if (j.is_discarded())
+            {
+                spdlog::error("Failed to parse API config YAML: {}", config_path);
+                return config;
+            }
+        }
+        else
+        {
+            file >> j;
+        }
 
         if (j.contains("enabled"))
             config.enabled = j["enabled"];

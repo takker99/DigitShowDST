@@ -32,6 +32,7 @@
 #include "Variables.hpp"
 #include "charconv.hpp"
 #include "control/json.hpp"
+#include "lpf.hpp"
 #include "physical_variables.hpp"
 #include "resource.h"
 #include "ui_helpers.hpp"
@@ -204,9 +205,12 @@ void CCalibrationFactor::CF_Load()
         m_DACal[i][1] = DA_Cal[i][1]; // linear
     }
 
-    for (auto &&[p, phyout] : std::views::zip(m_CFP, Phyout))
+    for (size_t i = 0; i < CHANNELS_CAL; ++i)
     {
-        p.Format(_T("%11.5f"), phyout);
+        // Fall back to raw Phyout if the LPF state has not been seeded yet.
+        const double value =
+            display_lpf::filter.is_initialized() ? display_lpf::filter.phyout_filtered()[i] : Phyout[i];
+        m_CFP[i].Format(_T("%11.5f"), value);
     }
 
     // Channel labels for CH0-CH7
@@ -540,8 +544,9 @@ void CCalibrationFactor::OnBUTTONCFSaveConfig()
 
             // Detect format from file extension
             const auto format = DetectFormat(std::filesystem::path(wpath));
+            const auto schema_url = version_info::build_schema_url("schemas/calibration_factor.schema.json");
 
-            if (!SaveConfigFile(std::filesystem::path(wpath), tree, format))
+            if (!SaveConfigFile(std::filesystem::path(wpath), tree, format, schema_url))
             {
                 spdlog::error("Failed to save calibration config file: {}", path_u8);
                 AfxMessageBox(_T("Failed to save calibration config file."), MB_ICONEXCLAMATION | MB_OK);

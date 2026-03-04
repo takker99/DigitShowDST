@@ -31,7 +31,7 @@ namespace control
 {
 inline constexpr std::size_t kVoltageCalibrationTerms = 2;
 using VoltageCalibration = std::array<double, kVoltageCalibrationTerms>;
-}
+} // namespace control
 
 namespace variables
 {
