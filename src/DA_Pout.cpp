@@ -114,7 +114,7 @@ void CDA_Pout::OnBUTTONCalculation00()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     UpdateData(TRUE);
-    m_DAVout[0] = static_cast<float>(control::toVoltage(m_DAPvalue[0], DA_Cal[0][1], DA_Cal[0][0]));
+    m_DAVout[0] = static_cast<float>(control::toVoltage(m_DAPvalue[0], DA_Cal[0]));
     UpdateData(FALSE);
 }
 
@@ -122,7 +122,7 @@ void CDA_Pout::OnBUTTONCalculation01()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     UpdateData(TRUE);
-    m_DAVout[1] = static_cast<float>(control::toVoltage(m_DAPvalue[1], DA_Cal[1][1], DA_Cal[1][0]));
+    m_DAVout[1] = static_cast<float>(control::toVoltage(m_DAPvalue[1], DA_Cal[1]));
     UpdateData(FALSE);
 }
 
@@ -130,7 +130,7 @@ void CDA_Pout::OnBUTTONCalculation02()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     UpdateData(TRUE);
-    m_DAVout[2] = static_cast<float>(control::toVoltage(m_DAPvalue[2], DA_Cal[2][1], DA_Cal[2][0]));
+    m_DAVout[2] = static_cast<float>(control::toVoltage(m_DAPvalue[2], DA_Cal[2]));
     UpdateData(FALSE);
 }
 
@@ -138,7 +138,7 @@ void CDA_Pout::OnBUTTONCalculation03()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     UpdateData(TRUE);
-    m_DAVout[3] = static_cast<float>(control::toVoltage(m_DAPvalue[3], DA_Cal[3][1], DA_Cal[3][0]));
+    m_DAVout[3] = static_cast<float>(control::toVoltage(m_DAPvalue[3], DA_Cal[3]));
     UpdateData(FALSE);
 }
 
@@ -146,7 +146,7 @@ void CDA_Pout::OnBUTTONCalculation04()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     UpdateData(TRUE);
-    m_DAVout[4] = static_cast<float>(control::toVoltage(m_DAPvalue[4], DA_Cal[4][1], DA_Cal[4][0]));
+    m_DAVout[4] = static_cast<float>(control::toVoltage(m_DAPvalue[4], DA_Cal[4]));
     UpdateData(FALSE);
 }
 
@@ -154,7 +154,7 @@ void CDA_Pout::OnBUTTONCalculation05()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     UpdateData(TRUE);
-    m_DAVout[5] = static_cast<float>(control::toVoltage(m_DAPvalue[5], DA_Cal[5][1], DA_Cal[5][0]));
+    m_DAVout[5] = static_cast<float>(control::toVoltage(m_DAPvalue[5], DA_Cal[5]));
     UpdateData(FALSE);
 }
 
@@ -162,7 +162,7 @@ void CDA_Pout::OnBUTTONCalculation06()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     UpdateData(TRUE);
-    m_DAVout[6] = static_cast<float>(control::toVoltage(m_DAPvalue[6], DA_Cal[6][1], DA_Cal[6][0]));
+    m_DAVout[6] = static_cast<float>(control::toVoltage(m_DAPvalue[6], DA_Cal[6]));
     UpdateData(FALSE);
 }
 
@@ -170,6 +170,6 @@ void CDA_Pout::OnBUTTONCalculation07()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     UpdateData(TRUE);
-    m_DAVout[7] = static_cast<float>(control::toVoltage(m_DAPvalue[7], DA_Cal[7][1], DA_Cal[7][0]));
+    m_DAVout[7] = static_cast<float>(control::toVoltage(m_DAPvalue[7], DA_Cal[7]));
     UpdateData(FALSE);
 }

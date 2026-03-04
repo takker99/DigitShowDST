@@ -127,18 +127,18 @@ struct PhysicalInput
     }
 };
 
-constexpr auto toVoltage(const double physical_value, const double cal_a, const double cal_b) noexcept
+constexpr auto toVoltage(const double physical_value, const std::array<double, 2> &calibration) noexcept
 {
-    return cal_a * physical_value + cal_b;
+    return calibration[1] * physical_value + calibration[0];
 }
 
 template <typename Value = double>
-constexpr auto fromVoltage(const Value voltage, const double cal_a, const double cal_b) noexcept
+constexpr auto fromVoltage(const Value voltage, const std::array<double, 2> &calibration) noexcept
 {
-    return (voltage - cal_b) / cal_a;
+    return (voltage - calibration[0]) / calibration[1];
 }
 
-constexpr std::array<float, 3> toIISMotorVoltage(const double rpm, const double cal_a, const double cal_b) noexcept
+constexpr std::array<float, 3> toIISMotorVoltage(const double rpm, const std::array<double, 2> &calibration) noexcept
 {
     return {{
         // ON: 5.0V, OFF: 0.0V
@@ -146,16 +146,16 @@ constexpr std::array<float, 3> toIISMotorVoltage(const double rpm, const double 
         // UP: 0.0V, DOWN: 5.0V
         rpm > 0.0 ? 0.0f : 5.0f,
         // SPEED
-        static_cast<float>(toVoltage(math_constexpr::abs(rpm), cal_a, cal_b)),
+        static_cast<float>(toVoltage(math_constexpr::abs(rpm), calibration)),
     }};
 }
 
 constexpr auto fromIISMotorVoltage(const float on_voltage, const float clutch_voltage, const float speed_voltage,
-                                   const double cal_a, const double cal_b) noexcept
+                                   const std::array<double, 2> &calibration) noexcept
 {
     return on_voltage <= 0.f || speed_voltage <= 0.f
                ? 0.0
-               : math_constexpr::copysign(fromVoltage(static_cast<double>(speed_voltage), cal_a, cal_b),
+               : math_constexpr::copysign(fromVoltage(static_cast<double>(speed_voltage), calibration),
                                           clutch_voltage > 0.f ? -1.0 : 1.0);
 }
 
@@ -172,6 +172,8 @@ concept PhysicalOutputLike = requires(T output) {
     { output.front_ep_kpa } -> std::convertible_to<Value>;
     { output.rear_ep_kpa } -> std::convertible_to<Value>;
     { output.motor_rpm } -> std::convertible_to<Value>;
+    { T::can_output_front_ep(static_cast<Value>(0)) } -> std::convertible_to<bool>;
+    { T::can_output_rear_ep(static_cast<Value>(0)) } -> std::convertible_to<bool>;
 };
 
 [[nodiscard]] constexpr SpecimenSnapshot present_specimen(const PhysicalInput &input) noexcept

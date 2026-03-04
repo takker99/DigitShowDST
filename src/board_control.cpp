@@ -137,7 +137,16 @@ std::expected<InitResult, std::string> InitializeBoards(
                                     return aio::setAiChannels(AdId[i], channels);
                                 })
                                 .and_then([&]() { return aio::setAiRangeAll(AdId[i], 0); })
-                                .and_then([&]() { return aio::getAiRange(AdId[i], 0); })
+                                .and_then([&]() {
+                                    // ScanClock制御: 1000 us / maxChannels (参考: DigitShowBasic)
+                                    const float scanClock = 1000.0f / static_cast<float>(AdChannels[i]);
+                                    return aio::setAiScanClock(AdId[i], scanClock);
+                                })
+                                .and_then([&]() { return aio::getAiScanClock(AdId[i]); })
+                                .and_then([&](float scanClock) {
+                                    spdlog::debug("A/D board {} scan clock: {} us", i, scanClock);
+                                    return aio::getAiRange(AdId[i], 0);
+                                })
                                 .transform([&](short range) {
                                     AdRange[i] = range;
                                     return GetRangeValue(range, &adRangeMax[i], &adRangeMin[i]);
@@ -294,7 +303,7 @@ std::expected<void, std::string> WriteAnalogOutputs() noexcept
         std::array<long, 8> daData = {0};
         for (size_t j = 0; std::cmp_less(j, DaChannels[i]); j++)
         {
-            DAVout[k] = std::clamp(DAVout[k], 0.0f, MAX_VOLTAGE_OUTPUT);
+            DAVout[k] = std::clamp(DAVout[k], MIN_VOLTAGE_OUTPUT, MAX_VOLTAGE_OUTPUT);
             daData[j] = VoltToBinary(daRangeMax[i], daRangeMin[i], DaResolution[i], DAVout[k]);
             k++;
         }
