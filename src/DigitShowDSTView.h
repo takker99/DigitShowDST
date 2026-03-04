@@ -86,6 +86,9 @@ class CDigitShowDSTView : public CFormView
     int64_t m_SamplingTime{}; /**< Sampling time display [ms] */
     CStringW m_FileName;      /**< Data file name display */
 
+    BOOL m_LpfEnabled{FALSE}; /**< LPF enable flag (bound to IDC_CHECK_LPF) */
+    double m_LpfCutoff{1.0};  /**< LPF cutoff frequency [Hz] (bound to IDC_EDIT_LPF_CUTOFF) */
+
     //}}AFX_DATA
 
     // アトリビュート
@@ -186,6 +189,9 @@ class CDigitShowDSTView : public CFormView
 
     /** @brief Set timer intervals */
     afx_msg void OnBUTTONSetTimeInterval();
+
+    /** @brief Toggle LPF cutoff input enabled state */
+    afx_msg void OnBNClickedCheckLpf();
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };

@@ -26,6 +26,7 @@
 
 #include "CalibrationAmp.h"
 #include "Variables.hpp"
+#include "lpf.hpp"
 #include "resource.h"
 #include "ui_helpers.hpp"
 
@@ -80,7 +81,9 @@ void CCalibrationAmp::OnBUTTONAmpBase()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     UpdateData(TRUE);
-    m_AmpVB = Vout[AmpID];
+    // Fall back to raw Vout if the LPF state has not been seeded yet.
+    m_AmpVB = display_lpf::filter.is_initialized() ? static_cast<float>(display_lpf::filter.vout_filtered()[AmpID])
+                                                   : Vout[AmpID];
     UpdateData(FALSE);
 }
 
@@ -88,7 +91,9 @@ void CCalibrationAmp::OnBUTTONAmpOffset()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     UpdateData(TRUE);
-    m_AmpVO = Vout[AmpID];
+    // Fall back to raw Vout if the LPF state has not been seeded yet.
+    m_AmpVO = display_lpf::filter.is_initialized() ? static_cast<float>(display_lpf::filter.vout_filtered()[AmpID])
+                                                   : Vout[AmpID];
     UpdateData(FALSE);
 }
 
