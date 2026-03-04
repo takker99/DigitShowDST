@@ -80,10 +80,10 @@ DigitShowDST は「Start Save → Stop Save」（通常保存）や FIFO モー�
   2. Shear_load_(N) - せん断荷重（旧名: Load_(N)）
   3. Vertical_load_(N) - 鉛直荷重（旧名: Cell_P.(kPa)）
   4. Shear_disp._(mm) - せん断変位（旧名: Disp.(mm)）
-  5. V-front-disp._(mm) - 前面鉛直変位（旧名: P.W.P(kPa)）
-  6. V-rear-disp._(mm) - 背面鉛直変位（旧名: SP.Vol.(mm3)）
-  7. Front_friction_(N) - 前面摩擦力（旧名: CH05_(V)）
-  8. Rear_friction_(N) - 背面摩擦力（旧名: V-LDT1_(mm)）
+  5. Front_Vertical_Disp_(mm) - 前面鉛直変位（旧名: P.W.P(kPa)）
+  6. Rear_Vertical_Disp_(mm) - 背面鉛直変位（旧名: SP.Vol.(mm3)）
+  7. Front_Friction_Force_(N) - 前面摩擦力（旧名: CH05_(V)）
+  8. Rear_Friction_Force_(N) - 背面摩擦力（旧名: V-LDT1_(mm)）
   9. CH08 - チャンネル8（旧名: CH07_(V)）
   10. V-LDT2_(mm)
   11. CH09_(V)
@@ -165,8 +165,8 @@ DigitShowDST は「Start Save → Stop Save」（通常保存）や FIFO モー�
   4. Sigma_(kPa) - 鉛直応力 σ（旧名: s'(a)(kPa)）
   5. V-ave-disp._(mm) - 平均鉛直変位（旧名: s'(r)(kPa)）
   6. ev_diff/2_(mm) - 鉛直変位差の半分（傾き）（旧名: Pore_(kPa)）
-  7. Front_friction_(N) - 前面摩擦力（旧名: p____(kPa)）
-  8. Rear_friction_(N) - 背面摩擦力（旧名: q____(kPa)）
+  7. Front_Friction_Force_(N) - 前面摩擦力（旧名: p____(kPa)）
+  8. Rear_Friction_Force_(N) - 背面摩擦力（旧名: q____(kPa)）
   9. RPM - モーター回転数（旧名: p'___(kPa)）
   10. Front_EP_(kPa) - 前面EP（旧名: e(a)_(%)_）
   11. Rear_EP_(kPa) - 背面EP（旧名: e(r)_(%)_）
@@ -191,8 +191,8 @@ DigitShowDST は「Start Save → Stop Save」（通常保存）や FIFO モー�
     - 10: `param[8]` = 前面 EP (kPa) ※ `latest_physical_output.front_ep_kpa`
     - 11: `param[9]` = 背面 EP (kPa) ※ `latest_physical_output.rear_ep_kpa`
     - 12: `param[10]` = RPM(V)（D/A 生値）※ `DAVout[CH_MotorSpeed]`
-    - 13: `param[11]` = 前面 EP(V)（D/A 生値）※ `DAVout[CH_EP_Cell_f]`
-    - 14: `param[12]` = 背面 EP(V)（D/A 生値）※ `DAVout[CH_EP_Cell_r]`
+    - 13: `param[11]` = 前面 EP(V)（D/A 生値）※ `DAVout[CH_FRONT_EP_CELL]`
+    - 14: `param[12]` = 背面 EP(V)（D/A 生値）※ `DAVout[CH_REAR_EP_CELL]`
     - 15: `param[13]` = ループ回数（サイクリック載荷のカウンタ）
     - 16: `param[14]` = 制御ステップ番号（`control::current_step_index`）
     - 17: `param[15]` = クリープ/緩和の経過時間（`control::step_elapsed` 由来）

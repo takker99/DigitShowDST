@@ -48,6 +48,12 @@ def read_dat_file(filepath: str | Path) -> pd.DataFrame:
     elif "Time(s)" in df.columns:
         df.set_index("Time(s)", inplace=True)
 
+    # 新形式（dual LC）: 後方互換性のため合算列を追加（新旧ヘッダ両対応）
+    _front = df.get("Front_Vertical_Force_(N)", df.get("Vertical_load_Front_(N)"))
+    _rear = df.get("Rear_Vertical_Force_(N)", df.get("Vertical_load_Rear_(N)"))
+    if _front is not None and _rear is not None:
+        df["Vertical_load_(N)"] = _front + _rear
+
     return df
 
 

@@ -64,8 +64,8 @@ All 8 D/A channels are reset to 0V:
 - CH_Motor (0) - Motor On/Off
 - CH_MotorCruch (1) - Motor Clutch (Loading/Unloading)
 - CH_MotorSpeed (2) - Motor Speed
-- CH_EP_Cell_f (3) - Front Bellofram Pressure
-- CH_EP_Cell_r (4) - Rear Bellofram Pressure
+- CH_FRONT_EP_CELL (3) - Front Bellofram Pressure
+- CH_REAR_EP_CELL (4) - Rear Bellofram Pressure
 - Channels 5-7 - Reserved/Future use
 
 ## Offline Mode Behavior

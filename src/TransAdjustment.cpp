@@ -69,7 +69,7 @@ END_MESSAGE_MAP_IGNORE_UNUSED_LOCAL_TYPEDEF()
 void CTransAdjustment::OnBUTTONInitialDisp()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
-    m_InitialDisp = variables::Phyout[1];
+    m_InitialDisp = variables::Phyout[CH_FRONT_VERTICAL_LC];
     UpdateData(FALSE);
     GetDlgItem(IDC_BUTTON_UpdateDisp)->EnableWindow(TRUE);
 }
@@ -77,7 +77,7 @@ void CTransAdjustment::OnBUTTONInitialDisp()
 void CTransAdjustment::OnBUTTONEndDisp()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
-    m_FinalDisp = variables::Phyout[1];
+    m_FinalDisp = variables::Phyout[CH_FRONT_VERTICAL_LC];
     UpdateData(FALSE);
     GetDlgItem(IDC_BUTTON_UpdateDisp)->EnableWindow(TRUE);
 }
@@ -87,14 +87,15 @@ void CTransAdjustment::OnBUTTONUpdateDisp()
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     UpdateData(TRUE);
     // AD_Cal[*][0] is the constant (c)
-    variables::AD_Cal[1][0] = variables::AD_Cal[1][0] + (m_InitialDisp - m_FinalDisp);
+    variables::AD_Cal[CH_FRONT_VERTICAL_LC][0] =
+        variables::AD_Cal[CH_FRONT_VERTICAL_LC][0] + (m_InitialDisp - m_FinalDisp);
     GetDlgItem(IDC_BUTTON_UpdateDisp)->EnableWindow(FALSE);
 }
 
 void CTransAdjustment::OnBUTTONInitialBullet()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
-    m_InitialBullet = variables::Phyout[4];
+    m_InitialBullet = variables::Phyout[CH_REAR_VERTICAL_DISP];
     UpdateData(FALSE);
     GetDlgItem(IDC_BUTTON_UpdateBullet)->EnableWindow(TRUE);
 }
@@ -102,7 +103,7 @@ void CTransAdjustment::OnBUTTONInitialBullet()
 void CTransAdjustment::OnBUTTONEndBullet()
 {
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
-    m_FinalBullet = variables::Phyout[4];
+    m_FinalBullet = variables::Phyout[CH_REAR_VERTICAL_DISP];
     UpdateData(FALSE);
     GetDlgItem(IDC_BUTTON_UpdateBullet)->EnableWindow(TRUE);
 }
@@ -112,6 +113,7 @@ void CTransAdjustment::OnBUTTONUpdateBullet()
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     UpdateData(TRUE);
     // AD_Cal[*][0] is the constant (c)
-    variables::AD_Cal[4][0] = variables::AD_Cal[4][0] + (m_InitialBullet - m_FinalBullet);
+    variables::AD_Cal[CH_REAR_VERTICAL_DISP][0] =
+        variables::AD_Cal[CH_REAR_VERTICAL_DISP][0] + (m_InitialBullet - m_FinalBullet);
     GetDlgItem(IDC_BUTTON_UpdateBullet)->EnableWindow(FALSE);
 }

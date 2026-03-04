@@ -74,16 +74,21 @@ struct PhysicalInput
 {
     SpecimenSnapshot specimen{};
     double shear_force_N = 0.0;
-    double vertical_force_N = 0.0;
+    double front_vertical_force_N = 0.0; // 前側 LC 値
+    double rear_vertical_force_N = 0.0;  // 後ろ側 LC 値
     double shear_displacement_mm = 0.0;
     double front_vertical_disp_mm = 0.0;
     double rear_vertical_disp_mm = 0.0;
     double front_friction_force_N = 0.0;
     double rear_friction_force_N = 0.0;
 
+    [[nodiscard]] constexpr double vertical_force_N() const noexcept
+    {
+        return front_vertical_force_N + rear_vertical_force_N;
+    }
     [[nodiscard]] constexpr double vertical_stress_kpa() const noexcept
     {
-        return to_kpa(this->vertical_force_N + normal_force_component());
+        return to_kpa(this->vertical_force_N() + normal_force_component());
     }
     [[nodiscard]] constexpr double shear_stress_kpa() const noexcept
     {
@@ -195,8 +200,15 @@ concept PhysicalOutputLike = requires(T output) {
     const double new_rear_disp = rebased_normal_mm - input.tilt_mm();
 
     return PhysicalInput{
-        reference,      input.shear_force_N, input.vertical_force_N,       input.shear_displacement_mm,
-        new_front_disp, new_rear_disp,       input.front_friction_force_N, input.rear_friction_force_N,
+        .specimen = reference,
+        .shear_force_N = input.shear_force_N,
+        .front_vertical_force_N = input.front_vertical_force_N,
+        .rear_vertical_force_N = input.rear_vertical_force_N,
+        .shear_displacement_mm = input.shear_displacement_mm,
+        .front_vertical_disp_mm = new_front_disp,
+        .rear_vertical_disp_mm = new_rear_disp,
+        .front_friction_force_N = input.front_friction_force_N,
+        .rear_friction_force_N = input.rear_friction_force_N,
     };
 }
 

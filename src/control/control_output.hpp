@@ -64,29 +64,29 @@ struct ControlOutput
     static double max_front_ep_kpa() noexcept
     {
         using namespace variables;
-        const auto min_value = control::fromVoltage(MIN_VOLTAGE_OUTPUT, DA_Cal[CH_EP_Cell_f]);
-        const auto max_value = control::fromVoltage(MAX_VOLTAGE_OUTPUT, DA_Cal[CH_EP_Cell_f]);
+        const auto min_value = control::fromVoltage(MIN_VOLTAGE_OUTPUT, DA_Cal[CH_FRONT_EP_CELL]);
+        const auto max_value = control::fromVoltage(MAX_VOLTAGE_OUTPUT, DA_Cal[CH_FRONT_EP_CELL]);
         return std::max(min_value, max_value);
     }
     static double min_front_ep_kpa() noexcept
     {
         using namespace variables;
-        const auto min_value = control::fromVoltage(MIN_VOLTAGE_OUTPUT, DA_Cal[CH_EP_Cell_f]);
-        const auto max_value = control::fromVoltage(MAX_VOLTAGE_OUTPUT, DA_Cal[CH_EP_Cell_f]);
+        const auto min_value = control::fromVoltage(MIN_VOLTAGE_OUTPUT, DA_Cal[CH_FRONT_EP_CELL]);
+        const auto max_value = control::fromVoltage(MAX_VOLTAGE_OUTPUT, DA_Cal[CH_FRONT_EP_CELL]);
         return std::min(min_value, max_value);
     }
     static double max_rear_ep_kpa() noexcept
     {
         using namespace variables;
-        const auto min_value = control::fromVoltage(MIN_VOLTAGE_OUTPUT, DA_Cal[CH_EP_Cell_r]);
-        const auto max_value = control::fromVoltage(MAX_VOLTAGE_OUTPUT, DA_Cal[CH_EP_Cell_r]);
+        const auto min_value = control::fromVoltage(MIN_VOLTAGE_OUTPUT, DA_Cal[CH_REAR_EP_CELL]);
+        const auto max_value = control::fromVoltage(MAX_VOLTAGE_OUTPUT, DA_Cal[CH_REAR_EP_CELL]);
         return std::max(min_value, max_value);
     }
     static double min_rear_ep_kpa() noexcept
     {
         using namespace variables;
-        const auto min_value = control::fromVoltage(MIN_VOLTAGE_OUTPUT, DA_Cal[CH_EP_Cell_r]);
-        const auto max_value = control::fromVoltage(MAX_VOLTAGE_OUTPUT, DA_Cal[CH_EP_Cell_r]);
+        const auto min_value = control::fromVoltage(MIN_VOLTAGE_OUTPUT, DA_Cal[CH_REAR_EP_CELL]);
+        const auto max_value = control::fromVoltage(MAX_VOLTAGE_OUTPUT, DA_Cal[CH_REAR_EP_CELL]);
         return std::min(min_value, max_value);
     }
     static double max_motor_rpm() noexcept

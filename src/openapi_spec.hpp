@@ -178,6 +178,8 @@ components:
       required:
         - specimen
         - shear_force_N
+        - front_vertical_force_N
+        - rear_vertical_force_N
         - vertical_force_N
         - shear_displacement_mm
         - front_vertical_disp_mm
@@ -196,10 +198,20 @@ components:
           format: double
           description: Shear force in Newtons
           example: 125.3
+        front_vertical_force_N:
+          type: number
+          format: double
+          description: Front vertical load cell force in Newtons
+          example: 225.4
+        rear_vertical_force_N:
+          type: number
+          format: double
+          description: Rear vertical load cell force in Newtons
+          example: 225.4
         vertical_force_N:
           type: number
           format: double
-          description: Vertical force in Newtons
+          description: Total vertical force (front + rear) in Newtons
           example: 450.8
         shear_displacement_mm:
           type: number
