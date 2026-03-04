@@ -208,7 +208,8 @@ void CCalibrationFactor::CF_Load()
     for (size_t i = 0; i < CHANNELS_CAL; ++i)
     {
         // Fall back to raw Phyout if the LPF state has not been seeded yet.
-        const double value = display_lpf::initialized ? display_lpf::phyout_filtered[i] : Phyout[i];
+        const double value =
+            display_lpf::filter.is_initialized() ? display_lpf::filter.phyout_filtered()[i] : Phyout[i];
         m_CFP[i].Format(_T("%11.5f"), value);
     }
 

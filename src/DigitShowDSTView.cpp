@@ -411,28 +411,28 @@ void CDigitShowDSTView::ShowData()
 
     // Update LPF state (passthrough when disabled)
     constexpr double kTimerDt_s = static_cast<double>(timer::TimeInterval_1.count()) / 1000.0;
-    display_lpf::enabled = (m_LpfEnabled != FALSE);
-    display_lpf::cutoff_hz = m_LpfCutoff;
-    display_lpf::update(para_raw, kTimerDt_s);
+    display_lpf::filter.set_enabled(m_LpfEnabled != FALSE);
+    display_lpf::filter.set_cutoff_hz(m_LpfCutoff);
+    display_lpf::filter.update(para_raw, kTimerDt_s);
 
     // Format voltage output display strings using filtered values
     for (size_t i = 0; i < CHANNELS_VOUT; ++i)
     {
-        m_Vout[i].Format(_T("%11.4f"), display_lpf::vout_filtered[i]);
+        m_Vout[i].Format(_T("%11.4f"), display_lpf::filter.vout_filtered()[i]);
     }
 
     // Format physical output display strings using filtered values
     for (size_t i = 0; i < CHANNELS_PHYOUT; ++i)
     {
-        m_Phyout[i].Format(_T("%11.4f"), display_lpf::phyout_filtered[i]);
+        m_Phyout[i].Format(_T("%11.4f"), display_lpf::filter.phyout_filtered()[i]);
     }
 
     // Map each parameter shown in the UI: physical input params use filtered values
-    m_Para[0].Format(_T("%11.4f"), display_lpf::para_filtered[0]); // shear_stress_kpa
-    m_Para[1].Format(_T("%11.4f"), display_lpf::para_filtered[1]); // shear_displacement_mm
-    m_Para[2].Format(_T("%11.4f"), display_lpf::para_filtered[2]); // vertical_stress_kpa
-    m_Para[3].Format(_T("%11.4f"), display_lpf::para_filtered[3]); // normal_displacement_mm
-    m_Para[4].Format(_T("%11.4f"), display_lpf::para_filtered[4]); // tilt_mm
+    m_Para[0].Format(_T("%11.4f"), display_lpf::filter.para_filtered()[0]); // shear_stress_kpa
+    m_Para[1].Format(_T("%11.4f"), display_lpf::filter.para_filtered()[1]); // shear_displacement_mm
+    m_Para[2].Format(_T("%11.4f"), display_lpf::filter.para_filtered()[2]); // vertical_stress_kpa
+    m_Para[3].Format(_T("%11.4f"), display_lpf::filter.para_filtered()[3]); // normal_displacement_mm
+    m_Para[4].Format(_T("%11.4f"), display_lpf::filter.para_filtered()[4]); // tilt_mm
     m_Para[5].Format(_T("%11.4f"), static_cast<double>(physical_output.motor_rpm));
     m_Para[6].Format(_T("%11.4f"), static_cast<double>(physical_output.front_ep_kpa));
     m_Para[7].Format(_T("%11.4f"), static_cast<double>(physical_output.rear_ep_kpa));

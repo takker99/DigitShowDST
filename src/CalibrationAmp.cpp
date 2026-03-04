@@ -82,8 +82,8 @@ void CCalibrationAmp::OnBUTTONAmpBase()
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     UpdateData(TRUE);
     // Fall back to raw Vout if the LPF state has not been seeded yet.
-    m_AmpVB = display_lpf::initialized ? static_cast<float>(display_lpf::vout_filtered[AmpID])
-                                       : Vout[AmpID];
+    m_AmpVB = display_lpf::filter.is_initialized() ? static_cast<float>(display_lpf::filter.vout_filtered()[AmpID])
+                                                   : Vout[AmpID];
     UpdateData(FALSE);
 }
 
@@ -92,8 +92,8 @@ void CCalibrationAmp::OnBUTTONAmpOffset()
     // TODO: この位置にコントロール通知ハンドラ用のコードを追加してください
     UpdateData(TRUE);
     // Fall back to raw Vout if the LPF state has not been seeded yet.
-    m_AmpVO = display_lpf::initialized ? static_cast<float>(display_lpf::vout_filtered[AmpID])
-                                       : Vout[AmpID];
+    m_AmpVO = display_lpf::filter.is_initialized() ? static_cast<float>(display_lpf::filter.vout_filtered()[AmpID])
+                                                   : Vout[AmpID];
     UpdateData(FALSE);
 }
 
