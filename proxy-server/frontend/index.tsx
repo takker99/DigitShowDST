@@ -32,6 +32,8 @@ type PerformanceWithMemory = Performance & {
 interface PhysicalInput {
   shear_force_N: number;
   vertical_force_N: number;
+  front_vertical_force_N: number;
+  rear_vertical_force_N: number;
   shear_displacement_mm: number;
   normal_displacement_mm: number;
   front_vertical_disp_mm: number;
@@ -59,11 +61,15 @@ interface DataHistory {
   timestamps: number[];
   shearForce: number[];
   verticalForce: number[];
+  frontVerticalForce: number[];
+  rearVerticalForce: number[];
+
   shearDisp: number[];
   normalDisp: number[];
   frontVerticalDisp: number[];
   rearVerticalDisp: number[];
   tiltMm: number[];
+  moment: number[];
   shearStress: number[];
   verticalStress: number[];
   motorRpm: number[];
@@ -77,11 +83,14 @@ const createEmptyHistory = (): DataHistory => ({
   timestamps: [],
   shearForce: [],
   verticalForce: [],
+  frontVerticalForce: [],
+  rearVerticalForce: [],
   shearDisp: [],
   normalDisp: [],
   frontVerticalDisp: [],
   rearVerticalDisp: [],
   tiltMm: [],
+  moment: [],
   shearStress: [],
   verticalStress: [],
   motorRpm: [],
@@ -95,11 +104,14 @@ const historyKeys: (keyof DataHistory)[] = [
   "timestamps",
   "shearForce",
   "verticalForce",
+  "frontVerticalForce",
+  "rearVerticalForce",
   "shearDisp",
   "normalDisp",
   "frontVerticalDisp",
   "rearVerticalDisp",
   "tiltMm",
+  "moment",
   "shearStress",
   "verticalStress",
   "motorRpm",
@@ -112,11 +124,14 @@ const historyKeys: (keyof DataHistory)[] = [
 const lowPassCarryKeys = [
   "shearForce",
   "verticalForce",
+  "frontVerticalForce",
+  "rearVerticalForce",
   "shearDisp",
   "normalDisp",
   "frontVerticalDisp",
   "rearVerticalDisp",
   "tiltMm",
+  "moment",
   "shearStress",
   "verticalStress",
   "frontFriction",
@@ -130,11 +145,14 @@ type LowPassCarryState = Record<LowPassCarryKey, LowPassFilterSeed | null>;
 const createEmptyLowPassCarry = (): LowPassCarryState => ({
   shearForce: null,
   verticalForce: null,
+  frontVerticalForce: null,
+  rearVerticalForce: null,
   shearDisp: null,
   normalDisp: null,
   frontVerticalDisp: null,
   rearVerticalDisp: null,
   tiltMm: null,
+  moment: null,
   shearStress: null,
   verticalStress: null,
   frontFriction: null,
@@ -170,11 +188,14 @@ const updateLowPassCarryFromHistory = (
   const seriesMap: Record<LowPassCarryKey, number[]> = {
     shearForce: history.shearForce,
     verticalForce: history.verticalForce,
+    frontVerticalForce: history.frontVerticalForce,
+    rearVerticalForce: history.rearVerticalForce,
     shearDisp: history.shearDisp,
     normalDisp: history.normalDisp,
     frontVerticalDisp: history.frontVerticalDisp,
     rearVerticalDisp: history.rearVerticalDisp,
     tiltMm: history.tiltMm,
+    moment: history.moment,
     shearStress: history.shearStress,
     verticalStress: history.verticalStress,
     frontFriction: history.frontFriction,
@@ -284,11 +305,14 @@ const App: FunctionComponent = () => {
               timestamps: [...prev.timestamps],
               shearForce: [...prev.shearForce],
               verticalForce: [...prev.verticalForce],
+              frontVerticalForce: [...prev.frontVerticalForce],
+              rearVerticalForce: [...prev.rearVerticalForce],
               shearDisp: [...prev.shearDisp],
               normalDisp: [...prev.normalDisp],
               frontVerticalDisp: [...prev.frontVerticalDisp],
               rearVerticalDisp: [...prev.rearVerticalDisp],
               tiltMm: [...prev.tiltMm],
+              moment: [...prev.moment],
               shearStress: [...prev.shearStress],
               verticalStress: [...prev.verticalStress],
               motorRpm: [...prev.motorRpm],
@@ -314,6 +338,14 @@ const App: FunctionComponent = () => {
               ...prev.verticalForce,
               sensorData.physical_input.vertical_force_N,
             ];
+            newHistory.frontVerticalForce = [
+              ...prev.frontVerticalForce,
+              sensorData.physical_input.front_vertical_force_N,
+            ];
+            newHistory.rearVerticalForce = [
+              ...prev.rearVerticalForce,
+              sensorData.physical_input.rear_vertical_force_N,
+            ];
             newHistory.shearDisp = [
               ...prev.shearDisp,
               sensorData.physical_input.shear_displacement_mm,
@@ -334,6 +366,12 @@ const App: FunctionComponent = () => {
               ...prev.tiltMm,
               sensorData.physical_input.tilt_mm,
             ];
+
+            const L = 0.11; // arm length in meters
+            const moment =
+              0.5 * L * sensorData.physical_input.front_vertical_force_N -
+              0.5 * L * sensorData.physical_input.rear_vertical_force_N;
+            newHistory.moment = [...prev.moment, moment];
             newHistory.shearStress = [
               ...prev.shearStress,
               sensorData.physical_input.shear_stress_kpa,
@@ -581,6 +619,48 @@ const App: FunctionComponent = () => {
     ],
   );
 
+  const filteredFrontVerticalForce = useMemo(
+    () =>
+      enableSmoothing && filterParam > 0 &&
+        dataHistory.frontVerticalForce.length > 0
+        ? applyFilter(
+          dataHistory.frontVerticalForce,
+          dataHistory.timestamps,
+          filterType,
+          filterParam,
+          lowPassCarry?.frontVerticalForce,
+        )
+        : dataHistory.frontVerticalForce,
+    [
+      dataHistory.frontVerticalForce,
+      dataHistory.timestamps,
+      enableSmoothing,
+      filterType,
+      filterParam,
+    ],
+  );
+
+  const filteredRearVerticalForce = useMemo(
+    () =>
+      enableSmoothing && filterParam > 0 &&
+        dataHistory.rearVerticalForce.length > 0
+        ? applyFilter(
+          dataHistory.rearVerticalForce,
+          dataHistory.timestamps,
+          filterType,
+          filterParam,
+          lowPassCarry?.rearVerticalForce,
+        )
+        : dataHistory.rearVerticalForce,
+    [
+      dataHistory.rearVerticalForce,
+      dataHistory.timestamps,
+      enableSmoothing,
+      filterType,
+      filterParam,
+    ],
+  );
+
   const filteredVerticalStress = useMemo(
     () =>
       enableSmoothing && filterParam > 0 &&
@@ -724,6 +804,26 @@ const App: FunctionComponent = () => {
     ],
   );
 
+  const filteredMoment = useMemo(
+    () =>
+      enableSmoothing && filterParam > 0 && dataHistory.moment.length > 0
+        ? applyFilter(
+          dataHistory.moment,
+          dataHistory.timestamps,
+          filterType,
+          filterParam,
+          lowPassCarry?.moment,
+        )
+        : dataHistory.moment,
+    [
+      dataHistory.moment,
+      dataHistory.timestamps,
+      enableSmoothing,
+      filterType,
+      filterParam,
+    ],
+  );
+
   const shearForceData = useMemo(
     () =>
       enableSmoothing && filterParam > 0
@@ -766,13 +866,26 @@ const App: FunctionComponent = () => {
         ? [
           dataHistory.timestamps,
           dataHistory.verticalForce,
+          dataHistory.frontVerticalForce,
+          dataHistory.rearVerticalForce,
           filteredVerticalForce,
+          filteredFrontVerticalForce,
+          filteredRearVerticalForce,
         ]
-        : [dataHistory.timestamps, dataHistory.verticalForce],
+        : [
+          dataHistory.timestamps,
+          dataHistory.verticalForce,
+          dataHistory.frontVerticalForce,
+          dataHistory.rearVerticalForce,
+        ],
     [
       dataHistory.timestamps,
       dataHistory.verticalForce,
+      dataHistory.frontVerticalForce,
+      dataHistory.rearVerticalForce,
       filteredVerticalForce,
+      filteredFrontVerticalForce,
+      filteredRearVerticalForce,
       enableSmoothing,
       filterParam,
     ],
@@ -830,7 +943,7 @@ const App: FunctionComponent = () => {
     ],
   );
 
-  const verticalDispTiltData: number[][] = useMemo(
+  const verticalDispTiltData = useMemo(
     () =>
       enableSmoothing && filterParam > 0
         ? [
@@ -838,24 +951,29 @@ const App: FunctionComponent = () => {
           dataHistory.frontVerticalDisp,
           dataHistory.rearVerticalDisp,
           dataHistory.tiltMm,
+          dataHistory.moment,
           filteredFrontVerticalDisp,
           filteredRearVerticalDisp,
           filteredTiltMm,
+          filteredMoment,
         ]
         : [
           dataHistory.timestamps,
           dataHistory.frontVerticalDisp,
           dataHistory.rearVerticalDisp,
           dataHistory.tiltMm,
+          dataHistory.moment,
         ],
     [
       dataHistory.timestamps,
       dataHistory.frontVerticalDisp,
       dataHistory.rearVerticalDisp,
       dataHistory.tiltMm,
+      dataHistory.moment,
       filteredFrontVerticalDisp,
       filteredRearVerticalDisp,
       filteredTiltMm,
+      filteredMoment,
       enableSmoothing,
       filterParam,
     ],
@@ -879,6 +997,7 @@ const App: FunctionComponent = () => {
     verticalFront: "#b91c1c",
     verticalRear: "#fb7185",
     tilt: "#94a3b8",
+    moment: "#f59e0b",
     epFront: "#0f766e",
     epRear: "#14b8a6",
     rpm: "#06b6d4",
@@ -1018,8 +1137,38 @@ const App: FunctionComponent = () => {
             : palette.vertical,
           width: 1.5,
         },
+        {
+          label: "Front Vertical Force (N)",
+          stroke: enableSmoothing
+            ? hexToRgba(palette.verticalFront, 0.3)
+            : palette.verticalFront,
+          width: 1.5,
+          show: false,
+        },
+        {
+          label: "Rear Vertical Force (N)",
+          stroke: enableSmoothing
+            ? hexToRgba(palette.verticalRear, 0.3)
+            : palette.verticalRear,
+          width: 1.5,
+          show: false,
+        },
         ...(enableSmoothing
-          ? [{ label: "Smoothed", stroke: palette.vertical, width: 1.0 }]
+          ? [
+            { label: "Smoothed", stroke: palette.vertical, width: 1.0 },
+            {
+              label: "Front Smoothed",
+              stroke: palette.verticalFront,
+              width: 1.0,
+              show: false,
+            },
+            {
+              label: "Rear Smoothed",
+              stroke: palette.verticalRear,
+              width: 1.0,
+              show: false,
+            },
+          ]
           : []),
       ],
       axes: [
@@ -1227,6 +1376,15 @@ const App: FunctionComponent = () => {
         width: 1.5,
         scale: "tilt",
       },
+
+      {
+        label: "Moment (N·m)",
+        stroke: enableSmoothing
+          ? hexToRgba(palette.moment, 0.3)
+          : palette.moment,
+        width: 1.5,
+        scale: "moment",
+      },
       ...(enableSmoothing
         ? [
           {
@@ -1248,6 +1406,12 @@ const App: FunctionComponent = () => {
             stroke: palette.tilt,
             width: 1.0,
             scale: "tilt",
+          },
+          {
+            label: "Moment Smoothed",
+            stroke: palette.moment,
+            width: 1.0,
+            scale: "moment",
           },
         ]
         : []),
@@ -1285,8 +1449,21 @@ const App: FunctionComponent = () => {
         grid: { stroke: axisTheme.grid, width: 1 },
         ticks: { stroke: axisTheme.text, width: 1 },
       },
+      {
+        scale: "moment",
+        label: "Moment (N·m)",
+        labelSize: 30,
+        side: 1,
+        stroke: axisTheme.text,
+        font: axisTheme.font,
+        labelFont: axisTheme.font,
+        labelStroke: axisTheme.text,
+        values: formatAxisValue,
+        grid: { stroke: axisTheme.grid, width: 1 },
+        ticks: { stroke: axisTheme.text, width: 1 },
+      },
     ],
-    scales: { x: { time: false }, disp: {}, tilt: {} },
+    scales: { x: { time: false }, disp: {}, tilt: {}, moment: {} },
   }), [axisTheme, palette, enableSmoothing]);
 
   const epOptions = useMemo<Omit<uPlot.Options, "width" | "height">>(() => ({
