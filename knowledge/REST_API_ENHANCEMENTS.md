@@ -2,7 +2,9 @@
 
 ## Overview
 
-This document describes recent enhancements to the DigitShowDST REST API, including the OpenAPI specification endpoint and automatic configuration file generation.
+This document describes recent enhancements to the DigitShowDST REST API,
+including the OpenAPI specification endpoint and automatic configuration file
+generation.
 
 ## New Features
 
@@ -33,14 +35,16 @@ curl http://localhost:8080/api/openapi -o openapi.yaml
 
 #### Implementation Details
 
-- The specification is embedded at build time as a C++ `constexpr std::string_view` in `src/openapi_spec.hpp`
+- The specification is embedded at build time as a C++
+  `constexpr std::string_view` in `src/openapi_spec.hpp`
 - No disk I/O required to serve the specification
 - Content is synchronized with `docs/api/openapi.yaml`
 - The specification documents all available API endpoints including itself
 
 ### 2. Automatic Configuration File Generation
 
-The API server now automatically creates `api_config.json` with default values if it doesn't exist.
+The API server now automatically creates `api_config.json` with default values
+if it doesn't exist.
 
 #### Behavior
 
@@ -86,16 +90,17 @@ When `ApiServer::load_config("api_config.json")` is called:
 
 After these enhancements, the REST API provides:
 
-| Endpoint | Method | Description | Content-Type |
-|----------|--------|-------------|--------------|
-| `/api/health` | GET | Health check | `application/json` |
-| `/api/openapi` | GET | OpenAPI specification | `application/x-yaml` |
-| `/api/sensor-data` | GET | Current sensor data snapshot | `application/json` |
-| `/api/sensor-data/stream` | GET | Real-time SSE data stream | `text/event-stream` |
+| Endpoint                  | Method | Description                  | Content-Type         |
+| ------------------------- | ------ | ---------------------------- | -------------------- |
+| `/api/health`             | GET    | Health check                 | `application/json`   |
+| `/api/openapi`            | GET    | OpenAPI specification        | `application/x-yaml` |
+| `/api/sensor-data`        | GET    | Current sensor data snapshot | `application/json`   |
+| `/api/sensor-data/stream` | GET    | Real-time SSE data stream    | `text/event-stream`  |
 
 ## Configuration Schema
 
-The `api_config.json` file follows the schema defined in `schemas/api_config.schema.json`:
+The `api_config.json` file follows the schema defined in
+`schemas/api_config.schema.json`:
 
 ```json
 {
@@ -157,12 +162,14 @@ info:
 ```
 
 **Advantages**:
+
 - Zero runtime overhead
 - No file system dependencies
 - Cannot be accidentally deleted or corrupted
 - Always synchronized with build
 
 **Updating the Spec**:
+
 1. Edit `docs/api/openapi.yaml`
 2. Update `src/openapi_spec.hpp` with the same content
 3. Rebuild the application
@@ -182,7 +189,8 @@ std::filesystem::exists(path)
 std::ofstream out_file(path)
 ```
 
-No MFC or Windows-specific APIs are used, maintaining cross-platform compatibility and modern C++ practices.
+No MFC or Windows-specific APIs are used, maintaining cross-platform
+compatibility and modern C++ practices.
 
 ## Error Handling
 
@@ -211,6 +219,7 @@ The implementation provides detailed logging:
 ```
 
 Log levels:
+
 - `info`: Normal operations (config load, file creation)
 - `warn`: Non-critical issues (file not found)
 - `error`: Failures (parse errors, write failures)

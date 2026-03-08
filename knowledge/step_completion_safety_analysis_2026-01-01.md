@@ -6,7 +6,8 @@
 
 ## Problem Statement
 
-The original `execute_control_step()` implementation unconditionally reset `control_output` to zero values when a step completed:
+The original `execute_control_step()` implementation unconditionally reset
+`control_output` to zero values when a step completed:
 
 ```cpp
 // OLD CODE (line 297)
@@ -20,25 +21,29 @@ if (step_completed)
 
 ### Why This Is Dangerous
 
-1. **Abrupt pressure loss (EP cells):** Resetting `control_output` to `{0.0, 0.0, 0.0, ...}` during step transition causes:
+1. **Abrupt pressure loss (EP cells):** Resetting `control_output` to
+   `{0.0, 0.0, 0.0, ...}` during step transition causes:
    - Air cylinders mounted on the upper shear box to suddenly rise
    - Potential specimen rupture (splitting/tearing)
    - Damage to peripheral equipment caught in gaps
 
-2. **Loss of output state:** `control_output` is a `static` variable that tracks the current hardware state across ticks. Resetting it breaks continuity.
+2. **Loss of output state:** `control_output` is a `static` variable that tracks
+   the current hardware state across ticks. Resetting it breaks continuity.
 
-3. **Design violation:** Each step should own its output transitions, not rely on a global reset.
+3. **Design violation:** Each step should own its output transitions, not rely
+   on a global reset.
 
 ## Safety Principle: "Safe Stop = State Maintenance"
 
 For a hardware control system:
 
-| Component | Safe Stop Behavior |
-|-----------|-------------------|
-| **Motor** | Stop rotation (RPM = 0) |
+| Component       | Safe Stop Behavior                                |
+| --------------- | ------------------------------------------------- |
+| **Motor**       | Stop rotation (RPM = 0)                           |
 | **EP Pressure** | Maintain current pressure (voltage held constant) |
 
-This prevents damage from sudden state changes while transitioning between control steps.
+This prevents damage from sudden state changes while transitioning between
+control steps.
 
 ## Implementation Analysis
 
@@ -81,7 +86,9 @@ control_output.rear_ep_kpa = fromVoltage(DAVout[CH_REAR_EP_CELL], ...);
 control_output.motor_rpm = fromIISMotorVoltage(DAVout[CH_Motor], ...);
 ```
 
-**Key insight:** The next step reads the **actual voltage values** from `DAVout[]` (the hardware output register), not the reset `control_output`. This ensures smooth initialization even though `static control_output` is preserved.
+**Key insight:** The next step reads the **actual voltage values** from
+`DAVout[]` (the hardware output register), not the reset `control_output`. This
+ensures smooth initialization even though `static control_output` is preserved.
 
 ### Strategy Factory Validation
 
@@ -95,24 +102,28 @@ if (strategy_step_index != control::current_step_index)
 ```
 
 - A fresh strategy is created for each new step ✓
-- The strategy factory (`src/control/strategy_factory.cpp`) handles initialization for each control pattern ✓
+- The strategy factory (`src/control/strategy_factory.cpp`) handles
+  initialization for each control pattern ✓
 - All strategy implementations initialize state from `ctx.control_output` ✓
 
 ## Risk Assessment
 
 ### Eliminated Risks
+
 - ✓ Abrupt pressure loss during step transition
 - ✓ Specimen rupture from sudden EP cylinder movement
 - ✓ Equipment damage from rapid state changes
 - ✓ Loss of output continuity
 
 ### Maintained Safeguards
+
 - ✓ Motor stops (RPM = 0.0) when step completes
 - ✓ Next step's strategy defines its own output behavior
 - ✓ Hardware state (`DAVout[]`) is the source of truth
 - ✓ `static control_output` cache is consistent with hardware
 
 ### Validation Requirements
+
 - [ ] Hardware test: Verify EP pressure remains stable during step transitions
 - [ ] Hardware test: Confirm motor stops without jerk
 - [ ] Integration test: Multi-step control sequences (cyclic, creep, etc.)
@@ -120,15 +131,16 @@ if (strategy_step_index != control::current_step_index)
 
 ## Code Changes
 
-**File:** `src/digitshow_operations.cpp`
-**Lines:** 291-300
+**File:** `src/digitshow_operations.cpp` **Lines:** 291-300
 
 **Removed:**
+
 ```cpp
 control_output = ControlOutput{};  // Dangerous reset
 ```
 
 **Added:**
+
 ```cpp
 // Note: control_output is preserved to maintain hardware state continuity.
 // The next step will read current DAVout values (line ~181) to initialize itself,
@@ -137,10 +149,16 @@ control_output = ControlOutput{};  // Dangerous reset
 ```
 
 ## Related Documentation
+
 - `control_mechanisms_overview.md` — Timer 2 dispatch and strategy architecture
 - `control_specifications.md` — JSON → CFNUM mapping and control patterns
-- `knowledge/voltage_reset_on_exit.md` — Shutdown voltage behavior (different from step transitions)
+- `knowledge/voltage_reset_on_exit.md` — Shutdown voltage behavior (different
+  from step transitions)
 
 ## Decision Rationale
 
-This fix prioritizes **safety over simplicity**. Rather than relying on a "reset to safe defaults" pattern that is inherently brittle in hardware systems, we now leverage the actual hardware state (`DAVout[]`) as the source of truth for initialization. This is more robust and aligns with real-world practice: gradual state changes are always safer than abrupt resets in physical systems.
+This fix prioritizes **safety over simplicity**. Rather than relying on a "reset
+to safe defaults" pattern that is inherently brittle in hardware systems, we now
+leverage the actual hardware state (`DAVout[]`) as the source of truth for
+initialization. This is more robust and aligns with real-world practice: gradual
+state changes are always safer than abrupt resets in physical systems.
