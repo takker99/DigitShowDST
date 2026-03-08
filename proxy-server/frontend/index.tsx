@@ -9,7 +9,7 @@ import {
 import { createRoot } from "react-dom/client";
 import type uPlot from "uplot";
 import { movingAverage } from "./moving_average.ts";
-import { lowPassFilter } from "./low_pass_filter.ts";
+import { lowPassFilter, type LowPassFilterSeed } from "./low_pass_filter.ts";
 import { UPlotChart } from "./UplotChart.tsx";
 import { resolveDefaultApiUrl } from "./resolve_default_api_url.ts";
 import { hexToRgba } from "./hex_to_rgba.ts";
@@ -109,6 +109,101 @@ const historyKeys: (keyof DataHistory)[] = [
   "rearFriction",
 ];
 
+const lowPassCarryKeys = [
+  "shearForce",
+  "verticalForce",
+  "shearDisp",
+  "normalDisp",
+  "frontVerticalDisp",
+  "rearVerticalDisp",
+  "tiltMm",
+  "shearStress",
+  "verticalStress",
+  "frontFriction",
+  "rearFriction",
+  "totalFriction",
+] as const;
+
+type LowPassCarryKey = (typeof lowPassCarryKeys)[number];
+type LowPassCarryState = Record<LowPassCarryKey, LowPassFilterSeed | null>;
+
+const createEmptyLowPassCarry = (): LowPassCarryState => ({
+  shearForce: null,
+  verticalForce: null,
+  shearDisp: null,
+  normalDisp: null,
+  frontVerticalDisp: null,
+  rearVerticalDisp: null,
+  tiltMm: null,
+  shearStress: null,
+  verticalStress: null,
+  frontFriction: null,
+  rearFriction: null,
+  totalFriction: null,
+});
+
+const buildTotalFriction = (
+  frontFriction: number[],
+  rearFriction: number[],
+): number[] => frontFriction.map((front, i) => front + rearFriction[i]);
+
+const updateLowPassCarryFromHistory = (
+  history: DataHistory,
+  trimStartIdx: number,
+  cutoffFrequencyHz: number,
+  previousCarry: LowPassCarryState,
+): LowPassCarryState => {
+  if (
+    trimStartIdx <= 0 ||
+    history.timestamps.length === 0 ||
+    cutoffFrequencyHz <= 0
+  ) {
+    return previousCarry;
+  }
+
+  const lastTrimmedIdx = trimStartIdx - 1;
+  const timestamps = history.timestamps;
+  const totalFriction = buildTotalFriction(
+    history.frontFriction,
+    history.rearFriction,
+  );
+  const seriesMap: Record<LowPassCarryKey, number[]> = {
+    shearForce: history.shearForce,
+    verticalForce: history.verticalForce,
+    shearDisp: history.shearDisp,
+    normalDisp: history.normalDisp,
+    frontVerticalDisp: history.frontVerticalDisp,
+    rearVerticalDisp: history.rearVerticalDisp,
+    tiltMm: history.tiltMm,
+    shearStress: history.shearStress,
+    verticalStress: history.verticalStress,
+    frontFriction: history.frontFriction,
+    rearFriction: history.rearFriction,
+    totalFriction,
+  };
+
+  const nextCarry: LowPassCarryState = { ...previousCarry };
+
+  lowPassCarryKeys.forEach((key) => {
+    const filteredValues = lowPassFilter(
+      seriesMap[key],
+      timestamps,
+      cutoffFrequencyHz,
+      previousCarry[key],
+    );
+    const filteredValue = filteredValues[lastTrimmedIdx];
+
+    nextCarry[key] = typeof filteredValue === "number"
+      ? {
+        timestamp: timestamps[lastTrimmedIdx],
+        filteredValue,
+      }
+      : previousCarry[key];
+  });
+
+  return nextCarry;
+};
+
 const isFilterType = (value: string): value is FilterType => {
   return value === "lowpass" || value === "movavg";
 };
@@ -123,9 +218,10 @@ const applyFilter = (
   timestamps: number[],
   filterType: FilterType,
   filterParam: number,
+  lowPassSeed?: LowPassFilterSeed | null,
 ): number[] => {
   if (filterType === "lowpass") {
-    return lowPassFilter(rawValues, timestamps, filterParam);
+    return lowPassFilter(rawValues, timestamps, filterParam, lowPassSeed);
   } else if (filterType === "movavg") {
     return movingAverage(rawValues, timestamps, filterParam);
   }
@@ -152,12 +248,23 @@ const App: FunctionComponent = () => {
   const eventSourceRef = useRef<EventSource | null>(null);
   const startTimeRef = useRef<number | null>(null);
   const displayWindowSecRef = useRef(60);
+  const cutoffFrequencyHzRef = useRef(cutoffFrequencyHz);
+  const lowPassCarryRef = useRef<LowPassCarryState>(createEmptyLowPassCarry());
+  const lowPassCarryCutoffHzRef = useRef(cutoffFrequencyHz);
+
+  useEffect(() => {
+    cutoffFrequencyHzRef.current = cutoffFrequencyHz;
+    lowPassCarryRef.current = createEmptyLowPassCarry();
+    lowPassCarryCutoffHzRef.current = cutoffFrequencyHz;
+  }, [cutoffFrequencyHz]);
 
   const connectToStream = useCallback(() => {
     if (eventSourceRef.current) eventSourceRef.current.close();
     setStatus("connecting");
     setError(null);
     startTimeRef.current = null;
+    lowPassCarryRef.current = createEmptyLowPassCarry();
+    lowPassCarryCutoffHzRef.current = cutoffFrequencyHzRef.current;
 
     try {
       const es = new EventSource(`${apiUrl}/api/sensor-data/stream`);
@@ -267,6 +374,17 @@ const App: FunctionComponent = () => {
                 t >= cutoffTime
               );
               if (startIdx >= 0) {
+                if (startIdx > 0) {
+                  lowPassCarryRef.current = updateLowPassCarryFromHistory(
+                    newHistory,
+                    startIdx,
+                    cutoffFrequencyHzRef.current,
+                    lowPassCarryRef.current,
+                  );
+                  lowPassCarryCutoffHzRef.current =
+                    cutoffFrequencyHzRef.current;
+                }
+
                 historyKeys.forEach((key) => {
                   newHistory[key] = newHistory[key].slice(startIdx);
                 });
@@ -324,6 +442,8 @@ const App: FunctionComponent = () => {
 
   const clearData = useCallback(() => {
     startTimeRef.current = null;
+    lowPassCarryRef.current = createEmptyLowPassCarry();
+    lowPassCarryCutoffHzRef.current = cutoffFrequencyHzRef.current;
     setDataHistory(createEmptyHistory());
   }, []);
 
@@ -346,11 +466,16 @@ const App: FunctionComponent = () => {
     ? cutoffFrequencyHz
     : smoothingWindowMs;
 
+  const lowPassCarry = lowPassCarryCutoffHzRef.current === cutoffFrequencyHz
+    ? lowPassCarryRef.current
+    : null;
+
   const totalFriction = useMemo(
     () =>
       dataHistory.frontFriction.length > 0
-        ? dataHistory.frontFriction.map((front, i) =>
-          front + dataHistory.rearFriction[i]
+        ? buildTotalFriction(
+          dataHistory.frontFriction,
+          dataHistory.rearFriction,
         )
         : [],
     [dataHistory.frontFriction, dataHistory.rearFriction],
@@ -364,6 +489,7 @@ const App: FunctionComponent = () => {
           dataHistory.timestamps,
           filterType,
           filterParam,
+          lowPassCarry?.shearForce,
         )
         : dataHistory.shearForce,
     [
@@ -383,6 +509,7 @@ const App: FunctionComponent = () => {
           dataHistory.timestamps,
           filterType,
           filterParam,
+          lowPassCarry?.frontFriction,
         )
         : dataHistory.frontFriction,
     [
@@ -402,6 +529,7 @@ const App: FunctionComponent = () => {
           dataHistory.timestamps,
           filterType,
           filterParam,
+          lowPassCarry?.rearFriction,
         )
         : dataHistory.rearFriction,
     [
@@ -421,6 +549,7 @@ const App: FunctionComponent = () => {
           dataHistory.timestamps,
           filterType,
           filterParam,
+          lowPassCarry?.totalFriction,
         )
         : totalFriction,
     [
@@ -440,6 +569,7 @@ const App: FunctionComponent = () => {
           dataHistory.timestamps,
           filterType,
           filterParam,
+          lowPassCarry?.verticalForce,
         )
         : dataHistory.verticalForce,
     [
@@ -460,6 +590,7 @@ const App: FunctionComponent = () => {
           dataHistory.timestamps,
           filterType,
           filterParam,
+          lowPassCarry?.verticalStress,
         )
         : dataHistory.verticalStress,
     [
@@ -479,6 +610,7 @@ const App: FunctionComponent = () => {
           dataHistory.timestamps,
           filterType,
           filterParam,
+          lowPassCarry?.normalDisp,
         )
         : dataHistory.normalDisp,
     [
@@ -498,6 +630,7 @@ const App: FunctionComponent = () => {
           dataHistory.timestamps,
           filterType,
           filterParam,
+          lowPassCarry?.shearStress,
         )
         : dataHistory.shearStress,
     [
@@ -517,6 +650,7 @@ const App: FunctionComponent = () => {
           dataHistory.timestamps,
           filterType,
           filterParam,
+          lowPassCarry?.shearDisp,
         )
         : dataHistory.shearDisp,
     [
@@ -537,6 +671,7 @@ const App: FunctionComponent = () => {
           dataHistory.timestamps,
           filterType,
           filterParam,
+          lowPassCarry?.frontVerticalDisp,
         )
         : dataHistory.frontVerticalDisp,
     [
@@ -557,6 +692,7 @@ const App: FunctionComponent = () => {
           dataHistory.timestamps,
           filterType,
           filterParam,
+          lowPassCarry?.rearVerticalDisp,
         )
         : dataHistory.rearVerticalDisp,
     [
@@ -576,6 +712,7 @@ const App: FunctionComponent = () => {
           dataHistory.timestamps,
           filterType,
           filterParam,
+          lowPassCarry?.tiltMm,
         )
         : dataHistory.tiltMm,
     [
