@@ -1,8 +1,16 @@
 {
   "tasks": {
-    "dev": "deno serve --watch --allow-net=localhost:8080 --allow-read=./proxy-server/dist ./proxy-server/main.ts",
-    "start": "deno serve --allow-net=localhost:8080 --allow-read=./proxy-server/dist ./proxy-server/main.ts",
-    "build": "deno bundle ./proxy-server/frontend/index.html --outdir=./proxy-server/dist --minify"
+    "dev": {
+      "command": "deno serve --watch --allow-net=localhost:8080 --allow-read=./proxy-server/dist ./proxy-server/main.ts",
+      "dependencies": ["build"]
+    },
+    "start": {
+      "command": "deno serve --allow-net=localhost:8080 --allow-read=./proxy-server/dist ./proxy-server/main.ts",
+      "dependencies": ["build"]
+    },
+    "build": "deno bundle ./proxy-server/frontend/index.html --outdir=./proxy-server/dist --minify",
+
+    "build:watch": "deno bundle ./proxy-server/frontend/index.html --outdir=./proxy-server/dist --minify --watch"
   },
   "lint": {
     "rules": {
