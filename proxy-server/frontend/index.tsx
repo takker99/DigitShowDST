@@ -980,13 +980,18 @@ const App: FunctionComponent = () => {
   );
 
   const epData: number[][] = useMemo(
-    () => [dataHistory.timestamps, dataHistory.frontEp, dataHistory.rearEp],
-    [dataHistory.timestamps, dataHistory.frontEp, dataHistory.rearEp],
-  );
-
-  const rpmData: number[][] = useMemo(
-    () => [dataHistory.timestamps, dataHistory.motorRpm],
-    [dataHistory.timestamps, dataHistory.motorRpm],
+    () => [
+      dataHistory.timestamps,
+      dataHistory.frontEp,
+      dataHistory.rearEp,
+      dataHistory.motorRpm,
+    ],
+    [
+      dataHistory.timestamps,
+      dataHistory.frontEp,
+      dataHistory.rearEp,
+      dataHistory.motorRpm,
+    ],
   );
 
   const palette = useMemo(() => ({
@@ -1468,55 +1473,61 @@ const App: FunctionComponent = () => {
 
   const epOptions = useMemo<Omit<uPlot.Options, "width" | "height">>(() => ({
     series: [
-      { label: "Time (s)" },
-      { label: "Front EP (kPa)", stroke: palette.epFront, width: 1.5 },
-      { label: "Rear EP (kPa)", stroke: palette.epRear, width: 1.5 },
+      { label: "Time (s)", scale: "x" },
+      {
+        label: "Front EP (kPa)",
+        stroke: palette.epFront,
+        width: 1.5,
+        scale: "ep",
+      },
+      {
+        label: "Rear EP (kPa)",
+        stroke: palette.epRear,
+        width: 1.5,
+        scale: "ep",
+      },
+      {
+        label: "Motor RPM",
+        stroke: palette.rpm,
+        width: 1.5,
+        scale: "rpm",
+      },
     ],
     axes: [
       {
         stroke: axisTheme.text,
         font: axisTheme.font,
+        values: formatAxisValue,
         grid: { stroke: axisTheme.grid, width: 1 },
         ticks: { stroke: axisTheme.text, width: 1 },
       },
       {
+        scale: "ep",
         label: "EP (kPa)",
         labelSize: 30,
         stroke: axisTheme.text,
         font: axisTheme.font,
         labelFont: axisTheme.font,
         labelStroke: axisTheme.text,
-        grid: { stroke: axisTheme.grid, width: 1 },
-        ticks: { stroke: axisTheme.text, width: 1 },
-      },
-    ],
-    scales: { x: { time: false }, y: {} },
-  }), [axisTheme, palette]);
-
-  const rpmOptions = useMemo<Omit<uPlot.Options, "width" | "height">>(() => ({
-    series: [
-      { label: "Time (s)" },
-      { label: "Motor RPM", stroke: palette.rpm, width: 1.5 },
-    ],
-    axes: [
-      {
-        stroke: axisTheme.text,
-        font: axisTheme.font,
+        values: formatAxisValue,
         grid: { stroke: axisTheme.grid, width: 1 },
         ticks: { stroke: axisTheme.text, width: 1 },
       },
       {
+        scale: "rpm",
         label: "RPM",
         labelSize: 30,
+        side: 1,
         stroke: axisTheme.text,
         font: axisTheme.font,
         labelFont: axisTheme.font,
         labelStroke: axisTheme.text,
+        values: formatAxisValue,
         grid: { stroke: axisTheme.grid, width: 1 },
         ticks: { stroke: axisTheme.text, width: 1 },
       },
     ],
-    scales: { x: { time: false }, y: {} },
+    scales: { x: { time: false }, ep: {}, rpm: {} },
   }), [axisTheme, palette]);
 
   return (
@@ -1773,12 +1784,8 @@ const App: FunctionComponent = () => {
           />
         </div>
         <div className="chart-container">
-          <h3 className="chart-title">EP (kPa)</h3>
+          <h3 className="chart-title">EP (kPa) & Motor RPM</h3>
           <UPlotChart data={epData} options={epOptions} />
-        </div>
-        <div className="chart-container">
-          <h3 className="chart-title">Motor RPM</h3>
-          <UPlotChart data={rpmData} options={rpmOptions} />
         </div>
       </div>
     </main>
