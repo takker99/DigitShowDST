@@ -5,12 +5,14 @@ This directory contains test fixtures for YAML control configuration validation.
 ## Test Cases
 
 ### Valid Configurations
+
 - `valid_minimal.yaml`: Minimal valid document with single no_control step
 - `valid_complex.yaml`: Multi-step workflow covering all strategy types
 - `valid_pre_consolidation.yaml`: Pre-consolidation workflow example
 - `valid_consolidation_sweep.yaml`: Complex consolidation with cyclic loading
 
 ### Invalid Configurations
+
 - `invalid_missing_version.yaml`: Missing version field
 - `invalid_wrong_version.yaml`: Unsupported version number
 - `invalid_missing_metadata.yaml`: Missing required metadata fields
@@ -24,6 +26,7 @@ This directory contains test fixtures for YAML control configuration validation.
 ## Usage
 
 These test files are used for:
+
 1. Parser regression testing during development
 2. Schema validation verification
 3. Documentation examples for migration guide
@@ -32,6 +35,7 @@ These test files are used for:
 ## Validation
 
 Run validation tests using:
+
 ```
 # Manual testing (once parser is integrated)
 DigitShowDST.exe --validate-config test_data\valid_minimal.yaml

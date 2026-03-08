@@ -1,6 +1,7 @@
 # JSON Schema Documentation
 
-このディレクトリには、DigitShowDSTアプリケーションで使用されるデータファイルのJSON Schemaが含まれています。
+このディレクトリには、DigitShowDSTアプリケーションで使用されるデータファイルのJSON
+Schemaが含まれています。
 
 ## スキーマファイル
 
@@ -9,12 +10,14 @@
 A/DチャンネルおよびD/Aチャンネルの較正係数を定義するスキーマ。
 
 **用途:**
+
 - A/D: 64チャンネル分の較正係数(a, b, c)を保存
 - A/D物理量 = a×V² + b×V + c の関係を定義
 - D/A: 8チャンネル分の較正係数(da_cal_a, da_cal_b)を保存
 - D/A出力 = da_cal_a×物理量 + da_cal_b の関係を定義
 
 **主要フィールド:**
+
 - `version`: スキーマバージョン (例: "1.0")
 - `calibration_data`: A/Dチャンネルの較正データ配列 (最大64チャンネル)
   - `channel`: チャンネル番号 (0-63)
@@ -34,21 +37,25 @@ A/DチャンネルおよびD/Aチャンネルの較正係数を定義するス�
   - `box_weight_g`: ボックス重量 [g]
 
 **バリデーション:**
+
 - `calibration_data`は0〜64チャンネル (省略可能、省略時はa=0, b=0, c=0)
 - `da_calibration_data`は0〜8チャンネル (省略可能、省略時はa=0, b=0)
 - チャンネル番号は範囲内 (A/D: 0-63, D/A: 0-7)
 - すべての係数は数値型
 
 ### 2. specimen_data.schema.json
+
 ### 3. control_script.schema.json
 
 制御スクリプト（Control from file）を定義するスキーマ。
 
 **用途:**
+
 - CFNUM/CFPARA[0..17] の配列をJSONで保存・読み込み
 - 最大128ステップに対応
 
 **主要フィールド:**
+
 - `version`: スキーマバージョン (例: "1.0")
 - `steps`: 制御ステップ配列（最大128要素）
   - `step`: ステップ番号（任意。省略時は配列順がインデックス）
@@ -57,20 +64,22 @@ A/DチャンネルおよびD/Aチャンネルの較正係数を定義するス�
   - `description`: 任意の説明文
 
 **バリデーション:**
+
 - `steps`の要素数は1〜128
 - `cfpara`は必ず18要素
 - 値の単位・意味は `knowledge/control_specifications.md` を参照
 
-
 供試体の物理特性と寸法を定義するスキーマ。
 
 **用途:**
+
 - 異なる試験ステージでの供試体データを保存
 - 4つのステージ: [present, initial, before consolidation, after consolidation]
 
 **主要フィールド:**
 
 #### 配列データ (各4要素)
+
 - `diameter`: 直径 [mm] (円柱供試体の場合)
 - `width`: 幅 [mm] (角柱供試体の場合)
 - `depth`: 奥行き [mm] (角柱供試体の場合)
@@ -82,6 +91,7 @@ A/DチャンネルおよびD/Aチャンネルの較正係数を定義するス�
 - `vldt2`: 鉛直変位計2の値 [mm]
 
 #### スカラーデータ
+
 - `gs`: 土粒子の比重 (通常 2.0-3.5)
 - `membrane_modulus`: メンブレン弾性係数 [kPa]
 - `membrane_thickness`: メンブレン厚さ [mm]
@@ -90,6 +100,7 @@ A/DチャンネルおよびD/Aチャンネルの較正係数を定義するス�
 - `box_weight`: ボックス重量 [g] (一面せん断試験用)
 
 **バリデーション:**
+
 - すべての配列は正確に4要素
 - 寸法や重量は非負値
 - 比重は2.0-3.5の範囲内
@@ -118,8 +129,8 @@ python -c "import json, jsonschema; \
 
 多くのエディタはJSON Schemaをサポートしています:
 
-**VS Code:**
-JSONファイルの先頭に以下を追加:
+**VS Code:** JSONファイルの先頭に以下を追加:
+
 ```json
 {
   "$schema": "../schemas/calibration_factor.schema.json",
@@ -128,6 +139,7 @@ JSONファイルの先頭に以下を追加:
 ```
 
 または`.vscode/settings.json`に:
+
 ```json
 {
   "json.schemas": [
@@ -157,6 +169,7 @@ JSONファイルの先頭に以下を追加:
 ## バージョニング
 
 スキーマのバージョンは`version`フィールドで管理されます:
+
 - メジャーバージョン: 互換性のない変更
 - マイナーバージョン: 後方互換性のある追加
 

@@ -524,3 +524,4 @@ generated/
 
 !Lib_amd64/*.lib
 !Lib_i386/*.lib
+proxy-server/dist/

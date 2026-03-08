@@ -1,6 +1,7 @@
 # REST API クイックスタート
 
-このガイドでは、DigitShowDSTのREST APIを使用してセンサーデータにアクセスする方法を説明します。
+このガイドでは、DigitShowDSTのREST
+APIを使用してセンサーデータにアクセスする方法を説明します。
 
 ## APIの有効化
 
@@ -30,6 +31,7 @@ curl http://localhost:8080/api/health
 ```
 
 レスポンス例：
+
 ```json
 {
   "status": "ok",
@@ -46,6 +48,7 @@ curl http://localhost:8080/api/sensor-data
 ```
 
 レスポンス例：
+
 ```json
 {
   "timestamp": 1735768800000,
@@ -86,6 +89,7 @@ curl http://localhost:8080/api/sensor-data/stream
 ```
 
 ストリーム出力例：
+
 ```
 event: data
 data: {"timestamp": 1735768800000, "physical_input": {...}, "physical_output": {...}}
@@ -101,60 +105,68 @@ data: {"timestamp": 1735768800100, "physical_input": {...}, "physical_output": {
 ```html
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>DigitShowDST リアルタイムモニタ</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <h1>せん断応力モニタ</h1>
     <canvas id="chart" width="800" height="400"></canvas>
 
     <script>
-        const ctx = document.getElementById('chart').getContext('2d');
-        const chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'せん断応力 (kPa)',
-                    data: [],
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
-                }]
+      const ctx = document.getElementById("chart").getContext("2d");
+      const chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: [],
+          datasets: [{
+            label: "せん断応力 (kPa)",
+            data: [],
+            borderColor: "rgb(75, 192, 192)",
+            tension: 0.1,
+          }],
+        },
+        options: {
+          scales: {
+            x: {
+              display: true,
+              title: { display: true, text: "時刻" },
             },
-            options: {
-                scales: {
-                    x: { display: true, title: { display: true, text: '時刻' } },
-                    y: { display: true, title: { display: true, text: 'τ (kPa)' } }
-                }
-            }
-        });
+            y: {
+              display: true,
+              title: { display: true, text: "τ (kPa)" },
+            },
+          },
+        },
+      });
 
-        const eventSource = new EventSource('http://localhost:8080/api/sensor-data/stream');
+      const eventSource = new EventSource(
+        "http://localhost:8080/api/sensor-data/stream",
+      );
 
-        eventSource.addEventListener('data', (event) => {
-            const data = JSON.parse(event.data);
-            const time = new Date(data.timestamp).toLocaleTimeString();
-            const stress = data.physical_input.shear_stress_kpa;
+      eventSource.addEventListener("data", (event) => {
+        const data = JSON.parse(event.data);
+        const time = new Date(data.timestamp).toLocaleTimeString();
+        const stress = data.physical_input.shear_stress_kpa;
 
-            chart.data.labels.push(time);
-            chart.data.datasets[0].data.push(stress);
+        chart.data.labels.push(time);
+        chart.data.datasets[0].data.push(stress);
 
-            // 直近100点のみ表示
-            if (chart.data.labels.length > 100) {
-                chart.data.labels.shift();
-                chart.data.datasets[0].data.shift();
-            }
+        // 直近100点のみ表示
+        if (chart.data.labels.length > 100) {
+          chart.data.labels.shift();
+          chart.data.datasets[0].data.shift();
+        }
 
-            chart.update('none'); // アニメーションなし
-        });
+        chart.update("none"); // アニメーションなし
+      });
 
-        eventSource.onerror = (error) => {
-            console.error('SSE接続エラー:', error);
-            eventSource.close();
-        };
+      eventSource.onerror = (error) => {
+        console.error("SSE接続エラー:", error);
+        eventSource.close();
+      };
     </script>
-</body>
+  </body>
 </html>
 ```
 
@@ -210,6 +222,7 @@ if __name__ == '__main__':
 ```
 
 実行例：
+
 ```bash
 # スナップショット取得
 python sensor_client.py
@@ -252,7 +265,8 @@ End Sub
 
 ### ポート8080が使用できない
 
-別のアプリケーションがポート8080を使用している場合は、`api_config.json` の `port` を変更してください：
+別のアプリケーションがポート8080を使用している場合は、`api_config.json` の
+`port` を変更してください：
 
 ```json
 {
@@ -340,10 +354,10 @@ serve((req) => {
       if (done) break;
 
       const text = decoder.decode(value);
-      const lines = text.split('\n');
+      const lines = text.split("\n");
 
       for (const line of lines) {
-        if (line.startsWith('data: ')) {
+        if (line.startsWith("data: ")) {
           socket.send(line.substring(6));
         }
       }
@@ -355,6 +369,7 @@ serve((req) => {
 ```
 
 実行：
+
 ```bash
 deno run --allow-net ws_proxy.ts
 ```

@@ -1,6 +1,7 @@
 # Testing REST API Enhancements
 
-This document provides step-by-step instructions for testing the new REST API features.
+This document provides step-by-step instructions for testing the new REST API
+features.
 
 ## Prerequisites
 
@@ -10,7 +11,9 @@ This document provides step-by-step instructions for testing the new REST API fe
 ## Test 1: Auto-Generated Configuration File
 
 ### Expected Behavior
-When the application starts and `api_config.json` doesn't exist, it should be automatically created.
+
+When the application starts and `api_config.json` doesn't exist, it should be
+automatically created.
 
 ### Steps
 
@@ -24,8 +27,7 @@ When the application starts and `api_config.json` doesn't exist, it should be au
    DigitShowDST.exe
    ```
 
-3. **Check the log output**:
-   Look for these log messages:
+3. **Check the log output**: Look for these log messages:
    ```
    [warn] API config file not found: api_config.json. Creating with default values.
    [info] Created default API config file: api_config.json
@@ -55,6 +57,7 @@ When the application starts and `api_config.json` doesn't exist, it should be au
    ```
 
 ### Success Criteria
+
 - ✅ File is created automatically
 - ✅ File contains proper JSON structure
 - ✅ All default values are present
@@ -64,6 +67,7 @@ When the application starts and `api_config.json` doesn't exist, it should be au
 ## Test 2: OpenAPI Endpoint
 
 ### Prerequisites
+
 Enable the API server:
 
 1. Edit `api_config.json`:
@@ -80,8 +84,7 @@ Enable the API server:
 
 ### Steps
 
-1. **Verify API server started**:
-   Check logs for:
+1. **Verify API server started**: Check logs for:
    ```
    [info] API server started successfully at http://127.0.0.1:8080
    ```
@@ -104,26 +107,31 @@ Enable the API server:
 4. **Verify the content**:
    - Check the Content-Type header: `application/x-yaml; charset=utf-8`
    - Verify it starts with `openapi: 3.0.3`
-   - Verify it contains 4 paths: `/api/health`, `/api/openapi`, `/api/sensor-data`, `/api/sensor-data/stream`
+   - Verify it contains 4 paths: `/api/health`, `/api/openapi`,
+     `/api/sensor-data`, `/api/sensor-data/stream`
 
 ### Alternative Test Methods
 
 #### Using a Web Browser
+
 1. Navigate to: `http://localhost:8080/api/openapi`
 2. Browser should prompt to download or display the YAML file
 
 #### Using Postman
+
 1. Create a new GET request to `http://localhost:8080/api/openapi`
 2. Send the request
 3. Verify the response contains valid YAML
 
 #### Using Swagger Editor
+
 1. Open https://editor.swagger.io/
 2. Click "File" → "Import URL"
 3. Enter: `http://localhost:8080/api/openapi`
 4. Swagger Editor should parse and display the API documentation
 
 ### Success Criteria
+
 - ✅ Endpoint responds with HTTP 200
 - ✅ Content-Type is `application/x-yaml`
 - ✅ Response contains valid OpenAPI 3.0 YAML
@@ -168,6 +176,7 @@ Enable the API server:
    - Sensor data: Returns JSON with timestamp, physical_input, physical_output
 
 ### Success Criteria
+
 - ✅ All endpoints respond correctly
 - ✅ No errors in application logs
 - ✅ Configuration persists across restarts
@@ -201,7 +210,8 @@ Enable the API server:
    ```
 
 3. **Verify**:
-   - Application logs error: `[error] Error loading API config from api_config.json: ...`
+   - Application logs error:
+     `[error] Error loading API config from api_config.json: ...`
    - Application continues with defaults: `[info] Using defaults`
    - Application doesn't crash
 
@@ -224,6 +234,7 @@ Enable the API server:
    - Application doesn't crash
 
 ### Success Criteria
+
 - ✅ Graceful handling of missing directories
 - ✅ Graceful handling of corrupted files
 - ✅ Graceful handling of write failures
@@ -243,6 +254,7 @@ Enable the API server:
 **Symptom**: Log shows `[error] Failed to start API server on 127.0.0.1:8080`
 
 **Solution**:
+
 1. Check if another application is using port 8080:
    ```cmd
    netstat -ano | findstr :8080
@@ -254,10 +266,12 @@ Enable the API server:
 **Symptom**: Config file doesn't appear after starting application
 
 **Possible Causes**:
+
 1. No write permission in the directory
 2. Running from a protected location (e.g., Program Files)
 
 **Solution**:
+
 - Run from a user-writable location
 - Check Windows Event Log for access denied errors
 - Run application as administrator (not recommended for normal use)
@@ -267,12 +281,16 @@ Enable the API server:
 **Symptom**: `curl http://localhost:8080/api/openapi` returns 404
 
 **Possible Causes**:
+
 1. API server not enabled
 2. Wrong URL
 
 **Solution**:
-1. Verify API server is running: check logs for "API server started successfully"
-2. Verify URL is correct: `http://localhost:8080/api/openapi` (no trailing slash)
+
+1. Verify API server is running: check logs for "API server started
+   successfully"
+2. Verify URL is correct: `http://localhost:8080/api/openapi` (no trailing
+   slash)
 3. Try health check first: `http://localhost:8080/api/health`
 
 ## Verification Checklist

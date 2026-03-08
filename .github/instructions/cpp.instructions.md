@@ -1,19 +1,23 @@
-﻿---
+---
 applyTo: "**/*.c,**/*.cpp,**/*.h,**/*.hpp"
 ---
 
 # C++ Coding Guidelines
 
-This document defines the standard conventions for writing and reviewing C++ code in the DigitShowDST project. Based on Modern C++ (C++17 and later) best practices, we aim for safe and maintainable code.
+This document defines the standard conventions for writing and reviewing C++
+code in the DigitShowDST project. Based on Modern C++ (C++17 and later) best
+practices, we aim for safe and maintainable code.
 
 ## Core Principles
 
 ### Function Qualifiers
+
 - **Apply `constexpr` and `noexcept` to functions by default**
   - If `constexpr` is not possible, consider making it a `const` member function
   - Omit `noexcept` only when the function may throw exceptions
 - **Mark function parameters as `const` whenever possible**
-  - Even for pass-by-value parameters, `const` prevents accidental modifications within the function
+  - Even for pass-by-value parameters, `const` prevents accidental modifications
+    within the function
   - This catches bugs where parameters are unintentionally modified
 
 ```cpp
@@ -35,6 +39,7 @@ void processValue(const int value) noexcept {
 ```
 
 ### Inline Functions
+
 - **Aggressively inline non-complex functions**
   - Short functions defined in headers
   - Template functions (implicitly inline)
@@ -50,6 +55,7 @@ inline bool isValid(const int value) noexcept {
 ## Variable Definitions
 
 ### Constness Priority
+
 1. **`constexpr`** - When the value can be a compile-time constant
 2. **`const`** - When initialized at runtime but never modified
 3. **mutable** - Only when modification is absolutely necessary
@@ -62,6 +68,7 @@ int counter = 0;                          // Only when necessary
 ```
 
 ### Scope Priority
+
 1. **Local scope variables** - Define immediately before use
 2. **`static` variables** - When sharing within a function is needed
 3. **`inline` variables** - When sharing across translation units is needed
@@ -87,6 +94,7 @@ namespace config {
 ```
 
 ### Namespace Usage
+
 - **Always wrap `inline` variables in a namespace**
 
 ```cpp
@@ -102,6 +110,7 @@ inline constexpr double kPi = 3.14159265358979323846;
 ## Functional Programming Principles
 
 ### Pure Functions and Side Effect Separation
+
 - **Define functions as pure whenever possible, separating side effects**
 - Depend only on inputs; return the same output for the same input
 
@@ -121,9 +130,12 @@ void logAndCalculate(const double radius) {
 ## Error Handling (Rust-Inspired Approach)
 
 ### Core Strategy
-1. **Normal errors**  Include in return value using `std::optional` or `std::expected`
-2. **Unexpected behavior (bugs)**  Throw exceptions
-3. **Exception-throwing library functions**  Wrap with `try-catch` and convert to `std::expected`
+
+1. **Normal errors** Include in return value using `std::optional` or
+   `std::expected`
+2. **Unexpected behavior (bugs)** Throw exceptions
+3. **Exception-throwing library functions** Wrap with `try-catch` and convert to
+   `std::expected`
 
 ```cpp
 // Good - normal errors use optional
@@ -152,6 +164,7 @@ int parseInt(const std::string_view str) {
 ```
 
 ### Exceptions Indicate "Bugs"
+
 ```cpp
 // Assertion-like usage
 void processArray(const std::vector<int>& arr) {
@@ -165,6 +178,7 @@ void processArray(const std::vector<int>& arr) {
 ## Leveraging Modern C++ Standard Library
 
 ### Prefer Standard Features
+
 - **Use modern C++ features over old C APIs**
 
 ```cpp
@@ -180,6 +194,7 @@ FILE* file = fopen("output.txt", "w");
 ```
 
 ### Containers and Ranges
+
 ```cpp
 // Good - range-based for loop
 for (const auto& item : collection) {
@@ -194,6 +209,7 @@ const auto result = std::ranges::find_if(items, predicate);
 ## String Handling
 
 ### Priority Order
+
 1. **`const char[N]`** - Fixed-length literals
 2. **`std::string_view`** - Read-only, no ownership
 3. **`std::string`** - Ownership needed, mutation required
@@ -219,6 +235,7 @@ void processName(const CString& name) {  // Avoid
 ```
 
 ### String Literals
+
 ```cpp
 // Good - using namespace for literals
 using namespace std::string_literals;
@@ -229,6 +246,7 @@ auto sv = "Hello"sv;           // std::string_view
 ## Memory Management
 
 ### Smart Pointer Usage
+
 - **Avoid raw pointers; use smart pointers**
 
 ```cpp
@@ -241,6 +259,7 @@ Widget* ptr = new Widget();  // Avoid
 ```
 
 ### RAII Principle
+
 - **Initialize resources upon acquisition; automatically release at scope end**
 
 ```cpp
@@ -260,6 +279,7 @@ fclose(file);  // May forget
 ## Type Safety
 
 ### Type Deduction
+
 ```cpp
 // Good - auto reduces verbosity
 auto value = calculateValue();
@@ -270,6 +290,7 @@ std::string name = getName();  // auto is fine, but explicit is clearer
 ```
 
 ### Enumerations
+
 ```cpp
 // Good - enum class
 enum class Status {
@@ -290,6 +311,7 @@ enum Status {  // Pollutes scope
 ## Code Style
 
 ### Naming Conventions
+
 - **Constants**: `kCamelCase` or `UPPER_SNAKE_CASE`
 - **Variables/Functions**: `camelCase` or `snake_case` (project-consistent)
 - **Types/Classes**: `PascalCase`
@@ -313,6 +335,7 @@ public:
 ```
 
 ### Include Order
+
 1. Corresponding header file (for .cpp files)
 2. C++ standard library
 3. Third-party libraries

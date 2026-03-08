@@ -1,6 +1,7 @@
 # DigitShowDST ログファイル解析ツール
 
-Python製のデータ分析・可視化ツール。DigitShowDSTが出力する `.dat`（物理量）、`.vlt`（生電圧）、`.out`（計算パラメータ）を読み込んでグラフ化・統計解析します。
+Python製のデータ分析・可視化ツール。DigitShowDSTが出力する
+`.dat`（物理量）、`.vlt`（生電圧）、`.out`（計算パラメータ）を読み込んでグラフ化・統計解析します。
 
 ## セットアップ
 
@@ -11,7 +12,9 @@ Python製のデータ分析・可視化ツール。DigitShowDSTが出力する `
 irm https://astral.sh/uv/install.ps1 | iex
 ```
 
-他のOSは [公式ドキュメント](https://docs.astral.sh/uv/getting-started/installation/) を参照。
+他のOSは
+[公式ドキュメント](https://docs.astral.sh/uv/getting-started/installation/)
+を参照。
 
 ### 2. 依存パッケージのインストール
 
@@ -48,6 +51,7 @@ uv run python scripts/examples.py 5
 ### 各スクリプトの説明
 
 #### `scripts/load_data.py`
+
 データ読み込みユーティリティ。
 
 ```python
@@ -62,6 +66,7 @@ df_dat, df_vlt, df_out = read_all_files("2025-10-28_test")
 ```
 
 #### `scripts/plot_data.py`
+
 可視化ツール。
 
 ```python
@@ -72,12 +77,15 @@ create_summary_report("2025-10-28_test", output_dir="output")
 ```
 
 **生成されるグラフ**:
+
 - `*_stress_strain.png` — 荷重-変位 & セル圧力の時系列
 - `*_dat_timeseries.png` — 主要物理量（Load, Disp, Cell_P）の時系列
 - `*_voltage_ch0-5.png` — 生電圧 CH00～CH05 の時系列
-- `*_parameters.png` — 計算パラメータ（せん断応力、有効応力、ひずみ、制御ステップ）
+- `*_parameters.png` —
+  計算パラメータ（せん断応力、有効応力、ひずみ、制御ステップ）
 
 #### `scripts/analyze_data.py`
+
 統計解析ツール。
 
 ```python
@@ -89,11 +97,13 @@ print(report['loading_analysis'])
 ```
 
 **出力内容**:
+
 - 基本統計量（mean, std, min, max）
 - 載荷解析（最大荷重、剛性推定）
 - 圧力解析（最大・平均圧力、変化率）
 
 #### `scripts/analyze_displacement_velocity.py`
+
 変位速度解析ツール（複数載荷区間の線形回帰）。
 
 ```powershell
@@ -111,12 +121,14 @@ uv run python scripts/analyze_displacement_velocity.py 2025-10-29_shear_test --o
 ```
 
 **機能**:
+
 - 三角形状の載荷区間を自動検出または手動選択（マウスでドラッグ）
 - 各区間で線形回帰: 傾き a (mm/s), 切片 b (mm), 決定係数 R²
 - 電圧を指定すると電圧-変位速度関係も線形回帰（モーターキャリブレーション用）
 - グラフ出力: 変位時系列 + 回帰直線 + 統計バーチャート + 電圧-速度プロット
 
 #### `scripts/examples.py`
+
 8種類の使用例。
 
 ```powershell
@@ -168,6 +180,7 @@ uv run jupyter notebook
 ```
 
 Notebook内:
+
 ```python
 from scripts.load_data import read_all_files
 import matplotlib.pyplot as plt
@@ -215,7 +228,8 @@ print(df.columns.tolist())
 
 ### 新しい解析関数を追加
 
-`scripts/analyze_data.py` に関数を追加し、`generate_analysis_report()` 内で呼び出す。
+`scripts/analyze_data.py` に関数を追加し、`generate_analysis_report()`
+内で呼び出す。
 
 ### 新しいプロット関数を追加
 
@@ -223,7 +237,8 @@ print(df.columns.tolist())
 
 ### テストデータ
 
-`2025-10-28_test.vlt` など、実際のログファイルをプロジェクトルートに配置してテスト。
+`2025-10-28_test.vlt`
+など、実際のログファイルをプロジェクトルートに配置してテスト。
 
 ## ライセンス
 
