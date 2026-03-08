@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { proxy } from "hono/proxy";
 import { logger } from "hono/logger";
 import { serveStatic } from "hono/deno";
+import { fromFileUrl } from "@std/path";
 
 const app = new Hono({ strict: false });
 
@@ -14,8 +15,16 @@ app.get(
 
 app.on(
   "get",
-  ["/", "/sample-viewer", "/sample-viewer.html"],
-  serveStatic({ path: "./scripts/sample-viewer.html" }),
+  ["/", "/index"],
+  (c) => c.redirect("/index.html"),
+);
+
+app.get(
+  "/*",
+  serveStatic({
+    root: fromFileUrl(new URL("./dist", import.meta.url)),
+    precompressed: true,
+  }),
 );
 
 export default app satisfies Deno.ServeDefaultExport;

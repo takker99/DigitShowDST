@@ -1,5 +1,5 @@
 {
-  "[typescript][typescriptreact][javascript][javascriptreact][json][jsonc][markdown]": {
+  "[typescript][typescriptreact][javascript][javascriptreact][json][jsonc][markdown][css]": {
     "editor.defaultFormatter": "denoland.vscode-deno"
   },
   // Keep resource-related files in UTF-8 with BOM as well
