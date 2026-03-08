@@ -10,26 +10,9 @@ export const UPlotChart: FunctionComponent<{
 }> = ({ data, options }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const plotRef = useRef<uPlot>(null);
-  const [size, setSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
     if (!containerRef.current) return;
-
-    const updateSize = () => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        setSize({ width: rect.width, height: 300 });
-      }
-    };
-
-    updateSize();
-    const resizeObserver = new ResizeObserver(updateSize);
-    resizeObserver.observe(containerRef.current);
-    return () => resizeObserver.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!containerRef.current || size.width === 0) return;
 
     if (plotRef.current) {
       plotRef.current.destroy();
@@ -38,8 +21,8 @@ export const UPlotChart: FunctionComponent<{
 
     const opts: uPlot.Options = {
       ...options,
-      width: size.width,
-      height: size.height,
+      width: 0,
+      height: 30,
     };
     plotRef.current = new uPlot(
       opts,
@@ -47,13 +30,25 @@ export const UPlotChart: FunctionComponent<{
       containerRef.current,
     );
 
+    const updateSize = () => {
+      if (containerRef.current && plotRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        plotRef.current.setSize({ width: rect.width, height: 300 });
+      }
+    };
+
+    updateSize();
+    const resizeObserver = new ResizeObserver(updateSize);
+    resizeObserver.observe(containerRef.current);
+
     return () => {
+      resizeObserver.disconnect();
       if (plotRef.current) {
         plotRef.current.destroy();
         plotRef.current = null;
       }
     };
-  }, [options, size]);
+  }, [options]);
 
   useEffect(() => {
     if (plotRef.current && data) {
