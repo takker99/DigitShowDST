@@ -322,6 +322,8 @@ void CDigitShowBasicView::OnInitialUpdate()
     m_Combo1->InsertString(-1,"15");
     m_Combo1->SetWindowText("0");
     CComboBox* m_Combo2 = (CComboBox*)GetDlgItem(IDC_COMBO_SamplingTime);
+	m_Combo2->InsertString(-1,"0.05 s");
+	m_Combo2->InsertString(-1,"0.1 s");
     m_Combo2->InsertString(-1,"0.2 s");
     m_Combo2->InsertString(-1,"0.5 s");
     m_Combo2->InsertString(-1,"1.0 s");
@@ -1084,6 +1086,8 @@ void CDigitShowBasicView::OnBUTTONSetTimeInterval()
     CString        tmp;
     CComboBox* m_Combo1 = (CComboBox*)GetDlgItem(IDC_COMBO_SamplingTime);
     m_Combo1->GetWindowText(tmp);
+	if(tmp=="0.05 s")    ctx->timeSettings.Interval3 = 50;
+	if(tmp=="0.1 s")    ctx->timeSettings.Interval3 = 100;
     if(tmp=="0.2 s")    ctx->timeSettings.Interval3 = 200;
     if(tmp=="0.5 s")    ctx->timeSettings.Interval3 = 500;
     if(tmp=="1.0 s")    ctx->timeSettings.Interval3 = 1000;
