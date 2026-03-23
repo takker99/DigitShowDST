@@ -148,7 +148,7 @@ void CDigitShowBasicDoc::OpenBoard()
         }
         // OPEN D/A BOARDS.
         if(ctx->NumDA > 0){
-            ctx->Ret = AioInit("AIO003" , &ctx->da.Id[0] );
+ctx->Ret = AioInit("AIO001" , &ctx->da.Id[0] );
             if(ctx->Ret != 0){
                 ctx->Ret2 = AioGetErrorString(ctx->Ret, ctx->ErrorString);
                  ctx->TextString.Format("AioInit = %d : %s", ctx->Ret, ctx->ErrorString);

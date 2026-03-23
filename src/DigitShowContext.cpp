@@ -38,7 +38,7 @@ void InitContext(DigitShowContext* ctx)
 
     // Initialize board counts
     ctx->NumAD = 1;
-    ctx->NumDA = 0;
+    ctx->NumDA = 1;
     ctx->AdMaxChannels = 0;
 
     // Initialize A/D board config
