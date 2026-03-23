@@ -281,8 +281,8 @@ void CSpecimen::OnBUTTONBeConsol()
     SpecimenData->Diameter[2] = SpecimenData->Diameter[1]*sqrt(SpecimenData->Area[2]/SpecimenData->Area[1]) ;
     SpecimenData->Depth[2]  = SpecimenData->Depth[1]*sqrt(SpecimenData->Area[2]/SpecimenData->Area[1]);
     SpecimenData->Width[2]  = SpecimenData->Width[1]*sqrt(SpecimenData->Area[2]/SpecimenData->Area[1]);
-    SpecimenData->VLDT1[2] = ctx->Phyout[5];
-    SpecimenData->VLDT2[2] = ctx->Phyout[6];
+    SpecimenData->VLDT1[2] = 120;
+    SpecimenData->VLDT2[2] = 120;
     ctx->cal.c[1] = ctx->cal.c[1]- ctx->Phyout[1];
     //---0-adjustment of Displacement transducer---
     ctx->cal.c[4] = ctx->cal.c[4]- ctx->Phyout[4];
