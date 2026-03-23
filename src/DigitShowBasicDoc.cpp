@@ -172,8 +172,8 @@ void CDigitShowBasicDoc::OpenBoard()
             ctx->Ret = AioGetAiMaxChannels ( ctx->ad.Id[i] , &ctx->ad.Channels[i] );
             ctx->Ret = AioSetAiChannels ( ctx->ad.Id[i] , ctx->ad.Channels[i] );
             ctx->AdMaxChannels = ctx->AdMaxChannels+ctx->ad.Channels[i]/2;
-            ctx->Ret = AioSetAiRangeAll ( ctx->ad.Id[i], 1 );
-            // (-5V, 5V)
+            ctx->Ret = AioSetAiRangeAll ( ctx->ad.Id[i], 0 );
+            // (-10V, 10V)
             ctx->Ret = AioGetAiRange ( ctx->ad.Id[i] , 0 , &ctx->ad.Range[i] );
             ctx->Ret = GetRangeValue(ctx->ad.Range[i], &ctx->ad.RangeMax[i], &ctx->ad.RangeMin[i]);
             ctx->Ret = AioGetAiMemoryType ( ctx->ad.Id[i] , &ctx->ad.MemoryType[i] );
