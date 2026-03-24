@@ -32,8 +32,7 @@
     <VcpkgEnableManifest>true</VcpkgEnableManifest>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <Import Project="$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.targets"
-    Condition="Exists('$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.targets')" />
+  <Import Project="$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.targets" Condition="Exists('$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.targets')" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -131,13 +130,10 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-  <Target Name="BootstrapVcpkg" BeforeTargets="InitializeBuildStatus"
-    Condition="!Exists('$(VcpkgRoot)vcpkg.exe')">
-    <Exec
-      Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(VcpkgRoot)scripts\bootstrap.ps1&quot; -disableMetrics" />
+  <Target Name="BootstrapVcpkg" BeforeTargets="InitializeBuildStatus" Condition="!Exists('$(VcpkgRoot)vcpkg.exe')">
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(VcpkgRoot)scripts\bootstrap.ps1&quot; -disableMetrics" />
   </Target>
   <Target Name="Format">
-    <Exec
-      Command="clang-format -i $(SolutionDir)src/*.cpp $(SolutionDir)src/*.h" />
+    <Exec Command="clang-format -i $(SolutionDir)src/*.cpp $(SolutionDir)src/*.h" />
   </Target>
 </Project>
