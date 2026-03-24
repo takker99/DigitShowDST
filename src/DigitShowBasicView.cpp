@@ -560,18 +560,18 @@ void CDigitShowBasicView::OnBUTTONStartSave()
                 fprintf(ctx->FileSaveData1, "%s    ", "Load_(N)");
                 fprintf(ctx->FileSaveData1, "%s    ", "Disp.(mm)");
                 fprintf(ctx->FileSaveData1, "%s    ", "Cell_P.(kPa)");
-                fprintf(ctx->FileSaveData1, "%s    ", "ECellP.(kPa)");
+                fprintf(ctx->FileSaveData1, "%s    ", "P.W.P(kPa)");
                 fprintf(ctx->FileSaveData1, "%s    ", "SP.Vol.(mm3)");
+                fprintf(ctx->FileSaveData1, "%s    ", "CH05_(V)");
                 fprintf(ctx->FileSaveData1, "%s    ", "V-LDT1_(mm)");
-                fprintf(ctx->FileSaveData1, "%s    ", "V-LDT2_(mm)");
                 fprintf(ctx->FileSaveData1, "%s    ", "CH07_(V)");
-                fprintf(ctx->FileSaveData1, "%s    ", "CH08_(V)");
+                fprintf(ctx->FileSaveData1, "%s    ", "V-LDT2_(mm)");
                 fprintf(ctx->FileSaveData1, "%s    ", "CH09_(V)");
-                fprintf(ctx->FileSaveData1, "%s    ", "CH10_(V)");
+                fprintf(ctx->FileSaveData1, "%s    ", "CG1_(mm)");
                 fprintf(ctx->FileSaveData1, "%s    ", "CH11_(V)");
-                fprintf(ctx->FileSaveData1, "%s    ", "CH12_(V)");
+                fprintf(ctx->FileSaveData1, "%s    ", "CG2_(mm)");
                 fprintf(ctx->FileSaveData1, "%s    ", "CH13_(V)");
-                fprintf(ctx->FileSaveData1, "%s    ", "CH14_(V)");
+                fprintf(ctx->FileSaveData1, "%s    ", "CG3_(mm)");
                 fprintf(ctx->FileSaveData1, "%s    ", "CH15_(V)");
                 fprintf(ctx->FileSaveData1, "\n");
             }
@@ -617,12 +617,12 @@ void CDigitShowBasicView::OnBUTTONStartSave()
                 fprintf(ctx->FileSaveData2, "%s    ", "p'___(kPa)");
                 fprintf(ctx->FileSaveData2, "%s    ", "e(a)_(%)_");
                 fprintf(ctx->FileSaveData2, "%s    ", "e(r)_(%)_");
-                fprintf(ctx->FileSaveData2, "%s    ", "e(v)_(%)_");
-                fprintf(ctx->FileSaveData2, "%s    ", "eLDT1(%)_");
-                fprintf(ctx->FileSaveData2, "%s    ", "eLDT2(%)_");
+                fprintf(ctx->FileSaveData2, "%s    ", "e(vol)_(%)_");
                 fprintf(ctx->FileSaveData2, "%s    ", "AvLDT(%)_");
-                fprintf(ctx->FileSaveData2, "%s    ", "(s'a+s'r)/2");
-                fprintf(ctx->FileSaveData2, "%s    ", "(s'a-s'r)/2");
+                fprintf(ctx->FileSaveData2, "%s    ", "DA(%)inCOMP");
+                fprintf(ctx->FileSaveData2, "%s    ", "DA(%)inEXT");
+                fprintf(ctx->FileSaveData2, "%s    ", "Cont_No__");
+                fprintf(ctx->FileSaveData2, "%s    ", "Step_time(s)");
                 fprintf(ctx->FileSaveData2, "\n");
             }
             // Timer starts

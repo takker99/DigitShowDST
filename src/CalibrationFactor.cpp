@@ -263,18 +263,18 @@ void CCalibrationFactor::CF_Load()
         m_C00 = _T("CH00, Load Cell");
         m_C01 = _T("CH01, Displacement");
         m_C02 = _T("CH02, Cell Pre.");
-        m_C03 = _T("CH03, Effect.Cell Pre. ");
+        m_C03 = _T("CH03, P.W.Pre. ");
         m_C04 = _T("CH04, Drained Vol.");
-        m_C05 = _T("CH05, LVDT1");
-        m_C06 = _T("CH06, LVDT2");
+        m_C05 = _T("CH05");
+        m_C06 = _T("CH06, LDT1");
         m_C07 = _T("CH07");
-        m_C08 = _T("CH08");
+        m_C08 = _T("CH08, LDT2");
         m_C09 = _T("CH09");
-        m_C10 = _T("CH10");
+        m_C10 = _T("CH10, GC1");
         m_C11 = _T("CH11");
-        m_C12 = _T("CH12");
+        m_C12 = _T("CH12, GC2");
         m_C13 = _T("CH13");
-        m_C14 = _T("CH14");
+        m_C14 = _T("CH14, GC3");
         m_C15 = _T("CH15");
     }
     if (m_Channels == "CH16-CH31")
@@ -650,7 +650,7 @@ void CCalibrationFactor::OnBUTTONZero15()
 void CCalibrationFactor::OnBUTTONAmp00()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult = 0;
+    INT_PTR nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 0;
     if (m_Channels == "CH16-CH31")
@@ -669,7 +669,7 @@ void CCalibrationFactor::OnBUTTONAmp00()
 void CCalibrationFactor::OnBUTTONAmp01()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult = 0;
+    INT_PTR nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 1;
     if (m_Channels == "CH16-CH31")
@@ -688,7 +688,7 @@ void CCalibrationFactor::OnBUTTONAmp01()
 void CCalibrationFactor::OnBUTTONAmp02()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult = 0;
+    INT_PTR nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 2;
     if (m_Channels == "CH16-CH31")
@@ -707,7 +707,7 @@ void CCalibrationFactor::OnBUTTONAmp02()
 void CCalibrationFactor::OnBUTTONAmp03()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult = 0;
+    INT_PTR nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 3;
     if (m_Channels == "CH16-CH31")
@@ -726,7 +726,7 @@ void CCalibrationFactor::OnBUTTONAmp03()
 void CCalibrationFactor::OnBUTTONAmp04()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult = 0;
+    INT_PTR nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 4;
     if (m_Channels == "CH16-CH31")
@@ -745,7 +745,7 @@ void CCalibrationFactor::OnBUTTONAmp04()
 void CCalibrationFactor::OnBUTTONAmp05()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult = 0;
+    INT_PTR nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 5;
     if (m_Channels == "CH16-CH31")
@@ -764,7 +764,7 @@ void CCalibrationFactor::OnBUTTONAmp05()
 void CCalibrationFactor::OnBUTTONAmp06()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult = 0;
+    INT_PTR nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 6;
     if (m_Channels == "CH16-CH31")
@@ -783,7 +783,7 @@ void CCalibrationFactor::OnBUTTONAmp06()
 void CCalibrationFactor::OnBUTTONAmp07()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult = 0;
+    INT_PTR nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 7;
     if (m_Channels == "CH16-CH31")
@@ -802,7 +802,7 @@ void CCalibrationFactor::OnBUTTONAmp07()
 void CCalibrationFactor::OnBUTTONAmp08()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult = 0;
+    INT_PTR nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 8;
     if (m_Channels == "CH16-CH31")
@@ -821,7 +821,7 @@ void CCalibrationFactor::OnBUTTONAmp08()
 void CCalibrationFactor::OnBUTTONAmp09()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult = 0;
+    INT_PTR nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 9;
     if (m_Channels == "CH16-CH31")
@@ -840,7 +840,7 @@ void CCalibrationFactor::OnBUTTONAmp09()
 void CCalibrationFactor::OnBUTTONAmp10()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult = 0;
+    INT_PTR nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 10;
     if (m_Channels == "CH16-CH31")
@@ -859,7 +859,7 @@ void CCalibrationFactor::OnBUTTONAmp10()
 void CCalibrationFactor::OnBUTTONAmp11()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult = 0;
+    INT_PTR nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 11;
     if (m_Channels == "CH16-CH31")
@@ -878,7 +878,7 @@ void CCalibrationFactor::OnBUTTONAmp11()
 void CCalibrationFactor::OnBUTTONAmp12()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult = 0;
+    INT_PTR nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 12;
     if (m_Channels == "CH16-CH31")
@@ -897,7 +897,7 @@ void CCalibrationFactor::OnBUTTONAmp12()
 void CCalibrationFactor::OnBUTTONAmp13()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult = 0;
+    INT_PTR nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 13;
     if (m_Channels == "CH16-CH31")
@@ -916,7 +916,7 @@ void CCalibrationFactor::OnBUTTONAmp13()
 void CCalibrationFactor::OnBUTTONAmp14()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult = 0;
+    INT_PTR nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 14;
     if (m_Channels == "CH16-CH31")
@@ -935,7 +935,7 @@ void CCalibrationFactor::OnBUTTONAmp14()
 void CCalibrationFactor::OnBUTTONAmp15()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult = 0;
+    INT_PTR nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 15;
     if (m_Channels == "CH16-CH31")

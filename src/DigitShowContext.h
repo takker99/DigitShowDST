@@ -70,6 +70,17 @@ struct ControlData
 };
 
 /**
+ * Cyclic loading runtime state
+ */
+struct CyclicControlState
+{
+    double DaFlag;
+    double RuIndicator;
+    double MinAxialStrain;
+    double MaxAxialStrain;
+};
+
+/**
  * A/D Board configuration
  */
 struct AdBoardConfig
@@ -252,6 +263,7 @@ struct DigitShowContext
     int ControlID;
     int NumCyclic;
     double TotalStepTime;
+    CyclicControlState cyclicState;
 
     // Amplifier calibration
     int AmpID;

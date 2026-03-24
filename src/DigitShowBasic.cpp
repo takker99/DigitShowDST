@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
 // DigitShowBasic.cpp : アプリケーション用クラスの機能定義を行います。
 
@@ -95,7 +95,7 @@ BOOL CDigitShowBasicApp::InitInstance()
     // アプリケーション用のドキュメント テンプレートを登録します。ドキュメント テンプレート
     //  はドキュメント、フレーム ウィンドウとビューを結合するために機能します。
 
-    CSingleDocTemplate *pDocTemplate;
+    CSingleDocTemplate *pDocTemplate = nullptr;
     pDocTemplate = new CSingleDocTemplate(IDR_MAINFRAME, RUNTIME_CLASS(CDigitShowBasicDoc),
                                           RUNTIME_CLASS(CMainFrame), // メイン SDI フレーム ウィンドウ
                                           RUNTIME_CLASS(CDigitShowBasicView));
@@ -135,7 +135,7 @@ class CAboutDlg : public CDialog
     // ClassWizard 仮想関数のオーバーライドを生成します。
     //{{AFX_VIRTUAL(CAboutDlg)
   protected:
-    virtual void DoDataExchange(CDataExchange *pDX);
+    void DoDataExchange(CDataExchange *pDX) override;
     // DDX/DDV のサポート
     //}}AFX_VIRTUAL
 

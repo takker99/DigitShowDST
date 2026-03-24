@@ -75,6 +75,10 @@ void InitContext(DigitShowContext *ctx)
     ctx->ControlID = 0;
     ctx->NumCyclic = 0;
     ctx->TotalStepTime = 0.0;
+    ctx->cyclicState.DaFlag = 0.0;
+    ctx->cyclicState.RuIndicator = 0.0;
+    ctx->cyclicState.MinAxialStrain = 0.0;
+    ctx->cyclicState.MaxAxialStrain = 0.0;
     ctx->AmpID = 0;
 
     // Initialize time values
