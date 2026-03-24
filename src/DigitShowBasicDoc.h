@@ -34,19 +34,12 @@ class CDigitShowBasicDoc : public CDocument
     virtual void Serialize(CArchive &ar);
 
   public:
-    void Creep2();
-    void ZeroAllDaOutputsOnShutdown();
+        void ZeroAllDaOutputsOnShutdown();
     void SaveToFile2();
     void Allocate_Memory();
-    void LinearEffectiveStressPath();
-    void Stop_Control();
+        void Stop_Control();
     void Start_Control();
-    void Creep();
-    void CLoading_Strain();
-    void CLoading_Stress();
-    void MLoading_Strain();
-    void MLoading_Stress();
-    void CloseBoard();
+        void CloseBoard();
     void OpenBoard();
     void SaveToFile();
     void Control_DA();
