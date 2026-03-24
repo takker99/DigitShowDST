@@ -42,6 +42,7 @@ class CDigitShowBasicDoc : public CDocument
         void CloseBoard();
     void OpenBoard();
     void SaveToFile();
+    void FlushSaveFiles();
     void Control_DA();
     void Cal_Param();
     void Cal_Physical();

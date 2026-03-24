@@ -415,6 +415,13 @@ void CDigitShowBasicDoc::SaveToFile()
         fprintf(ctx->FileSaveData2, "%lf    ", ctx->CalParam[i]);
     }
     fprintf(ctx->FileSaveData2, "\n");
+}
+
+void CDigitShowBasicDoc::FlushSaveFiles()
+{
+    DigitShowContext *ctx = GetContext();
+    if (ctx->FileSaveData0 == nullptr || ctx->FileSaveData1 == nullptr || ctx->FileSaveData2 == nullptr)
+        return;
     fflush(ctx->FileSaveData0);
     fflush(ctx->FileSaveData1);
     fflush(ctx->FileSaveData2);
