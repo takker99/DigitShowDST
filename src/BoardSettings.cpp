@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
 #include "BoardSettings.h"
 #include "DigitShowBasic.h"
@@ -29,19 +29,11 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-CBoardSettings::CBoardSettings(CWnd *pParent) : CDialog(CBoardSettings::IDD, pParent)
+CBoardSettings::CBoardSettings(CWnd *pParent)
+    : CDialog(CBoardSettings::IDD, pParent), m_ADMethod0(_T("")), m_ADMethod1(_T("")), m_ADResolution0(_T("")),
+      m_ADResolution1(_T("")), m_ADRange0(_T("")), m_ADRange1(_T("")), m_ADMaxChannel0(_T("")), m_ADMaxChannel1(_T("")),
+      m_DAMaxChannel0(_T("")), m_DARange0(_T("")), m_DAResolution0(_T(""))
 {
-    m_ADMethod0 = _T("");
-    m_ADMethod1 = _T("");
-    m_ADResolution0 = _T("");
-    m_ADResolution1 = _T("");
-    m_ADRange0 = _T("");
-    m_ADRange1 = _T("");
-    m_ADMaxChannel0 = _T("");
-    m_ADMaxChannel1 = _T("");
-    m_DAMaxChannel0 = _T("");
-    m_DARange0 = _T("");
-    m_DAResolution0 = _T("");
 }
 
 void CBoardSettings::DoDataExchange(CDataExchange *pDX)

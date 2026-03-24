@@ -27,7 +27,7 @@ class CBoardSettings : public CDialog
 {
   public:
     CBoardSettings(CWnd *pParent = NULL);
-    CDigitShowBasicDoc *pDoc;
+    CDigitShowBasicDoc *pDoc{};
 
     enum
     {

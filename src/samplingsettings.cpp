@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
 #include "DigitShowBasic.h"
 #include "DigitShowContext.h"
@@ -28,19 +28,11 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-CSamplingSettings::CSamplingSettings(CWnd *pParent) : CDialog(CSamplingSettings::IDD, pParent)
+CSamplingSettings::CSamplingSettings(CWnd *pParent)
+    : CDialog(CSamplingSettings::IDD, pParent), m_TimeInterval1(0), m_TimeInterval2(0), m_TimeInterval3(0),
+      m_AllocatedMemory(_T("")), m_AvSmplNum(0), m_Channels(0), m_EventSamplingTimes(0), m_MemoryType(_T("")),
+      m_SamplingClock(0.0f), m_SavingTime(0), m_TotalSamplingTimes(0)
 {
-    m_TimeInterval1 = 0;
-    m_TimeInterval2 = 0;
-    m_TimeInterval3 = 0;
-    m_AllocatedMemory = _T("");
-    m_AvSmplNum = 0;
-    m_Channels = 0;
-    m_EventSamplingTimes = 0;
-    m_MemoryType = _T("");
-    m_SamplingClock = 0.0f;
-    m_SavingTime = 0;
-    m_TotalSamplingTimes = 0;
 }
 
 void CSamplingSettings::DoDataExchange(CDataExchange *pDX)
@@ -89,8 +81,8 @@ BOOL CSamplingSettings::OnInitDialog()
     m_SavingTime = ctx->sampling.SavingTime;
     m_TotalSamplingTimes = ctx->sampling.TotalSamplingTimes;
     UpdateData(FALSE);
-    CButton *myBTN1 = (CButton *)GetDlgItem(IDC_BUTTON_Check);
-    CButton *myBTN2 = (CButton *)GetDlgItem(IDOK);
+    CButton *myBTN1 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_Check));
+    CButton *myBTN2 = static_cast<CButton *>(GetDlgItem(IDOK));
     if (ctx->FlagFIFO == TRUE)
         myBTN1->EnableWindow(FALSE);
     myBTN2->EnableWindow(FALSE);
@@ -110,7 +102,7 @@ void CSamplingSettings::OnBUTTONCheck()
     m_EventSamplingTimes = long(ctx->timeSettings.Interval1 / m_SamplingClock);
     UpdateData(FALSE);
 
-    CButton *myBTN1 = (CButton *)GetDlgItem(IDOK);
+    CButton *myBTN1 = static_cast<CButton *>(GetDlgItem(IDOK));
     myBTN1->EnableWindow(TRUE);
 }
 
