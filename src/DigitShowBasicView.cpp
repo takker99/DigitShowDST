@@ -231,18 +231,18 @@ void CDigitShowBasicView::OnInitialUpdate()
     CFormView::OnInitialUpdate();
     GetParentFrame()->RecalcLayout();
     ResizeParentToFit();
-    CButton *myBTN1 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_CtrlOff));
-    CButton *myBTN2 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_StopSave));
-    CButton *myBTN3 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_InterceptSave));
-    CButton *myBTN4 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStop));
-    CButton *myBTN5 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_WriteData));
+    CButton *myBTN1 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_CtrlOff));
+    CButton *myBTN2 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_StopSave));
+    CButton *myBTN3 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_InterceptSave));
+    CButton *myBTN4 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStop));
+    CButton *myBTN5 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_WriteData));
     myBTN1->EnableWindow(FALSE);
     myBTN2->EnableWindow(FALSE);
     myBTN3->EnableWindow(FALSE);
     myBTN4->EnableWindow(FALSE);
     myBTN5->EnableWindow(FALSE);
     CString tmp;
-    CComboBox *m_Combo1 = dynamic_cast<CComboBox *>(GetDlgItem(IDC_COMBO_Control_ID));
+    CComboBox *m_Combo1 = static_cast<CComboBox *>(GetDlgItem(IDC_COMBO_Control_ID));
     m_Combo1->InsertString(-1, "0");
     m_Combo1->InsertString(-1, "1");
     m_Combo1->InsertString(-1, "2");
@@ -260,7 +260,7 @@ void CDigitShowBasicView::OnInitialUpdate()
     m_Combo1->InsertString(-1, "14");
     m_Combo1->InsertString(-1, "15");
     m_Combo1->SetWindowText("0");
-    CComboBox *m_Combo2 = dynamic_cast<CComboBox *>(GetDlgItem(IDC_COMBO_SamplingTime));
+    CComboBox *m_Combo2 = static_cast<CComboBox *>(GetDlgItem(IDC_COMBO_SamplingTime));
     m_Combo2->InsertString(-1, "0.05 s");
     m_Combo2->InsertString(-1, "0.1 s");
     m_Combo2->InsertString(-1, "0.2 s");
@@ -507,8 +507,8 @@ void CDigitShowBasicView::OnBUTTONCtrlOn()
     if (ctx->FlagSetBoard)
     {
         SetTimer(2, ctx->timeSettings.Interval2, NULL);
-        CButton *myBTN1 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_CtrlOn));
-        CButton *myBTN2 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_CtrlOff));
+        CButton *myBTN1 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_CtrlOn));
+        CButton *myBTN2 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_CtrlOff));
         myBTN1->EnableWindow(FALSE);
         myBTN2->EnableWindow(TRUE);
         pDoc->Start_Control();
@@ -522,8 +522,8 @@ void CDigitShowBasicView::OnBUTTONCtrlOff()
     CDigitShowBasicDoc *pDoc = (CDigitShowBasicDoc *)GetDocument();
     KillTimer(2);
     ctx->FlagCtrl = FALSE;
-    CButton *myBTN1 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_CtrlOn));
-    CButton *myBTN2 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_CtrlOff));
+    CButton *myBTN1 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_CtrlOn));
+    CButton *myBTN2 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_CtrlOff));
     myBTN1->EnableWindow(TRUE);
     myBTN2->EnableWindow(FALSE);
     pDoc->Stop_Control();
@@ -643,11 +643,11 @@ void CDigitShowBasicView::OnBUTTONStartSave()
             ctx->SequentTime2 =
                 double(NowTime2.time - StartTime2.time) + double((NowTime2.millitm - StartTime2.millitm) / 1000.0);
             ctx->FlagSaveData = TRUE;
-            CButton *myBTN1 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_StartSave));
-            CButton *myBTN2 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_StopSave));
-            CButton *myBTN3 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_InterceptSave));
-            CButton *myBTN4 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStart));
-            CButton *myBTN5 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStop));
+            CButton *myBTN1 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_StartSave));
+            CButton *myBTN2 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_StopSave));
+            CButton *myBTN3 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_InterceptSave));
+            CButton *myBTN4 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStart));
+            CButton *myBTN5 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStop));
             myBTN1->EnableWindow(FALSE);
             myBTN2->EnableWindow(TRUE);
             myBTN3->EnableWindow(TRUE);
@@ -675,12 +675,12 @@ void CDigitShowBasicView::OnBUTTONStartSave()
         ctx->FlagSaveData = TRUE;
         ctx->sampling.CurrentSamplingTimes = 0;
         pDoc->Allocate_Memory();
-        CButton *myBTN1 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_StartSave));
-        CButton *myBTN2 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_StopSave));
-        CButton *myBTN3 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_InterceptSave));
-        CButton *myBTN4 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStart));
-        CButton *myBTN5 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStop));
-        CButton *myBTN6 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_WriteData));
+        CButton *myBTN1 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_StartSave));
+        CButton *myBTN2 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_StopSave));
+        CButton *myBTN3 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_InterceptSave));
+        CButton *myBTN4 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStart));
+        CButton *myBTN5 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStop));
+        CButton *myBTN6 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_WriteData));
         myBTN1->EnableWindow(FALSE);
         myBTN2->EnableWindow(TRUE);
         myBTN3->EnableWindow(FALSE);
@@ -718,11 +718,11 @@ void CDigitShowBasicView::OnBUTTONStopSave()
         fclose(ctx->FileSaveData0);
         fclose(ctx->FileSaveData1);
         fclose(ctx->FileSaveData2);
-        CButton *myBTN1 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_StartSave));
-        CButton *myBTN2 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_StopSave));
-        CButton *myBTN3 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_InterceptSave));
-        CButton *myBTN4 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStart));
-        CButton *myBTN5 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStop));
+        CButton *myBTN1 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_StartSave));
+        CButton *myBTN2 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_StopSave));
+        CButton *myBTN3 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_InterceptSave));
+        CButton *myBTN4 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStart));
+        CButton *myBTN5 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStop));
         myBTN1->EnableWindow(TRUE);
         myBTN2->EnableWindow(FALSE);
         myBTN3->EnableWindow(FALSE);
@@ -745,12 +745,12 @@ void CDigitShowBasicView::OnBUTTONStopSave()
             Ret = AioStartAi(ctx->ad.Id[0]);
         if (ctx->NumAD > 1)
             Ret = AioStartAi(ctx->ad.Id[1]);
-        CButton *myBTN1 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_StartSave));
-        CButton *myBTN2 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_StopSave));
-        CButton *myBTN3 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_InterceptSave));
-        CButton *myBTN4 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStart));
-        CButton *myBTN5 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStop));
-        CButton *myBTN6 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_WriteData));
+        CButton *myBTN1 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_StartSave));
+        CButton *myBTN2 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_StopSave));
+        CButton *myBTN3 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_InterceptSave));
+        CButton *myBTN4 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStart));
+        CButton *myBTN5 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStop));
+        CButton *myBTN6 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_WriteData));
         myBTN1->EnableWindow(TRUE);
         myBTN2->EnableWindow(FALSE);
         myBTN3->EnableWindow(FALSE);
@@ -781,8 +781,8 @@ void CDigitShowBasicView::OnBUTTONFIFOStart()
     long Ret = 0;
     INT_PTR nResult = 0;
     CDigitShowBasicDoc *pDoc = (CDigitShowBasicDoc *)GetDocument();
-    CButton *myBTN1 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStart));
-    CButton *myBTN2 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStop));
+    CButton *myBTN1 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStart));
+    CButton *myBTN2 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStop));
 
     if (ctx->FlagSetBoard == TRUE)
     {
@@ -834,8 +834,8 @@ void CDigitShowBasicView::OnBUTTONFIFOStop()
     DigitShowContext *ctx = GetContext();
     long Ret = 0;
     CDigitShowBasicDoc *pDoc = (CDigitShowBasicDoc *)GetDocument();
-    CButton *myBTN1 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStart));
-    CButton *myBTN2 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStop));
+    CButton *myBTN1 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStart));
+    CButton *myBTN2 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStop));
     if (ctx->NumAD > 0)
         Ret = AioStopAi(ctx->ad.Id[0]);
     if (ctx->NumAD > 1)
@@ -880,7 +880,7 @@ void CDigitShowBasicView::OnBUTTONWriteData()
         Ret = AioStopAi(ctx->ad.Id[1]);
 
     CString pFileName0, pFileName1, TmpString;
-    CButton *myBTN1 = dynamic_cast<CButton *>(GetDlgItem(IDC_BUTTON_WriteData));
+    CButton *myBTN1 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_WriteData));
     CDigitShowBasicDoc *pDoc = (CDigitShowBasicDoc *)GetDocument();
     errno_t err = 0;
 
@@ -1092,7 +1092,7 @@ void CDigitShowBasicView::OnBUTTONSetCtrlID()
 {
     DigitShowContext *ctx = GetContext();
     CString tmp;
-    CComboBox *m_Combo1 = dynamic_cast<CComboBox *>(GetDlgItem(IDC_COMBO_Control_ID));
+    CComboBox *m_Combo1 = static_cast<CComboBox *>(GetDlgItem(IDC_COMBO_Control_ID));
     m_Combo1->GetWindowText(tmp);
     ctx->ControlID = atoi(tmp);
 }
@@ -1101,7 +1101,7 @@ void CDigitShowBasicView::OnBUTTONSetTimeInterval()
 {
     DigitShowContext *ctx = GetContext();
     CString tmp;
-    CComboBox *m_Combo1 = dynamic_cast<CComboBox *>(GetDlgItem(IDC_COMBO_SamplingTime));
+    CComboBox *m_Combo1 = static_cast<CComboBox *>(GetDlgItem(IDC_COMBO_SamplingTime));
     m_Combo1->GetWindowText(tmp);
     if (tmp == "0.05 s")
         ctx->timeSettings.Interval3 = 50;

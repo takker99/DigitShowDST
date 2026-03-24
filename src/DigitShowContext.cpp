@@ -20,6 +20,89 @@
 
 #include "DigitShowContext.h"
 
+namespace
+{
+float ToDaVoltage(const DigitShowContext &ctx, int channel, double value)
+{
+    return float(ctx.cal.DA_a[channel] * value + ctx.cal.DA_b[channel]);
+}
+
+void RunSimpleCyclicControl(DigitShowContext &ctx, ControlData &cd)
+{
+    ctx.setMotorSpeed(cd.MotorSpeed);
+    ctx.setMotorBrake(false);
+
+    if (cd.flag[0] == FALSE)
+    {
+        if (cd.time[0] < cd.time[1])
+        {
+            ctx.setMotorCruchUp(false);
+            if (ctx.phys.q >= cd.sigma[1])
+            {
+                cd.time[0] = cd.time[1];
+                ctx.FlagCyclic = FALSE;
+            }
+        }
+        if (cd.time[1] <= cd.time[0] || cd.time[0] <= cd.time[2])
+        {
+            if (ctx.FlagCyclic == FALSE)
+            {
+                ctx.setMotorCruchUp(true);
+                if (ctx.phys.q <= cd.sigma[0])
+                    ctx.FlagCyclic = TRUE;
+            }
+            if (ctx.FlagCyclic == TRUE)
+            {
+                ctx.setMotorCruchUp(false);
+                if (ctx.phys.q >= cd.sigma[1])
+                {
+                    ctx.FlagCyclic = FALSE;
+                    ++cd.time[0];
+                }
+            }
+        }
+        if (cd.time[0] > cd.time[2])
+        {
+            ctx.setMotorCruchUp(false);
+        }
+    }
+    if (cd.flag[0] == TRUE)
+    {
+        if (cd.time[0] < cd.time[1])
+        {
+            ctx.setMotorCruchUp(true);
+            if (ctx.phys.q <= cd.sigma[0])
+            {
+                cd.time[0] = cd.time[1];
+                ctx.FlagCyclic = TRUE;
+            }
+        }
+        if (cd.time[1] <= cd.time[0] || cd.time[0] <= cd.time[2])
+        {
+            if (ctx.FlagCyclic == TRUE)
+            {
+                ctx.setMotorCruchUp(false);
+                if (ctx.phys.q >= cd.sigma[1])
+                    ctx.FlagCyclic = FALSE;
+            }
+            if (ctx.FlagCyclic == FALSE)
+            {
+                ctx.setMotorCruchUp(true);
+                if (ctx.phys.q <= cd.sigma[0])
+                {
+                    ctx.FlagCyclic = TRUE;
+                    ++cd.time[0];
+                }
+            }
+        }
+        if (cd.time[0] > cd.time[2])
+        {
+            ctx.setMotorCruchUp(true);
+        }
+    }
+}
+} // namespace
+
 // Singleton instance
 static DigitShowContext g_Context;
 static bool g_ContextInitialized = false;
@@ -227,4 +310,864 @@ void InitContext(DigitShowContext *ctx)
     // D/A calibration for cell pressure (V/kPa)
     ctx->cal.DA_a[ctx->daChannel.EP_Cell] = 0.012587;
     ctx->cal.DA_b[ctx->daChannel.EP_Cell] = 0.0;
+}
+
+void DigitShowContext::setMotorBrake(bool braking)
+{
+    DAVout[daChannel.Motor] = braking ? 0.0f : 5.0f;
+}
+
+void DigitShowContext::setMotorCruchUp(bool up)
+{
+    DAVout[daChannel.MotorCruch] = up ? 5.0f : 0.0f;
+}
+
+void DigitShowContext::setMotorSpeed(double rpm)
+{
+    DAVout[daChannel.MotorSpeed] = ToDaVoltage(*this, daChannel.MotorSpeed, rpm);
+}
+
+void DigitShowContext::adjustEpCell(double delta)
+{
+    DAVout[daChannel.EP_Cell] += float(delta);
+}
+
+void DigitShowContext::runBeforeConsolidationControl()
+{
+    //---Before Consolidation: Keep the specimen isotropic condition by Motor Control.---
+    // ctx->control[1].q: Reference Error Stress (kPa).
+    // ctx->control[1].MotorSpeed: The Maximum Motor Speed (rpm).
+    setMotorBrake(false);
+    if (phys.q > errTol.StressCom)
+    {
+        setMotorCruchUp(true);
+        if (phys.q > control[1].q)
+        {
+            setMotorSpeed(control[1].MotorSpeed);
+        }
+        if (phys.q <= control[1].q)
+        {
+            setMotorSpeed((phys.q / control[1].q) * control[1].MotorSpeed);
+        }
+    }
+    else if (phys.q < errTol.StressExt)
+    {
+        setMotorCruchUp(false);
+        if (phys.q < -control[1].q)
+        {
+            setMotorSpeed(control[1].MotorSpeed);
+        }
+        if (phys.q >= -control[1].q)
+        {
+            setMotorSpeed((-phys.q / control[1].q) * control[1].MotorSpeed);
+        }
+    }
+    else
+    {
+        setMotorSpeed(0.0);
+    }
+}
+
+void DigitShowContext::runConsolidationControl()
+{
+    // Consolidation (Motor Control):
+    // ctx->control[2].e_sigma[0]:	Target Axial Effectve Stress,
+    // ctx->control[2].K0:			K0 value,
+    // ctx->control[2].sigmaRate[2]:	Increase Rate of Cell Pressure
+    // ctx->control[2].MotorSpeed:	Motor Speed
+    setMotorBrake(false);
+    setMotorSpeed(control[2].MotorSpeed);
+
+    if (phys.e_sr < control[2].e_sigma[0] * control[2].K0 - errTol.StressA)
+    {
+        adjustEpCell(cal.DA_a[daChannel.EP_Cell] * control[2].sigmaRate[2] / 60.0 *
+                     static_cast<double>(timeSettings.Interval2) / 1000.0);
+    }
+    if (phys.e_sr > control[2].e_sigma[0] * control[2].K0 + errTol.StressA)
+    {
+        adjustEpCell(-cal.DA_a[daChannel.EP_Cell] * control[2].sigmaRate[2] / 60.0 *
+                     static_cast<double>(timeSettings.Interval2) / 1000.0);
+    }
+    if (phys.e_sa < phys.e_sr / control[2].K0 + errTol.StressExt)
+    {
+        setMotorCruchUp(false);
+    }
+    else if (phys.e_sa > phys.e_sr / control[2].K0 + errTol.StressCom)
+    {
+        setMotorCruchUp(true);
+    }
+    else
+    {
+        setMotorSpeed(0.0);
+    }
+}
+
+void DigitShowContext::runMonotonicLoadingCompressionExtensionControl()
+{
+    // Monotonic Loading (Motor Control)
+    // ctx->control[3].MotorSpeed:	Motor Speed
+    // ctx->control[3].MotorCruch:	Compression:1 /Extension:0
+    // ctx->control[3].flag[0]:		Monotonic_Loading:0 /Creep:1
+    // ctx->control[3].sigma[0];		Limiter
+    setMotorBrake(false);
+    setMotorSpeed(control[3].MotorSpeed);
+
+    if (control[3].flag[0] == FALSE)
+    {
+        if (control[3].MotorCruch == 0)
+        {
+            setMotorCruchUp(false);
+            if (phys.q >= control[3].q)
+                control[3].flag[0] = TRUE;
+        }
+        if (control[3].MotorCruch == 1)
+        {
+            setMotorCruchUp(true);
+            if (phys.q <= control[3].q)
+                control[3].flag[0] = TRUE;
+        }
+    }
+    if (control[3].flag[0] == TRUE)
+    {
+        if (control[3].MotorCruch == 0)
+        {
+            setMotorCruchUp(false);
+            if (phys.q >= control[3].q + errTol.StressExt)
+                setMotorSpeed(0.0);
+        }
+        if (control[3].MotorCruch == 1)
+        {
+            setMotorCruchUp(true);
+            if (phys.q <= control[3].q + errTol.StressCom)
+                setMotorSpeed(0.0);
+        }
+    }
+}
+
+void DigitShowContext::runMonotonicLoadingLoadingUnloadingControl()
+{
+    // Monotonic Loading (Motor Control)
+    // ctx->control[4].MotorSpeed:	Motor Speed
+    // ctx->control[4].MotorCruch:	Cruch Loading:1 /Unloading:0
+    // ctx->control[4].flag:			Loading:0 /Creep:1
+    // ctx->control[4].sigma[0];		Limiter
+    setMotorSpeed(control[4].MotorSpeed);
+    setMotorBrake(false);
+
+    if (control[4].flag[0] == FALSE)
+    {
+        if (control[4].MotorCruch == 0)
+        {
+            setMotorCruchUp(false);
+            if (phys.q >= control[4].q)
+                control[4].flag[0] = TRUE;
+        }
+        if (control[4].MotorCruch == 1)
+        {
+            setMotorCruchUp(true);
+            if (phys.q <= control[4].q)
+                control[4].flag[0] = TRUE;
+        }
+    }
+    if (control[4].flag[0] == TRUE)
+    {
+        if (control[4].MotorCruch == 0)
+        {
+            setMotorCruchUp(false);
+            if (phys.q >= control[4].q + errTol.StressExt)
+                setMotorSpeed(0.0);
+        }
+        if (control[4].MotorCruch == 1)
+        {
+            setMotorCruchUp(true);
+            if (phys.q <= control[4].q + errTol.StressCom)
+                setMotorSpeed(0.0);
+        }
+    }
+}
+
+void DigitShowContext::runCyclicLoadingControl()
+{
+    RunSimpleCyclicControl(*this, control[5]);
+}
+
+void DigitShowContext::runDrainCyclicLoadingControl()
+{
+    RunSimpleCyclicControl(*this, control[6]);
+}
+
+void DigitShowContext::runLinearEffectiveStressPathControl()
+{
+    setMotorBrake(false);
+    setMotorSpeed(control[7].MotorSpeed);
+
+    if (control[7].sigma[1] == control[7].e_sigma[1])
+    {
+        adjustEpCell(0.2 * cal.DA_a[daChannel.EP_Cell] * (control[7].e_sigma[1] - phys.e_sr));
+        if (phys.e_sa > control[7].e_sigma[0] + errTol.StressCom)
+            setMotorCruchUp(true);
+        else if (phys.e_sa < control[7].e_sigma[0] + errTol.StressExt)
+            setMotorCruchUp(false);
+        else
+            setMotorSpeed(0.0);
+    }
+    if (control[7].sigma[1] < control[7].e_sigma[1])
+    {
+        if (phys.e_sr >= control[7].e_sigma[1])
+        {
+            adjustEpCell(-0.2 * cal.DA_a[daChannel.EP_Cell] * (phys.e_sr - control[7].e_sigma[1]));
+        }
+        if (phys.e_sr < control[7].e_sigma[1])
+        {
+            adjustEpCell(cal.DA_a[daChannel.EP_Cell] * fabs(control[7].sigmaRate[0]) / 60.0 *
+                         static_cast<double>(timeSettings.Interval2) / 1000.0);
+        }
+        if (phys.e_sa > (control[7].e_sigma[0] - control[7].sigma[0]) / (control[7].e_sigma[1] - control[7].sigma[1]) *
+                                (phys.e_sr - control[7].sigma[1]) +
+                            control[7].sigma[0] + errTol.StressCom)
+        {
+            setMotorCruchUp(true);
+        }
+        else if (phys.e_sa < (control[7].e_sigma[0] - control[7].sigma[0]) /
+                                     (control[7].e_sigma[1] - control[7].sigma[1]) * (phys.e_sr - control[7].sigma[1]) +
+                                 control[7].sigma[0] + errTol.StressExt)
+        {
+            setMotorCruchUp(false);
+        }
+        else
+        {
+            setMotorSpeed(0.0);
+        }
+    }
+    if (control[7].sigma[1] > control[7].e_sigma[1])
+    {
+        if (phys.e_sr > control[7].e_sigma[1])
+        {
+            adjustEpCell(-cal.DA_a[daChannel.EP_Cell] * fabs(control[7].sigmaRate[0]) / 60.0 *
+                         static_cast<double>(timeSettings.Interval2) / 1000.0);
+        }
+        if (phys.e_sr <= control[7].e_sigma[1])
+        {
+            adjustEpCell(0.2 * cal.DA_a[daChannel.EP_Cell] * (control[7].e_sigma[1] - phys.e_sr));
+        }
+        if (phys.e_sa > (control[7].e_sigma[0] - control[7].sigma[0]) / (control[7].e_sigma[1] - control[7].sigma[1]) *
+                                (phys.e_sr - control[7].sigma[1]) +
+                            control[7].sigma[0] + errTol.StressCom)
+        {
+            setMotorCruchUp(true);
+        }
+        else if (phys.e_sa < (control[7].e_sigma[0] - control[7].sigma[0]) /
+                                     (control[7].e_sigma[1] - control[7].sigma[1]) * (phys.e_sr - control[7].sigma[1]) +
+                                 control[7].sigma[0] + errTol.StressExt)
+        {
+            setMotorCruchUp(false);
+        }
+        else
+        {
+            setMotorSpeed(0.0);
+        }
+    }
+}
+
+void DigitShowContext::runScriptedMonotonicLoadingStress()
+{
+    TotalStepTime += CtrlStepTime / 60.0;
+    setMotorBrake(false);
+    setMotorSpeed(controlFile.Para[controlFile.CurrentNum][1]);
+    // 2020.7　側圧一定
+    if (phys.sr >= controlFile.Para[controlFile.CurrentNum][3] + errTol.StressA)
+    {
+        adjustEpCell(-0.1 * cal.DA_a[daChannel.EP_Cell] * (phys.sr - controlFile.Para[controlFile.CurrentNum][3]));
+    }
+    if (phys.sr <= controlFile.Para[controlFile.CurrentNum][3] - errTol.StressA)
+    {
+        adjustEpCell(0.1 * cal.DA_a[daChannel.EP_Cell] * (controlFile.Para[controlFile.CurrentNum][3] - phys.sr));
+    }
+    if (controlFile.Para[controlFile.CurrentNum][0] == 0.0)
+    {
+        if (phys.q <= controlFile.Para[controlFile.CurrentNum][2])
+        {
+            setMotorCruchUp(false);
+        }
+        else
+        {
+            ++controlFile.CurrentNum;
+            TotalStepTime = 0.0;
+        }
+    }
+    else if (controlFile.Para[controlFile.CurrentNum][0] == 1.0)
+    {
+        if (phys.q >= controlFile.Para[controlFile.CurrentNum][2])
+        {
+            setMotorCruchUp(true);
+        }
+        else
+        {
+            ++controlFile.CurrentNum;
+            TotalStepTime = 0.0;
+        }
+    }
+}
+
+void DigitShowContext::runScriptedMonotonicLoadingStrain()
+{
+    TotalStepTime += CtrlStepTime / 60.0;
+    setMotorBrake(false);
+    setMotorSpeed(controlFile.Para[controlFile.CurrentNum][1]);
+
+    // 2020.7　側圧一定
+    if (phys.sr >= controlFile.Para[controlFile.CurrentNum][5] + errTol.StressA)
+    {
+        adjustEpCell(-0.1 * cal.DA_a[daChannel.EP_Cell] * (phys.sr - controlFile.Para[controlFile.CurrentNum][5]));
+    }
+    if (phys.sr <= controlFile.Para[controlFile.CurrentNum][5] - errTol.StressA)
+    {
+        adjustEpCell(0.1 * cal.DA_a[daChannel.EP_Cell] * (controlFile.Para[controlFile.CurrentNum][5] - phys.sr));
+    }
+    if (controlFile.Para[controlFile.CurrentNum][0] == 0.0)
+    {
+        if (phys.ea <= controlFile.Para[controlFile.CurrentNum][2])
+        {
+            setMotorCruchUp(false);
+        }
+        if (phys.ea > controlFile.Para[controlFile.CurrentNum][2])
+        { // 2021.3
+            ++controlFile.CurrentNum;
+            TotalStepTime = 0.0;
+        }
+        else if (TotalStepTime >= controlFile.Para[controlFile.CurrentNum][4])
+        { // 2021.3
+            ++controlFile.CurrentNum;
+            TotalStepTime = 0.0;
+        }
+        else if (Phyout[0] > controlFile.Para[controlFile.CurrentNum][3])
+        { // 2021.3
+            ++controlFile.CurrentNum;
+            TotalStepTime = 0.0;
+        }
+    }
+    else if (controlFile.Para[controlFile.CurrentNum][0] == 1.0)
+    {
+        if (phys.ea >= controlFile.Para[controlFile.CurrentNum][2])
+        {
+            setMotorCruchUp(true);
+        }
+        else
+        {
+            ++controlFile.CurrentNum;
+            TotalStepTime = 0.0;
+        }
+    }
+}
+
+void DigitShowContext::runScriptedCyclicLoadingStress()
+{
+    TotalStepTime += CtrlStepTime / 60.0;
+    setMotorBrake(false);
+    setMotorSpeed(controlFile.Para[controlFile.CurrentNum][1]);
+    // 2020.7　側圧一定
+    if (phys.sr >= controlFile.Para[controlFile.CurrentNum][6] + errTol.StressA)
+    {
+        adjustEpCell(-0.1 * cal.DA_a[daChannel.EP_Cell] * (phys.sr - controlFile.Para[controlFile.CurrentNum][6]));
+    }
+    if (phys.sr <= controlFile.Para[controlFile.CurrentNum][6] - errTol.StressA)
+    {
+        adjustEpCell(0.1 * cal.DA_a[daChannel.EP_Cell] * (controlFile.Para[controlFile.CurrentNum][6] - phys.sr));
+    }
+    if (controlFile.Para[controlFile.CurrentNum][0] == 0.0)
+    {
+        if (NumCyclic == 0)
+        {
+            FlagCyclic = FALSE;
+            NumCyclic = 1;
+        }
+        if (NumCyclic != 0 && NumCyclic <= controlFile.Para[controlFile.CurrentNum][4])
+        {
+            if (FlagCyclic == FALSE)
+            {
+                setMotorCruchUp(true);
+                // 2020.4 最終的に軸ひずみの最小値（マイナスの値）がcyclicState.MinAxialStrainに割り当てられる
+                cyclicState.MinAxialStrain = phys.ea;
+                if (phys.u >= controlFile.Para[controlFile.CurrentNum][7])
+                {                                   // 2021.3
+                    cyclicState.RuIndicator = 0.95; // 2021.3
+                }
+                if (phys.q <= controlFile.Para[controlFile.CurrentNum][2] &&
+                    (cyclicState.MaxAxialStrain - phys.ea) < controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator < 0.95)
+                    FlagCyclic = TRUE; // 2021.3
+                if (phys.q <= controlFile.Para[controlFile.CurrentNum][2] &&
+                    (cyclicState.MaxAxialStrain - phys.ea) < controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator == 0.95)
+                { // 2021.3
+                    FlagCyclic = TRUE;
+                }
+                if (phys.q <= controlFile.Para[controlFile.CurrentNum][2] &&
+                    (cyclicState.MaxAxialStrain - phys.ea) >= controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator < 0.95)
+                { // 2021.3
+                    FlagCyclic = TRUE;
+                }
+                if (phys.q <= controlFile.Para[controlFile.CurrentNum][2] &&
+                    (cyclicState.MaxAxialStrain - phys.ea) >= controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator == 0.95)
+                { // 2021.3
+                    FlagCyclic = TRUE;
+                    controlFile.Para[controlFile.CurrentNum][4] = NumCyclic;
+                }
+                if (phys.q > controlFile.Para[controlFile.CurrentNum][2] &&
+                    (cyclicState.MaxAxialStrain - phys.ea) >= 2.4 * controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator < 0.95)
+                { // 2021.3
+                    FlagCyclic = TRUE;
+                }
+                if (phys.q > controlFile.Para[controlFile.CurrentNum][2] &&
+                    (cyclicState.MaxAxialStrain - phys.ea) >= 2.4 * controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator == 0.95)
+                { // 2021.3
+                    FlagCyclic = TRUE;
+                    controlFile.Para[controlFile.CurrentNum][4] = NumCyclic;
+                }
+            }
+            if (FlagCyclic == TRUE)
+            {
+                setMotorCruchUp(false);
+
+                // 2020.4 最終的に軸ひずみの最小値（マイナスの値）がcyclicState.MinAxialStrainに割り当てられる
+                cyclicState.MaxAxialStrain = phys.ea;
+                if (phys.u >= controlFile.Para[controlFile.CurrentNum][7])
+                {                                   // 2021.3
+                    cyclicState.RuIndicator = 0.95; // 2021.3
+                }
+                if (phys.q >= controlFile.Para[controlFile.CurrentNum][3] &&
+                    (phys.ea - cyclicState.MinAxialStrain) < controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator < 0.95)
+                { // 2021.3
+                    FlagCyclic = FALSE;
+                    ++NumCyclic;
+                }
+                // 2021.3 現在の軸ひずみとの差分がDAを超えるか否か。
+                if (phys.q >= controlFile.Para[controlFile.CurrentNum][3] &&
+                    (phys.ea - cyclicState.MinAxialStrain) < controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator == 0.95)
+                {
+                    FlagCyclic = FALSE;
+                    ++NumCyclic;
+                }
+                if (phys.q >= controlFile.Para[controlFile.CurrentNum][3] &&
+                    (phys.ea - cyclicState.MinAxialStrain) >= controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator < 0.95)
+                { // 2021.3
+                    FlagCyclic = FALSE;
+                    ++NumCyclic;
+                }
+                if (phys.q >= controlFile.Para[controlFile.CurrentNum][3] &&
+                    (phys.ea - cyclicState.MinAxialStrain) >= controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator == 0.95)
+                { // 2021.3
+                    FlagCyclic = FALSE;
+                    --NumCyclic;
+                }
+                if (phys.q < controlFile.Para[controlFile.CurrentNum][3] &&
+                    (phys.ea - cyclicState.MinAxialStrain) >= 2.4 * controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator < 0.95)
+                { // 2021.3
+                    FlagCyclic = FALSE;
+                    ++NumCyclic;
+                }
+                if (phys.q < controlFile.Para[controlFile.CurrentNum][3] &&
+                    (phys.ea - cyclicState.MinAxialStrain) >= 2.4 * controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator == 0.95)
+                { // 2021.3
+                    FlagCyclic = FALSE;
+                    --NumCyclic;
+                }
+            }
+        }
+        if (NumCyclic > controlFile.Para[controlFile.CurrentNum][4])
+        {
+            ++controlFile.CurrentNum;
+            TotalStepTime = 0.0;
+            NumCyclic = 0;
+        }
+    }
+    else if (controlFile.Para[controlFile.CurrentNum][0] == 1.0)
+    {
+        if (NumCyclic == 0)
+        {
+            FlagCyclic = TRUE;
+            NumCyclic = 1;
+        }
+        if (NumCyclic != 0 && NumCyclic <= controlFile.Para[controlFile.CurrentNum][4])
+        {
+            if (FlagCyclic == FALSE)
+            {
+                setMotorCruchUp(true);
+                cyclicState.MinAxialStrain = phys.ea;
+                if (phys.u >= controlFile.Para[controlFile.CurrentNum][7])
+                {                                   // 2021.3
+                    cyclicState.RuIndicator = 0.95; // 2021.3
+                } // 2021.3
+                if ((cyclicState.MaxAxialStrain - phys.ea) >= controlFile.Para[controlFile.CurrentNum][5] ||
+                    (phys.ea - cyclicState.MinAxialStrain) >= controlFile.Para[controlFile.CurrentNum][5])
+                {                             // 2021.6
+                    cyclicState.DaFlag = 1.0; // 2021.6
+                }
+                if (phys.q <= controlFile.Para[controlFile.CurrentNum][2] &&
+                    (cyclicState.MaxAxialStrain - phys.ea) < controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator < 0.95)
+                {                      // 2021.3
+                    FlagCyclic = TRUE; // 2021.3
+                    ++NumCyclic;       // 2021.3
+                } // 2021.3
+                if (phys.q <= controlFile.Para[controlFile.CurrentNum][2] &&
+                    (cyclicState.MaxAxialStrain - phys.ea) < controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator == 0.95)
+                {                      // 2021.3
+                    FlagCyclic = TRUE; // 2021.3
+                    ++NumCyclic;       // 2021.3
+                } // 2021.3
+                if (phys.q <= controlFile.Para[controlFile.CurrentNum][2] &&
+                    (cyclicState.MaxAxialStrain - phys.ea) >= controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator < 0.95)
+                {                      // 2021.3
+                    FlagCyclic = TRUE; // 2021.3
+                    ++NumCyclic;       // 2021.3
+                } // 2021.3
+                if (phys.q <= controlFile.Para[controlFile.CurrentNum][2] &&
+                    (cyclicState.MaxAxialStrain - phys.ea) >= controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator == 0.95)
+                {                      // 2021.3
+                    FlagCyclic = TRUE; // 2021.3
+                                       // 2021.3 問題なく機能していることを確認
+                    controlFile.Para[controlFile.CurrentNum][4] = NumCyclic - 1;
+                } // 2021.3
+                if (phys.q > controlFile.Para[controlFile.CurrentNum][2] &&
+                    (cyclicState.MaxAxialStrain - phys.ea) >= 2.4 * controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator < 0.95)
+                {                      // 2021.3
+                    FlagCyclic = TRUE; // 2021.3
+                    ++NumCyclic;       // 2021.3
+                } // 2021.3
+                if (phys.q > controlFile.Para[controlFile.CurrentNum][2] &&
+                    (cyclicState.MaxAxialStrain - phys.ea) >= 2.4 * controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator == 0.95)
+                {                                                                // 2021.3
+                    FlagCyclic = TRUE;                                           // 2021.3
+                    controlFile.Para[controlFile.CurrentNum][4] = NumCyclic - 1; // 2021.3
+                }
+            }
+            if (FlagCyclic == TRUE)
+            {
+                setMotorCruchUp(false);
+                cyclicState.MaxAxialStrain = phys.ea;
+                if (phys.u >= controlFile.Para[controlFile.CurrentNum][7])
+                {                                   // 2021.3
+                    cyclicState.RuIndicator = 0.95; // 2021.3
+                } // 2021.3
+                if ((cyclicState.MaxAxialStrain - phys.ea) >= controlFile.Para[controlFile.CurrentNum][5] ||
+                    (phys.ea - cyclicState.MinAxialStrain) >= controlFile.Para[controlFile.CurrentNum][5])
+                {                             // 2021.6
+                    cyclicState.DaFlag = 1.0; // 2021.6
+                }
+                if (phys.q >= controlFile.Para[controlFile.CurrentNum][3] &&
+                    (phys.ea - cyclicState.MinAxialStrain) < controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator < 0.95)
+                {                       // 2021.3
+                    FlagCyclic = FALSE; // 2021.3
+                } // 2021.3
+                if (phys.q >= controlFile.Para[controlFile.CurrentNum][3] &&
+                    (phys.ea - cyclicState.MinAxialStrain) < controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator == 0.95)
+                { // 2021.3
+                    FlagCyclic = FALSE;
+                }
+                if (phys.q >= controlFile.Para[controlFile.CurrentNum][3] &&
+                    (phys.ea - cyclicState.MinAxialStrain) >= controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator < 0.95)
+                { // 2021.3
+                    FlagCyclic = FALSE;
+                }
+                if (phys.q >= controlFile.Para[controlFile.CurrentNum][3] &&
+                    (phys.ea - cyclicState.MinAxialStrain) >= controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator == 0.95)
+                { // 2021.3
+                    FlagCyclic = FALSE;
+                    controlFile.Para[controlFile.CurrentNum][4] = NumCyclic;
+                }
+                if (phys.q < controlFile.Para[controlFile.CurrentNum][3] &&
+                    (phys.ea - cyclicState.MinAxialStrain) >= 2.4 * controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator < 0.95)
+                { // 2021.3
+                    FlagCyclic = FALSE;
+                }
+                if (phys.q < controlFile.Para[controlFile.CurrentNum][3] &&
+                    (phys.ea - cyclicState.MinAxialStrain) >= 2.4 * controlFile.Para[controlFile.CurrentNum][5] &&
+                    cyclicState.RuIndicator == 0.95)
+                { // 2021.3
+                    FlagCyclic = FALSE;
+                    controlFile.Para[controlFile.CurrentNum][4] = NumCyclic;
+                }
+                if (phys.q <= 1.0 && cyclicState.DaFlag == 1.0 && cyclicState.RuIndicator == 0.95)
+                { // 2021.6
+                    ++controlFile.CurrentNum;
+                    TotalStepTime = 0.0;
+                    NumCyclic = 0;
+                }
+            }
+        }
+        if (NumCyclic > controlFile.Para[controlFile.CurrentNum][4])
+        {
+            ++controlFile.CurrentNum;
+            TotalStepTime = 0.0;
+            NumCyclic = 0;
+        }
+    }
+}
+
+void DigitShowContext::runScriptedCyclicLoadingStrain()
+{
+    TotalStepTime += CtrlStepTime / 60.0;
+    setMotorBrake(false);
+    setMotorSpeed(controlFile.Para[controlFile.CurrentNum][1]);
+    // 2020.7　側圧一定
+    if (phys.sr >= controlFile.Para[controlFile.CurrentNum][5] + errTol.StressA)
+    {
+        adjustEpCell(-0.1 * cal.DA_a[daChannel.EP_Cell] * (phys.sr - controlFile.Para[controlFile.CurrentNum][5]));
+    }
+    if (phys.sr <= controlFile.Para[controlFile.CurrentNum][5] - errTol.StressA)
+    {
+        adjustEpCell(0.1 * cal.DA_a[daChannel.EP_Cell] * (controlFile.Para[controlFile.CurrentNum][5] - phys.sr));
+    }
+    if (controlFile.Para[controlFile.CurrentNum][0] == 0.0)
+    {
+        if (NumCyclic == 0)
+        {
+            FlagCyclic = FALSE;
+            NumCyclic = 1;
+        }
+        if (NumCyclic != 0 && NumCyclic <= controlFile.Para[controlFile.CurrentNum][4])
+        {
+            if (FlagCyclic == FALSE)
+            {
+                setMotorCruchUp(true);
+                if (phys.ea <= controlFile.Para[controlFile.CurrentNum][2])
+                    FlagCyclic = TRUE;
+            }
+            if (FlagCyclic == TRUE)
+            {
+                setMotorCruchUp(false);
+                if (phys.ea >= controlFile.Para[controlFile.CurrentNum][3])
+                {
+                    FlagCyclic = FALSE;
+                    ++NumCyclic;
+                }
+            }
+        }
+        if (NumCyclic > controlFile.Para[controlFile.CurrentNum][4])
+        {
+            ++controlFile.CurrentNum;
+            TotalStepTime = 0.0;
+            NumCyclic = 0;
+        }
+    }
+    else if (controlFile.Para[controlFile.CurrentNum][0] == 1.0)
+    {
+        if (NumCyclic == 0)
+        {
+            FlagCyclic = TRUE;
+            NumCyclic = 1;
+        }
+        if (NumCyclic != 0 && NumCyclic <= controlFile.Para[controlFile.CurrentNum][4])
+        {
+            if (FlagCyclic == FALSE)
+            {
+                setMotorCruchUp(true);
+                if (phys.ea <= controlFile.Para[controlFile.CurrentNum][2])
+                {
+                    FlagCyclic = TRUE;
+                    ++NumCyclic;
+                }
+            }
+            if (FlagCyclic == TRUE)
+            {
+                setMotorCruchUp(false);
+                if (phys.ea >= controlFile.Para[controlFile.CurrentNum][3])
+                    FlagCyclic = FALSE;
+            }
+        }
+        if (NumCyclic > controlFile.Para[controlFile.CurrentNum][4])
+        {
+            ++controlFile.CurrentNum;
+            TotalStepTime = 0.0;
+            NumCyclic = 0;
+        }
+    }
+}
+
+void DigitShowContext::runScriptedCreep()
+{
+    TotalStepTime += CtrlStepTime / 60.0;
+    setMotorBrake(false);
+    setMotorSpeed(controlFile.Para[controlFile.CurrentNum][0]);
+    // 2020.7　側圧一定
+    if (phys.sr >= controlFile.Para[controlFile.CurrentNum][3] + errTol.StressA)
+    {
+        adjustEpCell(-0.1 * cal.DA_a[daChannel.EP_Cell] * (phys.sr - controlFile.Para[controlFile.CurrentNum][3]));
+    }
+    if (phys.sr <= controlFile.Para[controlFile.CurrentNum][3] - errTol.StressA)
+    {
+        adjustEpCell(0.1 * cal.DA_a[daChannel.EP_Cell] * (controlFile.Para[controlFile.CurrentNum][3] - phys.sr));
+    }
+    if (phys.q >= controlFile.Para[controlFile.CurrentNum][1] + errTol.StressCom)
+    {
+        setMotorCruchUp(true);
+    }
+    else if (phys.q <= controlFile.Para[controlFile.CurrentNum][1] + errTol.StressExt)
+    {
+        setMotorCruchUp(false);
+        // 2020.5 エラーストレスの大きさに応じたRPMの自動変更
+        setMotorSpeed(controlFile.Para[controlFile.CurrentNum][0] *
+                      (phys.q - controlFile.Para[controlFile.CurrentNum][1]) / errTol.StressExt / 2);
+    }
+    else
+    {
+        setMotorSpeed(0.0); // RPM->0
+    }
+    if (TotalStepTime >= controlFile.Para[controlFile.CurrentNum][2])
+    {
+        ++controlFile.CurrentNum;
+        TotalStepTime = 0.0;
+    }
+}
+
+// 2020.4　有効応力から全応力へ変更（B.P.を自動で上げられるように）
+void DigitShowContext::runScriptedLinearEffectiveStressPath()
+{
+    TotalStepTime += CtrlStepTime / 60.0;
+    setMotorBrake(false);
+    setMotorSpeed(controlFile.Para[controlFile.CurrentNum][4]);
+    if (controlFile.Para[controlFile.CurrentNum][1] == controlFile.Para[controlFile.CurrentNum][3])
+    {
+        adjustEpCell(0.2 * cal.DA_a[daChannel.EP_Cell] * (controlFile.Para[controlFile.CurrentNum][3] - phys.sr));
+        if (phys.sa > controlFile.Para[controlFile.CurrentNum][2] + errTol.StressCom)
+        {
+            setMotorCruchUp(true);
+        }
+        else if (phys.sa < controlFile.Para[controlFile.CurrentNum][2] + errTol.StressExt)
+        {
+            setMotorCruchUp(false);
+        }
+        else
+        {
+            ++controlFile.CurrentNum;
+            TotalStepTime = 0.0;
+        }
+    }
+    else if (controlFile.Para[controlFile.CurrentNum][1] < controlFile.Para[controlFile.CurrentNum][3])
+    {
+        if (phys.sr >= controlFile.Para[controlFile.CurrentNum][3] - errTol.StressA)
+        {
+            adjustEpCell(-0.2 * cal.DA_a[daChannel.EP_Cell] * (phys.sr - controlFile.Para[controlFile.CurrentNum][3]));
+        }
+        if (phys.sr < controlFile.Para[controlFile.CurrentNum][3] - errTol.StressA)
+        {
+            adjustEpCell(cal.DA_a[daChannel.EP_Cell] * fabs(controlFile.Para[controlFile.CurrentNum][5]) / 60.0 *
+                         static_cast<double>(timeSettings.Interval2) / 1000.0);
+        }
+        if (phys.sa >
+            (controlFile.Para[controlFile.CurrentNum][2] - controlFile.Para[controlFile.CurrentNum][0]) /
+                    (controlFile.Para[controlFile.CurrentNum][3] - controlFile.Para[controlFile.CurrentNum][1]) *
+                    (phys.sr - controlFile.Para[controlFile.CurrentNum][1]) +
+                controlFile.Para[controlFile.CurrentNum][0] + errTol.StressCom)
+        {
+            setMotorCruchUp(true);
+        }
+        else if (phys.sa <
+                 (controlFile.Para[controlFile.CurrentNum][2] - controlFile.Para[controlFile.CurrentNum][0]) /
+                         (controlFile.Para[controlFile.CurrentNum][3] - controlFile.Para[controlFile.CurrentNum][1]) *
+                         (phys.sr - controlFile.Para[controlFile.CurrentNum][1]) +
+                     controlFile.Para[controlFile.CurrentNum][0] + errTol.StressExt)
+        {
+            setMotorCruchUp(false);
+        }
+        else
+        {
+            setMotorSpeed(0.0); // RPM -> 0
+            if (fabs(phys.sr - controlFile.Para[controlFile.CurrentNum][3]) <= errTol.StressA)
+            {
+                ++controlFile.CurrentNum;
+                TotalStepTime = 0.0;
+            }
+        }
+    }
+    else if (controlFile.Para[controlFile.CurrentNum][1] > controlFile.Para[controlFile.CurrentNum][3])
+    {
+        if (phys.sr > controlFile.Para[controlFile.CurrentNum][3] + errTol.StressA)
+        {
+            adjustEpCell(-cal.DA_a[daChannel.EP_Cell] * fabs(controlFile.Para[controlFile.CurrentNum][5]) / 60.0 *
+                         static_cast<double>(timeSettings.Interval2) / 1000.0);
+        }
+        if (phys.sr <= controlFile.Para[controlFile.CurrentNum][3] + errTol.StressA)
+        {
+            adjustEpCell(0.2 * cal.DA_a[daChannel.EP_Cell] * (controlFile.Para[controlFile.CurrentNum][3] - phys.sr));
+        }
+        if (phys.sa >
+            (controlFile.Para[controlFile.CurrentNum][2] - controlFile.Para[controlFile.CurrentNum][0]) /
+                    (controlFile.Para[controlFile.CurrentNum][3] - controlFile.Para[controlFile.CurrentNum][1]) *
+                    (phys.sr - controlFile.Para[controlFile.CurrentNum][1]) +
+                controlFile.Para[controlFile.CurrentNum][0] + errTol.StressCom)
+        {
+            setMotorCruchUp(true);
+        }
+        else if (phys.sa <
+                 (controlFile.Para[controlFile.CurrentNum][2] - controlFile.Para[controlFile.CurrentNum][0]) /
+                         (controlFile.Para[controlFile.CurrentNum][3] - controlFile.Para[controlFile.CurrentNum][1]) *
+                         (phys.sr - controlFile.Para[controlFile.CurrentNum][1]) +
+                     controlFile.Para[controlFile.CurrentNum][0] + errTol.StressExt)
+        {
+            setMotorCruchUp(false);
+        }
+        else
+        {
+            setMotorSpeed(0.0); // RPM -> 0
+            if (fabs(phys.sr - controlFile.Para[controlFile.CurrentNum][3]) <= errTol.StressA)
+            {
+                ++controlFile.CurrentNum;
+                TotalStepTime = 0.0;
+            }
+        }
+    }
+}
+
+void DigitShowContext::runScriptedCreep2()
+{
+    TotalStepTime += CtrlStepTime / 60.0;
+    setMotorBrake(false);
+    setMotorSpeed(controlFile.Para[controlFile.CurrentNum][0]);
+    // 2020.7　側圧一定
+    if (phys.sr >= controlFile.Para[controlFile.CurrentNum][3] + errTol.StressA)
+    {
+        adjustEpCell(-0.1 * cal.DA_a[daChannel.EP_Cell] * (phys.sr - controlFile.Para[controlFile.CurrentNum][3]));
+    }
+    if (phys.sr <= controlFile.Para[controlFile.CurrentNum][3] - errTol.StressA)
+    {
+        adjustEpCell(0.1 * cal.DA_a[daChannel.EP_Cell] * (controlFile.Para[controlFile.CurrentNum][3] - phys.sr));
+    }
+    if (phys.q <= controlFile.Para[controlFile.CurrentNum][1] + errTol.StressExt)
+    {
+        setMotorCruchUp(false);
+        // 2020.5 エラーストレスの大きさに応じたRPMの自動変更
+        setMotorSpeed(controlFile.Para[controlFile.CurrentNum][0] *
+                      (phys.q - controlFile.Para[controlFile.CurrentNum][1]) / errTol.StressExt / 2);
+    }
+    else
+    {
+        setMotorSpeed(0.0); // RPM->0
+    }
+    if (TotalStepTime >= controlFile.Para[controlFile.CurrentNum][2])
+    {
+        ++controlFile.CurrentNum;
+        TotalStepTime = 0.0;
+    }
 }

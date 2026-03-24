@@ -304,6 +304,30 @@ struct DigitShowContext
 
     // Event handling
     long AdEvent;
+
+    // Control helpers (state transition only; no hardware I/O)
+    void setMotorBrake(bool braking);
+    void setMotorCruchUp(bool up);
+    void setMotorSpeed(double rpm);
+    void adjustEpCell(double delta);
+
+    // Control_DA handlers (state machine)
+    void runBeforeConsolidationControl();
+    void runConsolidationControl();
+    void runMonotonicLoadingCompressionExtensionControl();
+    void runMonotonicLoadingLoadingUnloadingControl();
+    void runCyclicLoadingControl();
+    void runDrainCyclicLoadingControl();
+    void runLinearEffectiveStressPathControl();
+
+    // Scripted control-file handlers (formerly in CDigitShowBasicDoc)
+    void runScriptedMonotonicLoadingStress();
+    void runScriptedMonotonicLoadingStrain();
+    void runScriptedCyclicLoadingStress();
+    void runScriptedCyclicLoadingStrain();
+    void runScriptedCreep();
+    void runScriptedLinearEffectiveStressPath();
+    void runScriptedCreep2();
 };
 
 /**
