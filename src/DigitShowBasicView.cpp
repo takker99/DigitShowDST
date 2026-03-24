@@ -74,7 +74,8 @@ CDigitShowBasicView::CDigitShowBasicView()
       m_Para00(_T("")), m_Para01(_T("")), m_Para02(_T("")), m_Para03(_T("")), m_Para04(_T("")), m_Para05(_T("")),
       m_Para06(_T("")), m_Para07(_T("")), m_Para08(_T("")), m_Para09(_T("")), m_Para10(_T("")), m_Para11(_T("")),
       m_Para12(_T("")), m_Para13(_T("")), m_Para14(_T("")), m_Para15(_T("")), m_Ctrl_ID(0), m_NowTime(_T("")),
-      m_SeqTime(0), m_FileName(_T("")), m_pEditBrush(new CBrush(RGB(255, 255, 255))),
+      m_SeqTime(0), m_FileName(_T("")), LastPeriodicSaveTimeSec(0.0), LastSavedControlNum(0),
+      m_pEditBrush(new CBrush(RGB(255, 255, 255))),
       m_pStaticBrush(new CBrush(RGB(0, 128, 128))), m_pDlgBrush(new CBrush(RGB(0, 128, 128)))
 {
     DigitShowContext *ctx = GetContext();
@@ -386,6 +387,31 @@ void CDigitShowBasicView::OnTimer(UINT_PTR nIDEvent)
         StepTime0 = StepTime1;
         if (ctx->FlagSetBoard)
             pDoc->Control_DA();
+        if (ctx->FlagSaveData == TRUE && ctx->FlagFIFO == FALSE)
+        {
+            bool shouldSave = false;
+            if (ctx->SequentTime2 - LastPeriodicSaveTimeSec >= 60.0)
+            {
+                shouldSave = true;
+            }
+            if (ctx->controlFile.CurrentNum != LastSavedControlNum)
+            {
+                shouldSave = true;
+            }
+            if (shouldSave)
+            {
+                _ftime_s(&NowTime2);
+                ctx->SequentTime2 =
+                    double(NowTime2.time - StartTime2.time) + double((NowTime2.millitm - StartTime2.millitm) / 1000.0);
+                if (ctx->FlagSetBoard)
+                    pDoc->AD_INPUT();
+                pDoc->Cal_Physical();
+                pDoc->Cal_Param();
+                pDoc->SaveToFile();
+                LastPeriodicSaveTimeSec = ctx->SequentTime2;
+                LastSavedControlNum = ctx->controlFile.CurrentNum;
+            }
+        }
     }
     break;
     case 3: {
@@ -511,6 +537,19 @@ void CDigitShowBasicView::OnBUTTONCtrlOn()
         CButton *myBTN2 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_CtrlOff));
         myBTN1->EnableWindow(FALSE);
         myBTN2->EnableWindow(TRUE);
+        if (ctx->FlagSaveData == TRUE && ctx->FlagFIFO == FALSE)
+        {
+            _ftime_s(&NowTime2);
+            ctx->SequentTime2 =
+                double(NowTime2.time - StartTime2.time) + double((NowTime2.millitm - StartTime2.millitm) / 1000.0);
+            if (ctx->FlagSetBoard)
+                pDoc->AD_INPUT();
+            pDoc->Cal_Physical();
+            pDoc->Cal_Param();
+            pDoc->SaveToFile();
+            LastPeriodicSaveTimeSec = ctx->SequentTime2;
+            LastSavedControlNum = ctx->controlFile.CurrentNum;
+        }
         pDoc->Start_Control();
     }
 }
@@ -520,6 +559,19 @@ void CDigitShowBasicView::OnBUTTONCtrlOff()
     DigitShowContext *ctx = GetContext();
 
     CDigitShowBasicDoc *pDoc = (CDigitShowBasicDoc *)GetDocument();
+    if (ctx->FlagSaveData == TRUE && ctx->FlagFIFO == FALSE)
+    {
+        _ftime_s(&NowTime2);
+        ctx->SequentTime2 =
+            double(NowTime2.time - StartTime2.time) + double((NowTime2.millitm - StartTime2.millitm) / 1000.0);
+        if (ctx->FlagSetBoard)
+            pDoc->AD_INPUT();
+        pDoc->Cal_Physical();
+        pDoc->Cal_Param();
+        pDoc->SaveToFile();
+        LastPeriodicSaveTimeSec = ctx->SequentTime2;
+        LastSavedControlNum = ctx->controlFile.CurrentNum;
+    }
     KillTimer(2);
     ctx->FlagCtrl = FALSE;
     CButton *myBTN1 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_CtrlOn));
@@ -643,6 +695,8 @@ void CDigitShowBasicView::OnBUTTONStartSave()
             ctx->SequentTime2 =
                 double(NowTime2.time - StartTime2.time) + double((NowTime2.millitm - StartTime2.millitm) / 1000.0);
             ctx->FlagSaveData = TRUE;
+            LastPeriodicSaveTimeSec = ctx->SequentTime2;
+            LastSavedControlNum = ctx->controlFile.CurrentNum;
             CButton *myBTN1 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_StartSave));
             CButton *myBTN2 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_StopSave));
             CButton *myBTN3 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_InterceptSave));
@@ -658,6 +712,8 @@ void CDigitShowBasicView::OnBUTTONStartSave()
             pDoc->Cal_Physical();
             pDoc->Cal_Param();
             pDoc->SaveToFile();
+            LastPeriodicSaveTimeSec = ctx->SequentTime2;
+            LastSavedControlNum = ctx->controlFile.CurrentNum;
         }
     }
     if (ctx->FlagSetBoard == TRUE && ctx->FlagFIFO == TRUE)

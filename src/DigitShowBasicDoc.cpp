@@ -389,6 +389,8 @@ void CDigitShowBasicDoc::Cal_Param()
 void CDigitShowBasicDoc::SaveToFile()
 {
     DigitShowContext *ctx = GetContext();
+    if (ctx->FileSaveData0 == nullptr || ctx->FileSaveData1 == nullptr || ctx->FileSaveData2 == nullptr)
+        return;
     // Save Voltage and Physical Data
     int i = 0, j = 0, k = 0;
 
@@ -413,6 +415,9 @@ void CDigitShowBasicDoc::SaveToFile()
         fprintf(ctx->FileSaveData2, "%lf    ", ctx->CalParam[i]);
     }
     fprintf(ctx->FileSaveData2, "\n");
+    fflush(ctx->FileSaveData0);
+    fflush(ctx->FileSaveData1);
+    fflush(ctx->FileSaveData2);
 }
 
 void CDigitShowBasicDoc::SaveToFile2()
