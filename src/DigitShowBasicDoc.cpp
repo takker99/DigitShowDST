@@ -223,12 +223,39 @@ void CDigitShowBasicDoc::CloseBoard()
     // Close A/D and D/A board to end the application
     if (ctx->FlagSetBoard == TRUE)
     {
+        // Ensure all D/A outputs are driven to 0V before releasing the D/A board.
+        ZeroAllDaOutputsOnShutdown();
+
         if (ctx->NumAD > 0)
             ctx->Ret = AioExit(ctx->ad.Id[0]);
         if (ctx->NumAD > 1)
             ctx->Ret = AioExit(ctx->ad.Id[1]);
         if (ctx->NumDA > 0)
             ctx->Ret = AioExit(ctx->da.Id[0]);
+
+        ctx->FlagSetBoard = FALSE;
+        ctx->FlagCtrl = FALSE;
+    }
+}
+
+void CDigitShowBasicDoc::ZeroAllDaOutputsOnShutdown()
+{
+    DigitShowContext *ctx = GetContext();
+
+    if (ctx->FlagSetBoard == FALSE || ctx->NumDA <= 0)
+        return;
+
+    for (int i = 0; i < 8; i++)
+    {
+        ctx->DAVout[i] = 0.0f;
+    }
+
+    DA_OUTPUT();
+
+    if (ctx->Ret != 0)
+    {
+        ctx->Ret2 = AioGetErrorString(ctx->Ret, ctx->ErrorString);
+        ctx->TextString.Format(_T("AioMultiAo (shutdown) = %d : %S"), ctx->Ret, ctx->ErrorString);
     }
 }
 
