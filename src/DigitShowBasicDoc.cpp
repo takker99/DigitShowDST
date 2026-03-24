@@ -182,7 +182,7 @@ void CDigitShowBasicDoc::OpenBoard()
             ctx->Ret = AioGetAiResolution(ctx->ad.Id[i], &ctx->ad.Resolution[i]);
             ctx->Ret = AioGetAiMaxChannels(ctx->ad.Id[i], &ctx->ad.Channels[i]);
             ctx->Ret = AioSetAiChannels(ctx->ad.Id[i], ctx->ad.Channels[i]);
-            ctx->AdMaxChannels = ctx->AdMaxChannels + ctx->ad.Channels[i] / 2;
+            ctx->AdMaxChannels += ctx->ad.Channels[i] / 2;
             ctx->Ret = AioSetAiRangeAll(ctx->ad.Id[i], 0);
             // (-10V, 10V)
             ctx->Ret = AioGetAiRange(ctx->ad.Id[i], 0, &ctx->ad.Range[i]);
@@ -272,12 +272,11 @@ void CDigitShowBasicDoc::AD_INPUT()
             ctx->Vout[k] = 0.0f;
             for (j = 0; j < ctx->sampling.AvSmplNum; j++)
             {
-                ctx->Vout[k] =
-                    ctx->Vout[k] + BinaryToVolt(ctx->ad.RangeMax[0], ctx->ad.RangeMin[0], ctx->ad.Resolution[0],
-                                                ctx->ad.Data0[ctx->ad.Channels[0] * j + 2 * i]) /
-                                       float(ctx->sampling.AvSmplNum);
+                ctx->Vout[k] += BinaryToVolt(ctx->ad.RangeMax[0], ctx->ad.RangeMin[0], ctx->ad.Resolution[0],
+                                             ctx->ad.Data0[ctx->ad.Channels[0] * j + 2 * i]) /
+                                float(ctx->sampling.AvSmplNum);
             }
-            k = k + 1;
+            ++k;
         }
     }
     if (ctx->NumAD > 1)
@@ -287,12 +286,11 @@ void CDigitShowBasicDoc::AD_INPUT()
             ctx->Vout[k] = 0.0f;
             for (j = 0; j < ctx->sampling.AvSmplNum; j++)
             {
-                ctx->Vout[k] =
-                    ctx->Vout[k] + BinaryToVolt(ctx->ad.RangeMax[1], ctx->ad.RangeMin[1], ctx->ad.Resolution[1],
-                                                ctx->ad.Data1[ctx->ad.Channels[1] * j + 2 * i]) /
-                                       float(ctx->sampling.AvSmplNum);
+                ctx->Vout[k] += BinaryToVolt(ctx->ad.RangeMax[1], ctx->ad.RangeMin[1], ctx->ad.Resolution[1],
+                                             ctx->ad.Data1[ctx->ad.Channels[1] * j + 2 * i]) /
+                                float(ctx->sampling.AvSmplNum);
             }
-            k = k + 1;
+            ++k;
         }
     }
 }
@@ -313,7 +311,7 @@ void CDigitShowBasicDoc::DA_OUTPUT()
                 ctx->DAVout[k] = 9.9999f;
             ctx->da.Data[j] =
                 VoltToBinary(ctx->da.RangeMax[i], ctx->da.RangeMin[i], ctx->da.Resolution[i], ctx->DAVout[k]);
-            k = k + 1;
+            ++k;
         }
         ctx->Ret = AioMultiAo(ctx->da.Id[i], ctx->da.Channels[i], &ctx->da.Data[0]);
     }
@@ -403,7 +401,7 @@ void CDigitShowBasicDoc::SaveToFile()
         {
             fprintf(ctx->FileSaveData0, "%lf    ", ctx->Vout[k]);
             fprintf(ctx->FileSaveData1, "%lf    ", ctx->Phyout[k]);
-            k = k + 1;
+            ++k;
         }
     }
     fprintf(ctx->FileSaveData0, "\n");
@@ -433,7 +431,7 @@ void CDigitShowBasicDoc::SaveToFile2()
                 ctx->Vtmp = BinaryToVolt(ctx->ad.RangeMax[0], ctx->ad.RangeMin[0], ctx->ad.Resolution[0],
                                          *((PLONG)ctx->pSmplData0 + i * ctx->ad.Channels[0] / 2 + j));
                 ctx->Ptmp = ctx->cal.a[k] * ctx->Vtmp * ctx->Vtmp + ctx->cal.b[k] * ctx->Vtmp + ctx->cal.c[k];
-                k = k + 1;
+                ++k;
                 fprintf(ctx->FileSaveData0, "%lf    ", ctx->Vtmp);
                 fprintf(ctx->FileSaveData1, "%lf    ", ctx->Ptmp);
             }
@@ -445,7 +443,7 @@ void CDigitShowBasicDoc::SaveToFile2()
                 ctx->Vtmp = BinaryToVolt(ctx->ad.RangeMax[1], ctx->ad.RangeMin[1], ctx->ad.Resolution[1],
                                          *((PLONG)ctx->pSmplData1 + i * ctx->ad.Channels[1] / 2 + j));
                 ctx->Ptmp = ctx->cal.a[k] * ctx->Vtmp * ctx->Vtmp + ctx->cal.b[k] * ctx->Vtmp + ctx->cal.c[k];
-                k = k + 1;
+                ++k;
                 fprintf(ctx->FileSaveData0, "%lf    ", ctx->Vtmp);
                 fprintf(ctx->FileSaveData1, "%lf    ", ctx->Ptmp);
             }
@@ -551,15 +549,13 @@ void CDigitShowBasicDoc::Control_DA()
                   ctx->cal.DA_b[ctx->daChannel.MotorSpeed]);
         if (ctx->phys.e_sr < ctx->control[2].e_sigma[0] * ctx->control[2].K0 - ctx->errTol.StressA)
         {
-            ctx->DAVout[ctx->daChannel.EP_Cell] =
-                ctx->DAVout[ctx->daChannel.EP_Cell] +
+            ctx->DAVout[ctx->daChannel.EP_Cell] +=
                 float(ctx->cal.DA_a[ctx->daChannel.EP_Cell] * ctx->control[2].sigmaRate[2] / 60.0 *
                       static_cast<double>(ctx->timeSettings.Interval2) / 1000.0);
         }
         if (ctx->phys.e_sr > ctx->control[2].e_sigma[0] * ctx->control[2].K0 + ctx->errTol.StressA)
         {
-            ctx->DAVout[ctx->daChannel.EP_Cell] =
-                ctx->DAVout[ctx->daChannel.EP_Cell] -
+            ctx->DAVout[ctx->daChannel.EP_Cell] -=
                 float(ctx->cal.DA_a[ctx->daChannel.EP_Cell] * ctx->control[2].sigmaRate[2] / 60.0 *
                       static_cast<double>(ctx->timeSettings.Interval2) / 1000.0);
         }
@@ -696,7 +692,7 @@ void CDigitShowBasicDoc::Control_DA()
                     if (ctx->phys.q >= ctx->control[5].sigma[1])
                     {
                         ctx->FlagCyclic = FALSE;
-                        ctx->control[5].time[0] = ctx->control[5].time[0] + 1;
+                        ++ctx->control[5].time[0];
                     }
                 }
             }
@@ -731,7 +727,7 @@ void CDigitShowBasicDoc::Control_DA()
                     if (ctx->phys.q <= ctx->control[5].sigma[0])
                     {
                         ctx->FlagCyclic = TRUE;
-                        ctx->control[5].time[0] = ctx->control[5].time[0] + 1;
+                        ++ctx->control[5].time[0];
                     }
                 }
             }
@@ -775,7 +771,7 @@ void CDigitShowBasicDoc::Control_DA()
                     if (ctx->phys.q >= ctx->control[6].sigma[1])
                     {
                         ctx->FlagCyclic = FALSE;
-                        ctx->control[6].time[0] = ctx->control[6].time[0] + 1;
+                        ++ctx->control[6].time[0];
                     }
                 }
             }
@@ -810,7 +806,7 @@ void CDigitShowBasicDoc::Control_DA()
                     if (ctx->phys.q <= ctx->control[6].sigma[0])
                     {
                         ctx->FlagCyclic = TRUE;
-                        ctx->control[6].time[0] = ctx->control[6].time[0] + 1;
+                        ++ctx->control[6].time[0];
                     }
                 }
             }
@@ -980,7 +976,7 @@ void CDigitShowBasicDoc::Stop_Control()
 void CDigitShowBasicDoc::MLoading_Stress()
 {
     DigitShowContext *ctx = GetContext();
-    ctx->TotalStepTime = ctx->TotalStepTime + ctx->CtrlStepTime / 60.0;
+    ctx->TotalStepTime += ctx->CtrlStepTime / 60.0;
     ctx->DAVout[ctx->daChannel.Motor] = 5.0f; // Motor: On
     ctx->DAVout[ctx->daChannel.MotorSpeed] =
         float(ctx->cal.DA_a[ctx->daChannel.MotorSpeed] * ctx->controlFile.Para[ctx->controlFile.CurrentNum][1] +
@@ -1008,7 +1004,7 @@ void CDigitShowBasicDoc::MLoading_Stress()
         }
         else
         {
-            ctx->controlFile.CurrentNum = ctx->controlFile.CurrentNum + 1;
+            ++ctx->controlFile.CurrentNum;
             ctx->TotalStepTime = 0.0;
         }
     }
@@ -1020,7 +1016,7 @@ void CDigitShowBasicDoc::MLoading_Stress()
         }
         else
         {
-            ctx->controlFile.CurrentNum = ctx->controlFile.CurrentNum + 1;
+            ++ctx->controlFile.CurrentNum;
             ctx->TotalStepTime = 0.0;
         }
     }
@@ -1029,7 +1025,7 @@ void CDigitShowBasicDoc::MLoading_Stress()
 void CDigitShowBasicDoc::MLoading_Strain()
 {
     DigitShowContext *ctx = GetContext();
-    ctx->TotalStepTime = ctx->TotalStepTime + ctx->CtrlStepTime / 60.0;
+    ctx->TotalStepTime += ctx->CtrlStepTime / 60.0;
     ctx->DAVout[ctx->daChannel.Motor] = 5.0f; // Motor: On
     ctx->DAVout[ctx->daChannel.MotorSpeed] =
         float(ctx->cal.DA_a[ctx->daChannel.MotorSpeed] * ctx->controlFile.Para[ctx->controlFile.CurrentNum][1] +
@@ -1058,17 +1054,17 @@ void CDigitShowBasicDoc::MLoading_Strain()
         }
         if (ctx->phys.ea > ctx->controlFile.Para[ctx->controlFile.CurrentNum][2])
         { // 2021.3
-            ctx->controlFile.CurrentNum = ctx->controlFile.CurrentNum + 1;
+            ++ctx->controlFile.CurrentNum;
             ctx->TotalStepTime = 0.0;
         }
         else if (ctx->TotalStepTime >= ctx->controlFile.Para[ctx->controlFile.CurrentNum][4])
         { // 2021.3
-            ctx->controlFile.CurrentNum = ctx->controlFile.CurrentNum + 1;
+            ++ctx->controlFile.CurrentNum;
             ctx->TotalStepTime = 0.0;
         }
         else if (ctx->Phyout[0] > ctx->controlFile.Para[ctx->controlFile.CurrentNum][3])
         { // 2021.3
-            ctx->controlFile.CurrentNum = ctx->controlFile.CurrentNum + 1;
+            ++ctx->controlFile.CurrentNum;
             ctx->TotalStepTime = 0.0;
         }
     }
@@ -1080,7 +1076,7 @@ void CDigitShowBasicDoc::MLoading_Strain()
         }
         else
         {
-            ctx->controlFile.CurrentNum = ctx->controlFile.CurrentNum + 1;
+            ++ctx->controlFile.CurrentNum;
             ctx->TotalStepTime = 0.0;
         }
     }
@@ -1089,7 +1085,7 @@ void CDigitShowBasicDoc::MLoading_Strain()
 void CDigitShowBasicDoc::CLoading_Stress()
 {
     DigitShowContext *ctx = GetContext();
-    ctx->TotalStepTime = ctx->TotalStepTime + ctx->CtrlStepTime / 60.0;
+    ctx->TotalStepTime += ctx->CtrlStepTime / 60.0;
     ctx->DAVout[ctx->daChannel.Motor] = 5.0f; // Motor: On
     ctx->DAVout[ctx->daChannel.MotorSpeed] =
         float(ctx->cal.DA_a[ctx->daChannel.MotorSpeed] * ctx->controlFile.Para[ctx->controlFile.CurrentNum][1] +
@@ -1186,7 +1182,7 @@ void CDigitShowBasicDoc::CLoading_Stress()
                     ctx->cyclicState.RuIndicator < 0.95)
                 { // 2021.3
                     ctx->FlagCyclic = FALSE;
-                    ctx->NumCyclic = ctx->NumCyclic + 1;
+                    ++ctx->NumCyclic;
                 }
                 // 2021.3 現在の軸ひずみとの差分がDAを超えるか否か。
                 if (ctx->phys.q >= ctx->controlFile.Para[ctx->controlFile.CurrentNum][3] &&
@@ -1195,7 +1191,7 @@ void CDigitShowBasicDoc::CLoading_Stress()
                     ctx->cyclicState.RuIndicator == 0.95)
                 {
                     ctx->FlagCyclic = FALSE;
-                    ctx->NumCyclic = ctx->NumCyclic + 1;
+                    ++ctx->NumCyclic;
                 }
                 if (ctx->phys.q >= ctx->controlFile.Para[ctx->controlFile.CurrentNum][3] &&
                     (ctx->phys.ea - ctx->cyclicState.MinAxialStrain) >=
@@ -1203,7 +1199,7 @@ void CDigitShowBasicDoc::CLoading_Stress()
                     ctx->cyclicState.RuIndicator < 0.95)
                 { // 2021.3
                     ctx->FlagCyclic = FALSE;
-                    ctx->NumCyclic = ctx->NumCyclic + 1;
+                    ++ctx->NumCyclic;
                 }
                 if (ctx->phys.q >= ctx->controlFile.Para[ctx->controlFile.CurrentNum][3] &&
                     (ctx->phys.ea - ctx->cyclicState.MinAxialStrain) >=
@@ -1211,7 +1207,7 @@ void CDigitShowBasicDoc::CLoading_Stress()
                     ctx->cyclicState.RuIndicator == 0.95)
                 { // 2021.3
                     ctx->FlagCyclic = FALSE;
-                    ctx->NumCyclic = ctx->NumCyclic - 1;
+                    --ctx->NumCyclic;
                 }
                 if (ctx->phys.q < ctx->controlFile.Para[ctx->controlFile.CurrentNum][3] &&
                     (ctx->phys.ea - ctx->cyclicState.MinAxialStrain) >=
@@ -1219,7 +1215,7 @@ void CDigitShowBasicDoc::CLoading_Stress()
                     ctx->cyclicState.RuIndicator < 0.95)
                 { // 2021.3
                     ctx->FlagCyclic = FALSE;
-                    ctx->NumCyclic = ctx->NumCyclic + 1;
+                    ++ctx->NumCyclic;
                 }
                 if (ctx->phys.q < ctx->controlFile.Para[ctx->controlFile.CurrentNum][3] &&
                     (ctx->phys.ea - ctx->cyclicState.MinAxialStrain) >=
@@ -1227,13 +1223,13 @@ void CDigitShowBasicDoc::CLoading_Stress()
                     ctx->cyclicState.RuIndicator == 0.95)
                 { // 2021.3
                     ctx->FlagCyclic = FALSE;
-                    ctx->NumCyclic = ctx->NumCyclic - 1;
+                    --ctx->NumCyclic;
                 }
             }
         }
         if (ctx->NumCyclic > ctx->controlFile.Para[ctx->controlFile.CurrentNum][4])
         {
-            ctx->controlFile.CurrentNum = ctx->controlFile.CurrentNum + 1;
+            ++ctx->controlFile.CurrentNum;
             ctx->TotalStepTime = 0.0;
             ctx->NumCyclic = 0;
         }
@@ -1266,25 +1262,25 @@ void CDigitShowBasicDoc::CLoading_Stress()
                     (ctx->cyclicState.MaxAxialStrain - ctx->phys.ea) <
                         ctx->controlFile.Para[ctx->controlFile.CurrentNum][5] &&
                     ctx->cyclicState.RuIndicator < 0.95)
-                {                                        // 2021.3
-                    ctx->FlagCyclic = TRUE;              // 2021.3
-                    ctx->NumCyclic = ctx->NumCyclic + 1; // 2021.3
+                {                           // 2021.3
+                    ctx->FlagCyclic = TRUE; // 2021.3
+                    ++ctx->NumCyclic;       // 2021.3
                 } // 2021.3
                 if (ctx->phys.q <= ctx->controlFile.Para[ctx->controlFile.CurrentNum][2] &&
                     (ctx->cyclicState.MaxAxialStrain - ctx->phys.ea) <
                         ctx->controlFile.Para[ctx->controlFile.CurrentNum][5] &&
                     ctx->cyclicState.RuIndicator == 0.95)
-                {                                        // 2021.3
-                    ctx->FlagCyclic = TRUE;              // 2021.3
-                    ctx->NumCyclic = ctx->NumCyclic + 1; // 2021.3
+                {                           // 2021.3
+                    ctx->FlagCyclic = TRUE; // 2021.3
+                    ++ctx->NumCyclic;       // 2021.3
                 } // 2021.3
                 if (ctx->phys.q <= ctx->controlFile.Para[ctx->controlFile.CurrentNum][2] &&
                     (ctx->cyclicState.MaxAxialStrain - ctx->phys.ea) >=
                         ctx->controlFile.Para[ctx->controlFile.CurrentNum][5] &&
                     ctx->cyclicState.RuIndicator < 0.95)
-                {                                        // 2021.3
-                    ctx->FlagCyclic = TRUE;              // 2021.3
-                    ctx->NumCyclic = ctx->NumCyclic + 1; // 2021.3
+                {                           // 2021.3
+                    ctx->FlagCyclic = TRUE; // 2021.3
+                    ++ctx->NumCyclic;       // 2021.3
                 } // 2021.3
                 if (ctx->phys.q <= ctx->controlFile.Para[ctx->controlFile.CurrentNum][2] &&
                     (ctx->cyclicState.MaxAxialStrain - ctx->phys.ea) >=
@@ -1299,9 +1295,9 @@ void CDigitShowBasicDoc::CLoading_Stress()
                     (ctx->cyclicState.MaxAxialStrain - ctx->phys.ea) >=
                         2.4 * ctx->controlFile.Para[ctx->controlFile.CurrentNum][5] &&
                     ctx->cyclicState.RuIndicator < 0.95)
-                {                                        // 2021.3
-                    ctx->FlagCyclic = TRUE;              // 2021.3
-                    ctx->NumCyclic = ctx->NumCyclic + 1; // 2021.3
+                {                           // 2021.3
+                    ctx->FlagCyclic = TRUE; // 2021.3
+                    ++ctx->NumCyclic;       // 2021.3
                 } // 2021.3
                 if (ctx->phys.q > ctx->controlFile.Para[ctx->controlFile.CurrentNum][2] &&
                     (ctx->cyclicState.MaxAxialStrain - ctx->phys.ea) >=
@@ -1373,7 +1369,7 @@ void CDigitShowBasicDoc::CLoading_Stress()
                 }
                 if (ctx->phys.q <= 1.0 && ctx->cyclicState.DaFlag == 1.0 && ctx->cyclicState.RuIndicator == 0.95)
                 { // 2021.6
-                    ctx->controlFile.CurrentNum = ctx->controlFile.CurrentNum + 1;
+                    ++ctx->controlFile.CurrentNum;
                     ctx->TotalStepTime = 0.0;
                     ctx->NumCyclic = 0;
                 }
@@ -1381,7 +1377,7 @@ void CDigitShowBasicDoc::CLoading_Stress()
         }
         if (ctx->NumCyclic > ctx->controlFile.Para[ctx->controlFile.CurrentNum][4])
         {
-            ctx->controlFile.CurrentNum = ctx->controlFile.CurrentNum + 1;
+            ++ctx->controlFile.CurrentNum;
             ctx->TotalStepTime = 0.0;
             ctx->NumCyclic = 0;
         }
@@ -1391,7 +1387,7 @@ void CDigitShowBasicDoc::CLoading_Stress()
 void CDigitShowBasicDoc::CLoading_Strain()
 {
     DigitShowContext *ctx = GetContext();
-    ctx->TotalStepTime = ctx->TotalStepTime + ctx->CtrlStepTime / 60.0;
+    ctx->TotalStepTime += ctx->CtrlStepTime / 60.0;
     ctx->DAVout[ctx->daChannel.Motor] = 5.0f;
     ctx->DAVout[ctx->daChannel.MotorSpeed] =
         float(ctx->cal.DA_a[ctx->daChannel.MotorSpeed] * ctx->controlFile.Para[ctx->controlFile.CurrentNum][1] +
@@ -1432,13 +1428,13 @@ void CDigitShowBasicDoc::CLoading_Strain()
                 if (ctx->phys.ea >= ctx->controlFile.Para[ctx->controlFile.CurrentNum][3])
                 {
                     ctx->FlagCyclic = FALSE;
-                    ctx->NumCyclic = ctx->NumCyclic + 1;
+                    ++ctx->NumCyclic;
                 }
             }
         }
         if (ctx->NumCyclic > ctx->controlFile.Para[ctx->controlFile.CurrentNum][4])
         {
-            ctx->controlFile.CurrentNum = ctx->controlFile.CurrentNum + 1;
+            ++ctx->controlFile.CurrentNum;
             ctx->TotalStepTime = 0.0;
             ctx->NumCyclic = 0;
         }
@@ -1458,7 +1454,7 @@ void CDigitShowBasicDoc::CLoading_Strain()
                 if (ctx->phys.ea <= ctx->controlFile.Para[ctx->controlFile.CurrentNum][2])
                 {
                     ctx->FlagCyclic = TRUE;
-                    ctx->NumCyclic = ctx->NumCyclic + 1;
+                    ++ctx->NumCyclic;
                 }
             }
             if (ctx->FlagCyclic == TRUE)
@@ -1470,7 +1466,7 @@ void CDigitShowBasicDoc::CLoading_Strain()
         }
         if (ctx->NumCyclic > ctx->controlFile.Para[ctx->controlFile.CurrentNum][4])
         {
-            ctx->controlFile.CurrentNum = ctx->controlFile.CurrentNum + 1;
+            ++ctx->controlFile.CurrentNum;
             ctx->TotalStepTime = 0.0;
             ctx->NumCyclic = 0;
         }
@@ -1480,7 +1476,7 @@ void CDigitShowBasicDoc::CLoading_Strain()
 void CDigitShowBasicDoc::Creep()
 {
     DigitShowContext *ctx = GetContext();
-    ctx->TotalStepTime = ctx->TotalStepTime + ctx->CtrlStepTime / 60.0;
+    ctx->TotalStepTime += ctx->CtrlStepTime / 60.0;
     ctx->DAVout[ctx->daChannel.Motor] = 5.0f; // Motor:On
     ctx->DAVout[ctx->daChannel.MotorSpeed] =
         float(ctx->cal.DA_a[ctx->daChannel.MotorSpeed] * ctx->controlFile.Para[ctx->controlFile.CurrentNum][0] +
@@ -1519,7 +1515,7 @@ void CDigitShowBasicDoc::Creep()
     }
     if (ctx->TotalStepTime >= ctx->controlFile.Para[ctx->controlFile.CurrentNum][2])
     {
-        ctx->controlFile.CurrentNum = ctx->controlFile.CurrentNum + 1;
+        ++ctx->controlFile.CurrentNum;
         ctx->TotalStepTime = 0.0;
     }
 }
@@ -1528,7 +1524,7 @@ void CDigitShowBasicDoc::Creep()
 void CDigitShowBasicDoc::LinearEffectiveStressPath()
 {
     DigitShowContext *ctx = GetContext();
-    ctx->TotalStepTime = ctx->TotalStepTime + ctx->CtrlStepTime / 60.0;
+    ctx->TotalStepTime += ctx->CtrlStepTime / 60.0;
     ctx->DAVout[ctx->daChannel.Motor] = 5.0f;
     ctx->DAVout[ctx->daChannel.MotorSpeed] =
         float(ctx->cal.DA_a[ctx->daChannel.MotorSpeed] * ctx->controlFile.Para[ctx->controlFile.CurrentNum][4] +
@@ -1549,7 +1545,7 @@ void CDigitShowBasicDoc::LinearEffectiveStressPath()
         }
         else
         {
-            ctx->controlFile.CurrentNum = ctx->controlFile.CurrentNum + 1;
+            ++ctx->controlFile.CurrentNum;
             ctx->TotalStepTime = 0.0;
         }
     }
@@ -1594,7 +1590,7 @@ void CDigitShowBasicDoc::LinearEffectiveStressPath()
             ctx->DAVout[ctx->daChannel.MotorSpeed] = 0.0f; // RPM -> 0
             if (fabs(ctx->phys.sr - ctx->controlFile.Para[ctx->controlFile.CurrentNum][3]) <= ctx->errTol.StressA)
             {
-                ctx->controlFile.CurrentNum = ctx->controlFile.CurrentNum + 1;
+                ++ctx->controlFile.CurrentNum;
                 ctx->TotalStepTime = 0.0;
             }
         }
@@ -1640,7 +1636,7 @@ void CDigitShowBasicDoc::LinearEffectiveStressPath()
             ctx->DAVout[ctx->daChannel.MotorSpeed] = 0.0f; // RPM -> 0
             if (fabs(ctx->phys.sr - ctx->controlFile.Para[ctx->controlFile.CurrentNum][3]) <= ctx->errTol.StressA)
             {
-                ctx->controlFile.CurrentNum = ctx->controlFile.CurrentNum + 1;
+                ++ctx->controlFile.CurrentNum;
                 ctx->TotalStepTime = 0.0;
             }
         }
@@ -1650,7 +1646,7 @@ void CDigitShowBasicDoc::LinearEffectiveStressPath()
 void CDigitShowBasicDoc::Creep2()
 {
     DigitShowContext *ctx = GetContext();
-    ctx->TotalStepTime = ctx->TotalStepTime + ctx->CtrlStepTime / 60.0;
+    ctx->TotalStepTime += ctx->CtrlStepTime / 60.0;
     ctx->DAVout[ctx->daChannel.Motor] = 5.0f; // Motor:On
     ctx->DAVout[ctx->daChannel.MotorSpeed] =
         float(ctx->cal.DA_a[ctx->daChannel.MotorSpeed] * ctx->controlFile.Para[ctx->controlFile.CurrentNum][0] +
@@ -1685,7 +1681,7 @@ void CDigitShowBasicDoc::Creep2()
     }
     if (ctx->TotalStepTime >= ctx->controlFile.Para[ctx->controlFile.CurrentNum][2])
     {
-        ctx->controlFile.CurrentNum = ctx->controlFile.CurrentNum + 1;
+        ++ctx->controlFile.CurrentNum;
         ctx->TotalStepTime = 0.0;
     }
 }

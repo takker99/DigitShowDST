@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
 #include "DigitShowBasic.h"
 #include "DigitShowBasicDoc.h"
@@ -237,8 +237,8 @@ void CSpecimen::OnBUTTONSave()
     OnBUTTONUpdate();
 
     CString pFileName;
-    FILE *FileSpcData;
-    errno_t err;
+    FILE *FileSpcData = nullptr;
+    errno_t err = 0;
 
     CFileDialog SpcSaveFile_dlg(FALSE, NULL, "*.spe", OFN_CREATEPROMPT | OFN_OVERWRITEPROMPT,
                                 "Specimen Files(*.spe)|*.spe| All Files(*.*)|*.*| |", NULL);
@@ -289,9 +289,9 @@ void CSpecimen::OnBUTTONBeConsol()
     SpecimenData->Width[2] = SpecimenData->Width[1] * sqrt(SpecimenData->Area[2] / SpecimenData->Area[1]);
     SpecimenData->VLDT1[2] = 120;
     SpecimenData->VLDT2[2] = 120;
-    ctx->cal.c[1] = ctx->cal.c[1] - ctx->Phyout[1];
+    ctx->cal.c[1] -= ctx->Phyout[1];
     //---0-adjustment of Displacement transducer---
-    ctx->cal.c[4] = ctx->cal.c[4] - ctx->Phyout[4];
+    ctx->cal.c[4] -= ctx->Phyout[4];
     //---0-adjustment of Volume Change ---
     Reflesh();
     OnBUTTONToPresent2();
@@ -310,9 +310,9 @@ void CSpecimen::OnBUTTONAfConsolidation()
     SpecimenData->Width[3] = SpecimenData->Width[2] * sqrt(SpecimenData->Area[3] / SpecimenData->Area[2]);
     SpecimenData->VLDT1[3] = ctx->Phyout[5];
     SpecimenData->VLDT2[3] = ctx->Phyout[6];
-    ctx->cal.c[1] = ctx->cal.c[1] - ctx->Phyout[1];
+    ctx->cal.c[1] -= ctx->Phyout[1];
     //---0-adjustment of Displacement transducer---
-    ctx->cal.c[4] = ctx->cal.c[4] - ctx->Phyout[4];
+    ctx->cal.c[4] -= ctx->Phyout[4];
     //---0-adjustment of Volume Change ---
     Reflesh();
     OnBUTTONToPresent3();
