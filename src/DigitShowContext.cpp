@@ -151,12 +151,12 @@ void InitContext(DigitShowContext *ctx)
         ctx->specimen.Diameter[j] = 50.0;
         ctx->specimen.Width[j] = 0.0;
         ctx->specimen.Depth[j] = 0.0;
-        ctx->specimen.Height[j] = 100.0;
-        ctx->specimen.Area[j] = 1963.495408;
-        ctx->specimen.Volume[j] = 196349.5408;
+        ctx->specimen.Height[j] = 150.0;
+        ctx->specimen.Area[j] = 3848.451;
+        ctx->specimen.Volume[j] = 577267.7;
         ctx->specimen.Weight[j] = 0.0;
-        ctx->specimen.VLDT1[j] = 70.0;
-        ctx->specimen.VLDT2[j] = 70.0;
+        ctx->specimen.VLDT1[j] = 120;
+        ctx->specimen.VLDT2[j] = 120;
     }
     ctx->specimen.Gs = 0.0;
     ctx->specimen.MembraneModulus = 0.0;
@@ -202,13 +202,13 @@ void InitContext(DigitShowContext *ctx)
     }
 
     // Pre-consolidation control defaults
-    ctx->control[1].MotorSpeed = 1000.0;
-    ctx->control[1].q = 10.0;
+    ctx->control[1].MotorSpeed = 100.0;
+    ctx->control[1].q = 1.0;
 
     // Error tolerance defaults
-    ctx->errTol.StressCom = 0.5;
-    ctx->errTol.StressExt = -0.5;
-    ctx->errTol.StressA = 0.1;
+    ctx->errTol.StressCom = 1.0;
+    ctx->errTol.StressExt = -1.0;
+    ctx->errTol.StressA = 0.3;
 
     // D/A channel assignments
     ctx->daChannel.Motor = 0;
@@ -217,10 +217,10 @@ void InitContext(DigitShowContext *ctx)
     ctx->daChannel.EP_Cell = 3;
 
     // D/A calibration for motor speed (V/rpm)
-    ctx->cal.DA_a[ctx->daChannel.MotorSpeed] = 0.003378059;
+    ctx->cal.DA_a[ctx->daChannel.MotorSpeed] = 0.00262055;
     ctx->cal.DA_b[ctx->daChannel.MotorSpeed] = 0.0;
 
     // D/A calibration for cell pressure (V/kPa)
-    ctx->cal.DA_a[ctx->daChannel.EP_Cell] = 0.003401361;
+    ctx->cal.DA_a[ctx->daChannel.EP_Cell] = 0.012587;
     ctx->cal.DA_b[ctx->daChannel.EP_Cell] = 0.0;
 }
