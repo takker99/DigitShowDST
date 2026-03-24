@@ -17,8 +17,9 @@
  */
 
 #include "stdafx.h"
-#include "DigitShowBasic.h"
+
 #include "Control_MLoading.h"
+#include "DigitShowBasic.h"
 #include "DigitShowBasicDoc.h"
 #include "DigitShowContext.h"
 
@@ -28,17 +29,16 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-CControl_MLoading::CControl_MLoading(CWnd* pParent)
-    : CDialog(CControl_MLoading::IDD, pParent)
+CControl_MLoading::CControl_MLoading(CWnd *pParent) : CDialog(CControl_MLoading::IDD, pParent)
 {
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_MotorCruch = ctx->control[3].MotorCruch;
     m_MotorSpeed = ctx->control[3].MotorSpeed;
     m_flag0 = ctx->control[3].flag[0];
     m_q = ctx->control[3].q;
 }
 
-void CControl_MLoading::DoDataExchange(CDataExchange* pDX)
+void CControl_MLoading::DoDataExchange(CDataExchange *pDX)
 {
     CDialog::DoDataExchange(pDX);
     DDX_Text(pDX, IDC_EDIT_Motor_Cruch, m_MotorCruch);
@@ -49,14 +49,14 @@ void CControl_MLoading::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CControl_MLoading, CDialog)
-    ON_BN_CLICKED(IDC_BUTTON_Update, OnBUTTONUpdate)
-    ON_BN_CLICKED(IDC_BUTTON_Reflesh, OnBUTTONReflesh)
+ON_BN_CLICKED(IDC_BUTTON_Update, OnBUTTONUpdate)
+ON_BN_CLICKED(IDC_BUTTON_Reflesh, OnBUTTONReflesh)
 END_MESSAGE_MAP()
 
 void CControl_MLoading::OnBUTTONUpdate()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     ctx->control[3].MotorCruch = m_MotorCruch;
     ctx->control[3].MotorSpeed = m_MotorSpeed;
     ctx->control[3].flag[0] = (m_flag0 != 0);
@@ -66,8 +66,9 @@ void CControl_MLoading::OnBUTTONUpdate()
 
 void CControl_MLoading::OnBUTTONReflesh()
 {
-    DigitShowContext* ctx = GetContext();
-    if (ctx->ControlID == 4) {
+    DigitShowContext *ctx = GetContext();
+    if (ctx->ControlID == 4)
+    {
         ctx->control[3] = ctx->control[4];
     }
     m_MotorCruch = ctx->control[3].MotorCruch;

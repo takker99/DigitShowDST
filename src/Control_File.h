@@ -23,10 +23,13 @@
 
 class CControl_File : public CDialog
 {
-public:
-    CControl_File(CWnd* pParent = NULL);
+  public:
+    CControl_File(CWnd *pParent = NULL);
 
-    enum { IDD = IDD_Control_File };
+    enum
+    {
+        IDD = IDD_Control_File
+    };
 
     double m_CFPARA0;
     double m_CFPARA1;
@@ -38,13 +41,13 @@ public:
     double m_CFPARA7;
     double m_CFPARA8;
     double m_CFPARA9;
-    int    m_StepNum;
-    int    m_SCFNum;
-    int    m_CurNum;
-    int    m_CFNum;
+    int m_StepNum;
+    int m_SCFNum;
+    int m_CurNum;
+    int m_CFNum;
 
-protected:
-    virtual void DoDataExchange(CDataExchange* pDX);
+  protected:
+    virtual void DoDataExchange(CDataExchange *pDX);
     virtual BOOL OnInitDialog();
 
     afx_msg void OnBUTTONUpdate();

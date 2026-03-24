@@ -17,8 +17,9 @@
  */
 
 #include "stdafx.h"
-#include "DigitShowBasic.h"
+
 #include "Control_LinearStressPath.h"
+#include "DigitShowBasic.h"
 #include "DigitShowBasicDoc.h"
 #include "DigitShowContext.h"
 
@@ -28,10 +29,9 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-CControl_LinearStressPath::CControl_LinearStressPath(CWnd* pParent)
-    : CDialog(CControl_LinearStressPath::IDD, pParent)
+CControl_LinearStressPath::CControl_LinearStressPath(CWnd *pParent) : CDialog(CControl_LinearStressPath::IDD, pParent)
 {
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_e_sigma1 = ctx->control[7].e_sigma[0];
     m_e_sigma2 = ctx->control[7].e_sigma[1];
     m_MotorSpeed = ctx->control[7].MotorSpeed;
@@ -40,7 +40,7 @@ CControl_LinearStressPath::CControl_LinearStressPath(CWnd* pParent)
     m_sigma2 = ctx->control[7].sigma[1];
 }
 
-void CControl_LinearStressPath::DoDataExchange(CDataExchange* pDX)
+void CControl_LinearStressPath::DoDataExchange(CDataExchange *pDX)
 {
     CDialog::DoDataExchange(pDX);
     DDX_Text(pDX, IDC_EDIT_e_sigma1, m_e_sigma1);
@@ -52,13 +52,13 @@ void CControl_LinearStressPath::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CControl_LinearStressPath, CDialog)
-    ON_BN_CLICKED(IDC_BUTTON_Update, OnBUTTONUpdate)
+ON_BN_CLICKED(IDC_BUTTON_Update, OnBUTTONUpdate)
 END_MESSAGE_MAP()
 
 void CControl_LinearStressPath::OnBUTTONUpdate()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     ctx->control[7].e_sigma[0] = m_e_sigma1;
     ctx->control[7].e_sigma[1] = m_e_sigma2;
     ctx->control[7].MotorSpeed = m_MotorSpeed;

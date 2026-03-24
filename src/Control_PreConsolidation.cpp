@@ -17,8 +17,9 @@
  */
 
 #include "stdafx.h"
-#include "DigitShowBasic.h"
+
 #include "Control_PreConsolidation.h"
+#include "DigitShowBasic.h"
 #include "DigitShowBasicDoc.h"
 #include "DigitShowContext.h"
 
@@ -28,15 +29,14 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-CControl_PreConsolidation::CControl_PreConsolidation(CWnd* pParent)
-    : CDialog(CControl_PreConsolidation::IDD, pParent)
+CControl_PreConsolidation::CControl_PreConsolidation(CWnd *pParent) : CDialog(CControl_PreConsolidation::IDD, pParent)
 {
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_q = ctx->control[1].q;
     m_MotorSpeed = ctx->control[1].MotorSpeed;
 }
 
-void CControl_PreConsolidation::DoDataExchange(CDataExchange* pDX)
+void CControl_PreConsolidation::DoDataExchange(CDataExchange *pDX)
 {
     CDialog::DoDataExchange(pDX);
     DDX_Text(pDX, IDC_EDIT_q, m_q);
@@ -50,7 +50,7 @@ END_MESSAGE_MAP()
 void CControl_PreConsolidation::OnOK()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     ctx->control[1].q = m_q;
     ctx->control[1].MotorSpeed = m_MotorSpeed;
     CDialog::OnOK();

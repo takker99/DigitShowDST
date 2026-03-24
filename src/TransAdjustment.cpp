@@ -17,10 +17,11 @@
  */
 
 #include "stdafx.h"
+
 #include "DigitShowBasic.h"
-#include "TransAdjustment.h"
 #include "DigitShowBasicDoc.h"
 #include "DigitShowContext.h"
+#include "TransAdjustment.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -28,8 +29,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-CTransAdjustment::CTransAdjustment(CWnd* pParent)
-    : CDialog(CTransAdjustment::IDD, pParent)
+CTransAdjustment::CTransAdjustment(CWnd *pParent) : CDialog(CTransAdjustment::IDD, pParent)
 {
     m_FinalDisp = 0.0;
     m_InitialDisp = 0.0;
@@ -37,7 +37,7 @@ CTransAdjustment::CTransAdjustment(CWnd* pParent)
     m_InitialBullet = 0.0;
 }
 
-void CTransAdjustment::DoDataExchange(CDataExchange* pDX)
+void CTransAdjustment::DoDataExchange(CDataExchange *pDX)
 {
     CDialog::DoDataExchange(pDX);
     DDX_Text(pDX, IDC_EDIT_FinalDisp, m_FinalDisp);
@@ -47,64 +47,64 @@ void CTransAdjustment::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CTransAdjustment, CDialog)
-    ON_BN_CLICKED(IDC_BUTTON_InitialDisp, OnBUTTONInitialDisp)
-    ON_BN_CLICKED(IDC_BUTTON_EndDisp, OnBUTTONEndDisp)
-    ON_BN_CLICKED(IDC_BUTTON_InitialBullet, OnBUTTONInitialBullet)
-    ON_BN_CLICKED(IDC_BUTTON_EndBullet, OnBUTTONEndBullet)
-    ON_BN_CLICKED(IDC_BUTTON_UpdateDisp, OnBUTTONUpdateDisp)
-    ON_BN_CLICKED(IDC_BUTTON_UpdateBullet, OnBUTTONUpdateBullet)
+ON_BN_CLICKED(IDC_BUTTON_InitialDisp, OnBUTTONInitialDisp)
+ON_BN_CLICKED(IDC_BUTTON_EndDisp, OnBUTTONEndDisp)
+ON_BN_CLICKED(IDC_BUTTON_InitialBullet, OnBUTTONInitialBullet)
+ON_BN_CLICKED(IDC_BUTTON_EndBullet, OnBUTTONEndBullet)
+ON_BN_CLICKED(IDC_BUTTON_UpdateDisp, OnBUTTONUpdateDisp)
+ON_BN_CLICKED(IDC_BUTTON_UpdateBullet, OnBUTTONUpdateBullet)
 END_MESSAGE_MAP()
 
 void CTransAdjustment::OnBUTTONInitialDisp()
 {
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_InitialDisp = ctx->Phyout[1];
     UpdateData(FALSE);
-    CButton* myBTN1 = (CButton*)GetDlgItem(IDC_BUTTON_UpdateDisp);
+    CButton *myBTN1 = (CButton *)GetDlgItem(IDC_BUTTON_UpdateDisp);
     myBTN1->EnableWindow(TRUE);
 }
 
 void CTransAdjustment::OnBUTTONEndDisp()
 {
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_FinalDisp = ctx->Phyout[1];
     UpdateData(FALSE);
-    CButton* myBTN1 = (CButton*)GetDlgItem(IDC_BUTTON_UpdateDisp);
+    CButton *myBTN1 = (CButton *)GetDlgItem(IDC_BUTTON_UpdateDisp);
     myBTN1->EnableWindow(TRUE);
 }
 
 void CTransAdjustment::OnBUTTONUpdateDisp()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     ctx->cal.c[1] = ctx->cal.c[1] + (m_InitialDisp - m_FinalDisp);
-    CButton* myBTN1 = (CButton*)GetDlgItem(IDC_BUTTON_UpdateDisp);
+    CButton *myBTN1 = (CButton *)GetDlgItem(IDC_BUTTON_UpdateDisp);
     myBTN1->EnableWindow(FALSE);
 }
 
 void CTransAdjustment::OnBUTTONInitialBullet()
 {
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_InitialBullet = ctx->Phyout[4];
     UpdateData(FALSE);
-    CButton* myBTN1 = (CButton*)GetDlgItem(IDC_BUTTON_UpdateBullet);
+    CButton *myBTN1 = (CButton *)GetDlgItem(IDC_BUTTON_UpdateBullet);
     myBTN1->EnableWindow(TRUE);
 }
 
 void CTransAdjustment::OnBUTTONEndBullet()
 {
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_FinalBullet = ctx->Phyout[4];
     UpdateData(FALSE);
-    CButton* myBTN1 = (CButton*)GetDlgItem(IDC_BUTTON_UpdateBullet);
+    CButton *myBTN1 = (CButton *)GetDlgItem(IDC_BUTTON_UpdateBullet);
     myBTN1->EnableWindow(TRUE);
 }
 
 void CTransAdjustment::OnBUTTONUpdateBullet()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     ctx->cal.c[4] = ctx->cal.c[4] + (m_InitialBullet - m_FinalBullet);
-    CButton* myBTN1 = (CButton*)GetDlgItem(IDC_BUTTON_UpdateBullet);
+    CButton *myBTN1 = (CButton *)GetDlgItem(IDC_BUTTON_UpdateBullet);
     myBTN1->EnableWindow(FALSE);
 }

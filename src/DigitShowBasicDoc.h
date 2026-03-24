@@ -25,15 +25,15 @@
 
 class CDigitShowBasicDoc : public CDocument
 {
-protected:
+  protected:
     CDigitShowBasicDoc();
     DECLARE_DYNCREATE(CDigitShowBasicDoc)
 
-public:
+  public:
     virtual BOOL OnNewDocument();
-    virtual void Serialize(CArchive& ar);
+    virtual void Serialize(CArchive &ar);
 
-public:
+  public:
     void Creep2();
     void SaveToFile2();
     void Allocate_Memory();
@@ -57,10 +57,10 @@ public:
 
 #ifdef _DEBUG
     virtual void AssertValid() const;
-    virtual void Dump(CDumpContext& dc) const;
+    virtual void Dump(CDumpContext &dc) const;
 #endif
 
-protected:
+  protected:
     DECLARE_MESSAGE_MAP()
 };
 

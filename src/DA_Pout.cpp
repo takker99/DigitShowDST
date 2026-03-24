@@ -17,8 +17,9 @@
  */
 
 #include "stdafx.h"
-#include "DigitShowBasic.h"
+
 #include "DA_Pout.h"
+#include "DigitShowBasic.h"
 #include "DigitShowContext.h"
 
 #ifdef _DEBUG
@@ -27,10 +28,9 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-CDA_Pout::CDA_Pout(CWnd* pParent)
-    : CDialog(CDA_Pout::IDD, pParent)
+CDA_Pout::CDA_Pout(CWnd *pParent) : CDialog(CDA_Pout::IDD, pParent)
 {
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_DACala00 = ctx->cal.DA_a[0];
     m_DACala01 = ctx->cal.DA_a[1];
     m_DACala02 = ctx->cal.DA_a[2];
@@ -65,7 +65,7 @@ CDA_Pout::CDA_Pout(CWnd* pParent)
     m_DAVout07 = ctx->DAVout[7];
 }
 
-void CDA_Pout::DoDataExchange(CDataExchange* pDX)
+void CDA_Pout::DoDataExchange(CDataExchange *pDX)
 {
     CDialog::DoDataExchange(pDX);
     DDX_Text(pDX, IDC_EDIT_DACala00, m_DACala00);
@@ -103,21 +103,21 @@ void CDA_Pout::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CDA_Pout, CDialog)
-    ON_BN_CLICKED(IDC_BUTTON_DAOutput, OnBUTTONDAOutput)
-    ON_BN_CLICKED(IDC_BUTTON_Calculation00, OnBUTTONCalculation00)
-    ON_BN_CLICKED(IDC_BUTTON_Calculation01, OnBUTTONCalculation01)
-    ON_BN_CLICKED(IDC_BUTTON_Calculation02, OnBUTTONCalculation02)
-    ON_BN_CLICKED(IDC_BUTTON_Calculation03, OnBUTTONCalculation03)
-    ON_BN_CLICKED(IDC_BUTTON_Calculation04, OnBUTTONCalculation04)
-    ON_BN_CLICKED(IDC_BUTTON_Calculation05, OnBUTTONCalculation05)
-    ON_BN_CLICKED(IDC_BUTTON_Calculation06, OnBUTTONCalculation06)
-    ON_BN_CLICKED(IDC_BUTTON_Calculation07, OnBUTTONCalculation07)
+ON_BN_CLICKED(IDC_BUTTON_DAOutput, OnBUTTONDAOutput)
+ON_BN_CLICKED(IDC_BUTTON_Calculation00, OnBUTTONCalculation00)
+ON_BN_CLICKED(IDC_BUTTON_Calculation01, OnBUTTONCalculation01)
+ON_BN_CLICKED(IDC_BUTTON_Calculation02, OnBUTTONCalculation02)
+ON_BN_CLICKED(IDC_BUTTON_Calculation03, OnBUTTONCalculation03)
+ON_BN_CLICKED(IDC_BUTTON_Calculation04, OnBUTTONCalculation04)
+ON_BN_CLICKED(IDC_BUTTON_Calculation05, OnBUTTONCalculation05)
+ON_BN_CLICKED(IDC_BUTTON_Calculation06, OnBUTTONCalculation06)
+ON_BN_CLICKED(IDC_BUTTON_Calculation07, OnBUTTONCalculation07)
 END_MESSAGE_MAP()
 
 void CDA_Pout::OnBUTTONDAOutput()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     ctx->DAVout[0] = m_DAVout00;
     ctx->DAVout[1] = m_DAVout01;
     ctx->DAVout[2] = m_DAVout02;
@@ -132,7 +132,7 @@ void CDA_Pout::OnBUTTONDAOutput()
 void CDA_Pout::OnBUTTONCalculation00()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_DAVout00 = float(ctx->cal.DA_a[0] * m_DAPvalue00 + ctx->cal.DA_b[0]);
     UpdateData(FALSE);
 }
@@ -140,7 +140,7 @@ void CDA_Pout::OnBUTTONCalculation00()
 void CDA_Pout::OnBUTTONCalculation01()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_DAVout01 = float(ctx->cal.DA_a[1] * m_DAPvalue01 + ctx->cal.DA_b[1]);
     UpdateData(FALSE);
 }
@@ -148,7 +148,7 @@ void CDA_Pout::OnBUTTONCalculation01()
 void CDA_Pout::OnBUTTONCalculation02()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_DAVout02 = float(ctx->cal.DA_a[2] * m_DAPvalue02 + ctx->cal.DA_b[2]);
     UpdateData(FALSE);
 }
@@ -156,7 +156,7 @@ void CDA_Pout::OnBUTTONCalculation02()
 void CDA_Pout::OnBUTTONCalculation03()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_DAVout03 = float(ctx->cal.DA_a[3] * m_DAPvalue03 + ctx->cal.DA_b[3]);
     UpdateData(FALSE);
 }
@@ -164,7 +164,7 @@ void CDA_Pout::OnBUTTONCalculation03()
 void CDA_Pout::OnBUTTONCalculation04()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_DAVout04 = float(ctx->cal.DA_a[4] * m_DAPvalue04 + ctx->cal.DA_b[4]);
     UpdateData(FALSE);
 }
@@ -172,7 +172,7 @@ void CDA_Pout::OnBUTTONCalculation04()
 void CDA_Pout::OnBUTTONCalculation05()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_DAVout05 = float(ctx->cal.DA_a[5] * m_DAPvalue05 + ctx->cal.DA_b[5]);
     UpdateData(FALSE);
 }
@@ -180,7 +180,7 @@ void CDA_Pout::OnBUTTONCalculation05()
 void CDA_Pout::OnBUTTONCalculation06()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_DAVout06 = float(ctx->cal.DA_a[6] * m_DAPvalue06 + ctx->cal.DA_b[6]);
     UpdateData(FALSE);
 }
@@ -188,7 +188,7 @@ void CDA_Pout::OnBUTTONCalculation06()
 void CDA_Pout::OnBUTTONCalculation07()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_DAVout07 = float(ctx->cal.DA_a[7] * m_DAPvalue07 + ctx->cal.DA_b[7]);
     UpdateData(FALSE);
 }

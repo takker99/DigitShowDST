@@ -17,8 +17,9 @@
  */
 
 #include "stdafx.h"
-#include "DigitShowBasic.h"
+
 #include "DA_Channel.h"
+#include "DigitShowBasic.h"
 #include "DigitShowContext.h"
 
 #ifdef _DEBUG
@@ -27,10 +28,9 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-CDA_Channel::CDA_Channel(CWnd* pParent)
-    : CDialog(CDA_Channel::IDD, pParent)
+CDA_Channel::CDA_Channel(CWnd *pParent) : CDialog(CDA_Channel::IDD, pParent)
 {
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_DA_Cala00 = ctx->cal.DA_a[0];
     m_DA_Cala01 = ctx->cal.DA_a[1];
     m_DA_Cala02 = ctx->cal.DA_a[2];
@@ -49,7 +49,7 @@ CDA_Channel::CDA_Channel(CWnd* pParent)
     m_DA_Calb07 = ctx->cal.DA_b[7];
 }
 
-void CDA_Channel::DoDataExchange(CDataExchange* pDX)
+void CDA_Channel::DoDataExchange(CDataExchange *pDX)
 {
     CDialog::DoDataExchange(pDX);
     DDX_Text(pDX, IDC_EDIT_DA_Cala00, m_DA_Cala00);
@@ -76,7 +76,7 @@ END_MESSAGE_MAP()
 void CDA_Channel::OnOK()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     ctx->cal.DA_a[0] = m_DA_Cala00;
     ctx->cal.DA_a[1] = m_DA_Cala01;
     ctx->cal.DA_a[2] = m_DA_Cala02;

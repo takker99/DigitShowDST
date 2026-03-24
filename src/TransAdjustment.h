@@ -23,18 +23,21 @@
 
 class CTransAdjustment : public CDialog
 {
-public:
-    CTransAdjustment(CWnd* pParent = NULL);
+  public:
+    CTransAdjustment(CWnd *pParent = NULL);
 
-    enum { IDD = IDD_TransAdjustment };
+    enum
+    {
+        IDD = IDD_TransAdjustment
+    };
 
     double m_FinalDisp;
     double m_InitialDisp;
     double m_FinalBullet;
     double m_InitialBullet;
 
-protected:
-    virtual void DoDataExchange(CDataExchange* pDX);
+  protected:
+    virtual void DoDataExchange(CDataExchange *pDX);
 
     afx_msg void OnBUTTONInitialDisp();
     afx_msg void OnBUTTONEndDisp();

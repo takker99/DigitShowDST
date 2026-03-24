@@ -23,18 +23,21 @@
 
 class CControl_Consolidation : public CDialog
 {
-public:
-    CControl_Consolidation(CWnd* pParent = NULL);
+  public:
+    CControl_Consolidation(CWnd *pParent = NULL);
 
-    enum { IDD = IDD_Control_Consolidation };
+    enum
+    {
+        IDD = IDD_Control_Consolidation
+    };
 
     double m_MotorK0;
     double m_MotorSpeed;
     double m_MotorSrRate;
     double m_MotorESa;
 
-protected:
-    virtual void DoDataExchange(CDataExchange* pDX);
+  protected:
+    virtual void DoDataExchange(CDataExchange *pDX);
 
     afx_msg void OnBUTTONUpdate();
 

@@ -23,10 +23,13 @@
 
 class CDA_Channel : public CDialog
 {
-public:
-    CDA_Channel(CWnd* pParent = NULL);
+  public:
+    CDA_Channel(CWnd *pParent = NULL);
 
-    enum { IDD = IDD_DA_Channel };
+    enum
+    {
+        IDD = IDD_DA_Channel
+    };
 
     double m_DA_Cala00;
     double m_DA_Cala01;
@@ -45,8 +48,8 @@ public:
     double m_DA_Calb06;
     double m_DA_Calb07;
 
-protected:
-    virtual void DoDataExchange(CDataExchange* pDX);
+  protected:
+    virtual void DoDataExchange(CDataExchange *pDX);
     virtual void OnOK();
 
     DECLARE_MESSAGE_MAP()

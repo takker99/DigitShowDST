@@ -23,25 +23,25 @@
 
 class CMainFrame : public CFrameWnd
 {
-protected:
+  protected:
     CMainFrame();
     DECLARE_DYNCREATE(CMainFrame)
 
-public:
-    virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+  public:
+    virtual BOOL PreCreateWindow(CREATESTRUCT &cs);
 
-public:
+  public:
     virtual ~CMainFrame();
 
 #ifdef _DEBUG
     virtual void AssertValid() const;
-    virtual void Dump(CDumpContext& dc) const;
+    virtual void Dump(CDumpContext &dc) const;
 #endif
 
-private:
+  private:
     int nResult;
 
-protected:
+  protected:
     afx_msg void OnBoardSettings();
     afx_msg void OnCalibrationFactor();
     afx_msg void OnSpecimenData();

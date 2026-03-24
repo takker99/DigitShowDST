@@ -25,11 +25,14 @@
 
 class CBoardSettings : public CDialog
 {
-public:
-    CBoardSettings(CWnd* pParent = NULL);
-    CDigitShowBasicDoc* pDoc;
+  public:
+    CBoardSettings(CWnd *pParent = NULL);
+    CDigitShowBasicDoc *pDoc;
 
-    enum { IDD = IDD_BoardSettings };
+    enum
+    {
+        IDD = IDD_BoardSettings
+    };
 
     CString m_ADMethod0;
     CString m_ADMethod1;
@@ -43,8 +46,8 @@ public:
     CString m_DARange0;
     CString m_DAResolution0;
 
-protected:
-    virtual void DoDataExchange(CDataExchange* pDX);
+  protected:
+    virtual void DoDataExchange(CDataExchange *pDX);
     virtual BOOL OnInitDialog();
 
     DECLARE_MESSAGE_MAP()

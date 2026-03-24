@@ -25,19 +25,22 @@
 
 class CCalibrationAmp : public CDialog
 {
-public:
-    CCalibrationAmp(CWnd* pParent = NULL);
+  public:
+    CCalibrationAmp(CWnd *pParent = NULL);
 
-    enum { IDD = IDD_CalibrationAmp };
+    enum
+    {
+        IDD = IDD_CalibrationAmp
+    };
 
-    int   m_AmpNo;
+    int m_AmpNo;
     float m_AmpPB;
     float m_AmpVB;
     float m_AmpVO;
     float m_AmpPO;
 
-protected:
-    virtual void DoDataExchange(CDataExchange* pDX);
+  protected:
+    virtual void DoDataExchange(CDataExchange *pDX);
 
     afx_msg void OnBUTTONAmpBase();
     afx_msg void OnBUTTONAmpOffset();

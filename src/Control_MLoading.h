@@ -23,18 +23,21 @@
 
 class CControl_MLoading : public CDialog
 {
-public:
-    CControl_MLoading(CWnd* pParent = NULL);
+  public:
+    CControl_MLoading(CWnd *pParent = NULL);
 
-    enum { IDD = IDD_Control_MLoading };
+    enum
+    {
+        IDD = IDD_Control_MLoading
+    };
 
-    int    m_MotorCruch;
+    int m_MotorCruch;
     double m_MotorSpeed;
-    int    m_flag0;
+    int m_flag0;
     double m_q;
 
-protected:
-    virtual void DoDataExchange(CDataExchange* pDX);
+  protected:
+    virtual void DoDataExchange(CDataExchange *pDX);
 
     afx_msg void OnBUTTONUpdate();
     afx_msg void OnBUTTONReflesh();

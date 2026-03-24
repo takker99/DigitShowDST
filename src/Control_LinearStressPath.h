@@ -23,10 +23,13 @@
 
 class CControl_LinearStressPath : public CDialog
 {
-public:
-    CControl_LinearStressPath(CWnd* pParent = NULL);
+  public:
+    CControl_LinearStressPath(CWnd *pParent = NULL);
 
-    enum { IDD = IDD_Control_LinearStressPathLoading };
+    enum
+    {
+        IDD = IDD_Control_LinearStressPathLoading
+    };
 
     double m_e_sigma1;
     double m_e_sigma2;
@@ -35,8 +38,8 @@ public:
     double m_sigma1;
     double m_sigma2;
 
-protected:
-    virtual void DoDataExchange(CDataExchange* pDX);
+  protected:
+    virtual void DoDataExchange(CDataExchange *pDX);
 
     afx_msg void OnBUTTONUpdate();
 

@@ -17,8 +17,9 @@
  */
 
 #include "stdafx.h"
-#include "DigitShowBasic.h"
+
 #include "Control_File.h"
+#include "DigitShowBasic.h"
 #include "DigitShowContext.h"
 
 #ifdef _DEBUG
@@ -27,10 +28,9 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-CControl_File::CControl_File(CWnd* pParent)
-    : CDialog(CControl_File::IDD, pParent)
+CControl_File::CControl_File(CWnd *pParent) : CDialog(CControl_File::IDD, pParent)
 {
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     int curNum = ctx->controlFile.CurrentNum;
     m_CurNum = curNum;
     m_CFNum = ctx->controlFile.Num[curNum];
@@ -48,7 +48,7 @@ CControl_File::CControl_File(CWnd* pParent)
     m_CFPARA9 = ctx->controlFile.Para[curNum][9];
 }
 
-void CControl_File::DoDataExchange(CDataExchange* pDX)
+void CControl_File::DoDataExchange(CDataExchange *pDX)
 {
     CDialog::DoDataExchange(pDX);
     DDX_Text(pDX, IDC_EDIT_CFPARA0, m_CFPARA0);
@@ -69,24 +69,24 @@ void CControl_File::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CControl_File, CDialog)
-    ON_BN_CLICKED(IDC_BUTTON_Update, OnBUTTONUpdate)
-    ON_BN_CLICKED(IDC_BUTTON_ReadFile, OnBUTTONReadFile)
-    ON_BN_CLICKED(IDC_BUTTON_SaveFile, OnBUTTONSaveFile)
-    ON_BN_CLICKED(IDC_BUTTON_Load, OnBUTTONLoad)
-    ON_BN_CLICKED(IDC_CHECK_ChangeNo, OnCHECKChangeNo)
-    ON_BN_CLICKED(IDC_BUTTON_StepDec, OnBUTTONStepDec)
-    ON_BN_CLICKED(IDC_BUTTON_StepInc, OnBUTTONStepInc)
+ON_BN_CLICKED(IDC_BUTTON_Update, OnBUTTONUpdate)
+ON_BN_CLICKED(IDC_BUTTON_ReadFile, OnBUTTONReadFile)
+ON_BN_CLICKED(IDC_BUTTON_SaveFile, OnBUTTONSaveFile)
+ON_BN_CLICKED(IDC_BUTTON_Load, OnBUTTONLoad)
+ON_BN_CLICKED(IDC_CHECK_ChangeNo, OnCHECKChangeNo)
+ON_BN_CLICKED(IDC_BUTTON_StepDec, OnBUTTONStepDec)
+ON_BN_CLICKED(IDC_BUTTON_StepInc, OnBUTTONStepInc)
 END_MESSAGE_MAP()
 
 BOOL CControl_File::OnInitDialog()
 {
     CDialog::OnInitDialog();
-    
-    CButton* myBTN1 = (CButton*)GetDlgItem(IDC_BUTTON_StepDec);
-    CButton* myBTN2 = (CButton*)GetDlgItem(IDC_BUTTON_StepInc);
+
+    CButton *myBTN1 = (CButton *)GetDlgItem(IDC_BUTTON_StepDec);
+    CButton *myBTN2 = (CButton *)GetDlgItem(IDC_BUTTON_StepInc);
     myBTN1->EnableWindow(FALSE);
     myBTN2->EnableWindow(FALSE);
-    CButton* chkbox1 = (CButton*)GetDlgItem(IDC_CHECK_ChangeNo);
+    CButton *chkbox1 = (CButton *)GetDlgItem(IDC_CHECK_ChangeNo);
     chkbox1->SetCheck(0);
     return TRUE;
 }
@@ -94,7 +94,7 @@ BOOL CControl_File::OnInitDialog()
 void CControl_File::OnBUTTONLoad()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_SCFNum = ctx->controlFile.Num[m_StepNum];
     m_CFPARA0 = ctx->controlFile.Para[m_StepNum][0];
     m_CFPARA1 = ctx->controlFile.Para[m_StepNum][1];
@@ -112,7 +112,7 @@ void CControl_File::OnBUTTONLoad()
 void CControl_File::OnBUTTONUpdate()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     ctx->controlFile.Num[m_StepNum] = m_SCFNum;
     ctx->controlFile.Para[m_StepNum][0] = m_CFPARA0;
     ctx->controlFile.Para[m_StepNum][1] = m_CFPARA1;
@@ -129,21 +129,25 @@ void CControl_File::OnBUTTONUpdate()
 
 void CControl_File::OnBUTTONReadFile()
 {
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     ctx->controlFile.CurrentNum = 0;
     CString pFileName;
-    FILE* FileCtlData;
+    FILE *FileCtlData;
     errno_t err;
 
     CFileDialog CtlLoadFile_dlg(TRUE, NULL, "*.ctl", OFN_FILEMUSTEXIST | OFN_HIDEREADONLY,
-        "Control Files(*.ctl)|*.ctl| All Files(*.*)|*.*| |", NULL);
+                                "Control Files(*.ctl)|*.ctl| All Files(*.*)|*.*| |", NULL);
 
-    if (CtlLoadFile_dlg.DoModal() == IDOK) {
+    if (CtlLoadFile_dlg.DoModal() == IDOK)
+    {
         pFileName = CtlLoadFile_dlg.GetPathName();
-        if ((err = fopen_s(&FileCtlData, (LPCSTR)pFileName, _T("r"))) == 0) {
-            for (int i = 0; i < 128; i++) {
+        if ((err = fopen_s(&FileCtlData, (LPCSTR)pFileName, _T("r"))) == 0)
+        {
+            for (int i = 0; i < 128; i++)
+            {
                 fscanf_s(FileCtlData, _T("%d"), &ctx->controlFile.Num[i]);
-                for (int j = 0; j < 10; j++) {
+                for (int j = 0; j < 10; j++)
+                {
                     fscanf_s(FileCtlData, _T("%lf"), &ctx->controlFile.Para[i][j]);
                 }
             }
@@ -156,20 +160,24 @@ void CControl_File::OnBUTTONReadFile()
 
 void CControl_File::OnBUTTONSaveFile()
 {
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     CString pFileName;
-    FILE* FileCtlData;
+    FILE *FileCtlData;
     errno_t err;
 
     CFileDialog CtlSaveFile_dlg(FALSE, NULL, "*.ctl", OFN_OVERWRITEPROMPT,
-        "Control Files(*.ctl)|*.ctl| All Files(*.*)|*.*| |", NULL);
+                                "Control Files(*.ctl)|*.ctl| All Files(*.*)|*.*| |", NULL);
 
-    if (CtlSaveFile_dlg.DoModal() == IDOK) {
+    if (CtlSaveFile_dlg.DoModal() == IDOK)
+    {
         pFileName = CtlSaveFile_dlg.GetPathName();
-        if ((err = fopen_s(&FileCtlData, (LPCSTR)pFileName, _T("w"))) == 0) {
-            for (int i = 0; i < 128; i++) {
+        if ((err = fopen_s(&FileCtlData, (LPCSTR)pFileName, _T("w"))) == 0)
+        {
+            for (int i = 0; i < 128; i++)
+            {
                 fprintf(FileCtlData, "%d    ", ctx->controlFile.Num[i]);
-                for (int j = 0; j < 10; j++) {
+                for (int j = 0; j < 10; j++)
+                {
                     fprintf(FileCtlData, "%lf    ", ctx->controlFile.Para[i][j]);
                 }
                 fprintf(FileCtlData, "\n");
@@ -181,19 +189,23 @@ void CControl_File::OnBUTTONSaveFile()
 
 void CControl_File::OnCHECKChangeNo()
 {
-    DigitShowContext* ctx = GetContext();
-    CButton* myBTN1 = (CButton*)GetDlgItem(IDC_BUTTON_StepDec);
-    CButton* myBTN2 = (CButton*)GetDlgItem(IDC_BUTTON_StepInc);
-    CButton* chkbox1 = (CButton*)GetDlgItem(IDC_CHECK_ChangeNo);
-    if (chkbox1->GetCheck()) {
-        if (ctx->controlFile.CurrentNum > 0) {
+    DigitShowContext *ctx = GetContext();
+    CButton *myBTN1 = (CButton *)GetDlgItem(IDC_BUTTON_StepDec);
+    CButton *myBTN2 = (CButton *)GetDlgItem(IDC_BUTTON_StepInc);
+    CButton *chkbox1 = (CButton *)GetDlgItem(IDC_CHECK_ChangeNo);
+    if (chkbox1->GetCheck())
+    {
+        if (ctx->controlFile.CurrentNum > 0)
+        {
             myBTN1->EnableWindow(TRUE);
         }
-        if (ctx->controlFile.CurrentNum < 127) {
+        if (ctx->controlFile.CurrentNum < 127)
+        {
             myBTN2->EnableWindow(TRUE);
         }
     }
-    else {
+    else
+    {
         myBTN1->EnableWindow(FALSE);
         myBTN2->EnableWindow(FALSE);
     }
@@ -201,14 +213,14 @@ void CControl_File::OnCHECKChangeNo()
 
 void CControl_File::OnBUTTONStepDec()
 {
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     ctx->controlFile.CurrentNum--;
     ctx->NumCyclic = 0;
     ctx->TotalStepTime = 0.0;
     m_CurNum = ctx->controlFile.CurrentNum;
     m_CFNum = ctx->controlFile.Num[ctx->controlFile.CurrentNum];
-    CButton* myBTN1 = (CButton*)GetDlgItem(IDC_BUTTON_StepDec);
-    CButton* myBTN2 = (CButton*)GetDlgItem(IDC_BUTTON_StepInc);
+    CButton *myBTN1 = (CButton *)GetDlgItem(IDC_BUTTON_StepDec);
+    CButton *myBTN2 = (CButton *)GetDlgItem(IDC_BUTTON_StepInc);
     myBTN1->EnableWindow(ctx->controlFile.CurrentNum > 0);
     myBTN2->EnableWindow(ctx->controlFile.CurrentNum < 127);
     UpdateData(FALSE);
@@ -216,14 +228,14 @@ void CControl_File::OnBUTTONStepDec()
 
 void CControl_File::OnBUTTONStepInc()
 {
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     ctx->controlFile.CurrentNum++;
     ctx->NumCyclic = 0;
     ctx->TotalStepTime = 0.0;
     m_CurNum = ctx->controlFile.CurrentNum;
     m_CFNum = ctx->controlFile.Num[ctx->controlFile.CurrentNum];
-    CButton* myBTN1 = (CButton*)GetDlgItem(IDC_BUTTON_StepDec);
-    CButton* myBTN2 = (CButton*)GetDlgItem(IDC_BUTTON_StepInc);
+    CButton *myBTN1 = (CButton *)GetDlgItem(IDC_BUTTON_StepDec);
+    CButton *myBTN2 = (CButton *)GetDlgItem(IDC_BUTTON_StepInc);
     myBTN1->EnableWindow(ctx->controlFile.CurrentNum > 0);
     myBTN2->EnableWindow(ctx->controlFile.CurrentNum < 127);
     UpdateData(FALSE);

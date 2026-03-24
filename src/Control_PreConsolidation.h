@@ -23,16 +23,19 @@
 
 class CControl_PreConsolidation : public CDialog
 {
-public:
-    CControl_PreConsolidation(CWnd* pParent = NULL);
+  public:
+    CControl_PreConsolidation(CWnd *pParent = NULL);
 
-    enum { IDD = IDD_Control_PreConsolidation };
+    enum
+    {
+        IDD = IDD_Control_PreConsolidation
+    };
 
     double m_q;
     double m_MotorSpeed;
 
-protected:
-    virtual void DoDataExchange(CDataExchange* pDX);
+  protected:
+    virtual void DoDataExchange(CDataExchange *pDX);
     virtual void OnOK();
 
     DECLARE_MESSAGE_MAP()

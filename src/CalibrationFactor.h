@@ -25,38 +25,41 @@
 
 class CCalibrationFactor : public CDialog
 {
-public:
-    CCalibrationFactor(CWnd* pParent = NULL);
-    CDigitShowBasicDoc* pDoc;
+  public:
+    CCalibrationFactor(CWnd *pParent = NULL);
+    CDigitShowBasicDoc *pDoc;
 
     void CF_Load();
 
-    enum { IDD = IDD_Calibration_Factor };
+    enum
+    {
+        IDD = IDD_Calibration_Factor
+    };
 
     CString m_CFP00, m_CFP01, m_CFP02, m_CFP03;
     CString m_CFP04, m_CFP05, m_CFP06, m_CFP07;
     CString m_CFP08, m_CFP09, m_CFP10, m_CFP11;
     CString m_CFP12, m_CFP13, m_CFP14, m_CFP15;
-    double  m_CFA00, m_CFA01, m_CFA02, m_CFA03;
-    double  m_CFA04, m_CFA05, m_CFA06, m_CFA07;
-    double  m_CFA08, m_CFA09, m_CFA10, m_CFA11;
-    double  m_CFA12, m_CFA13, m_CFA14, m_CFA15;
-    double  m_CFB00, m_CFB01, m_CFB02, m_CFB03;
-    double  m_CFB04, m_CFB05, m_CFB06, m_CFB07;
-    double  m_CFB08, m_CFB09, m_CFB10, m_CFB11;
-    double  m_CFB12, m_CFB13, m_CFB14, m_CFB15;
-    double  m_CFC00, m_CFC01, m_CFC02, m_CFC03;
-    double  m_CFC04, m_CFC05, m_CFC06, m_CFC07;
-    double  m_CFC08, m_CFC09, m_CFC10, m_CFC11;
-    double  m_CFC12, m_CFC13, m_CFC14, m_CFC15;
+    double m_CFA00, m_CFA01, m_CFA02, m_CFA03;
+    double m_CFA04, m_CFA05, m_CFA06, m_CFA07;
+    double m_CFA08, m_CFA09, m_CFA10, m_CFA11;
+    double m_CFA12, m_CFA13, m_CFA14, m_CFA15;
+    double m_CFB00, m_CFB01, m_CFB02, m_CFB03;
+    double m_CFB04, m_CFB05, m_CFB06, m_CFB07;
+    double m_CFB08, m_CFB09, m_CFB10, m_CFB11;
+    double m_CFB12, m_CFB13, m_CFB14, m_CFB15;
+    double m_CFC00, m_CFC01, m_CFC02, m_CFC03;
+    double m_CFC04, m_CFC05, m_CFC06, m_CFC07;
+    double m_CFC08, m_CFC09, m_CFC10, m_CFC11;
+    double m_CFC12, m_CFC13, m_CFC14, m_CFC15;
     CString m_Channels;
     CString m_C00, m_C01, m_C02, m_C03;
     CString m_C04, m_C05, m_C06, m_C07;
     CString m_C08, m_C09, m_C10, m_C11;
     CString m_C12, m_C13, m_C14, m_C15;
 
-protected:
-    virtual void DoDataExchange(CDataExchange* pDX);
+  protected:
+    virtual void DoDataExchange(CDataExchange *pDX);
     virtual BOOL OnInitDialog();
 
     afx_msg void OnBUTTONCFUpdate();

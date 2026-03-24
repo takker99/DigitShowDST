@@ -17,8 +17,9 @@
  */
 
 #include "stdafx.h"
-#include "DigitShowBasic.h"
+
 #include "DA_Vout.h"
+#include "DigitShowBasic.h"
 #include "DigitShowContext.h"
 
 #ifdef _DEBUG
@@ -27,10 +28,9 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-CDA_Vout::CDA_Vout(CWnd* pParent)
-    : CDialog(CDA_Vout::IDD, pParent)
+CDA_Vout::CDA_Vout(CWnd *pParent) : CDialog(CDA_Vout::IDD, pParent)
 {
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_DAVout01 = ctx->DAVout[0];
     m_DAVout02 = ctx->DAVout[1];
     m_DAVout03 = ctx->DAVout[2];
@@ -41,7 +41,7 @@ CDA_Vout::CDA_Vout(CWnd* pParent)
     m_DAVout08 = ctx->DAVout[7];
 }
 
-void CDA_Vout::DoDataExchange(CDataExchange* pDX)
+void CDA_Vout::DoDataExchange(CDataExchange *pDX)
 {
     CDialog::DoDataExchange(pDX);
     DDX_Text(pDX, IDC_EDIT_DAVout01, m_DAVout01);
@@ -55,14 +55,14 @@ void CDA_Vout::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CDA_Vout, CDialog)
-    ON_BN_CLICKED(IDC_BUTTON_DA_Vout, OnBUTTONDAVout)
-    ON_BN_CLICKED(IDC_BUTTON_Reflesh, OnBUTTONReflesh)
+ON_BN_CLICKED(IDC_BUTTON_DA_Vout, OnBUTTONDAVout)
+ON_BN_CLICKED(IDC_BUTTON_Reflesh, OnBUTTONReflesh)
 END_MESSAGE_MAP()
 
 void CDA_Vout::OnBUTTONDAVout()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     ctx->DAVout[0] = m_DAVout01;
     ctx->DAVout[1] = m_DAVout02;
     ctx->DAVout[2] = m_DAVout03;
@@ -76,7 +76,7 @@ void CDA_Vout::OnBUTTONDAVout()
 
 void CDA_Vout::OnBUTTONReflesh()
 {
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_DAVout01 = ctx->DAVout[0];
     m_DAVout02 = ctx->DAVout[1];
     m_DAVout03 = ctx->DAVout[2];

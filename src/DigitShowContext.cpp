@@ -17,24 +17,27 @@
  */
 
 #include "stdafx.h"
+
 #include "DigitShowContext.h"
 
 // Singleton instance
 static DigitShowContext g_Context;
 static bool g_ContextInitialized = false;
 
-DigitShowContext* GetContext()
+DigitShowContext *GetContext()
 {
-    if (!g_ContextInitialized) {
+    if (!g_ContextInitialized)
+    {
         InitContext(&g_Context);
         g_ContextInitialized = true;
     }
     return &g_Context;
 }
 
-void InitContext(DigitShowContext* ctx)
+void InitContext(DigitShowContext *ctx)
 {
-    if (ctx == nullptr) return;
+    if (ctx == nullptr)
+        return;
 
     // Initialize board counts
     ctx->NumAD = 1;
@@ -43,10 +46,10 @@ void InitContext(DigitShowContext* ctx)
 
     // Initialize A/D board config
     memset(&ctx->ad, 0, sizeof(ctx->ad));
-    
+
     // Initialize D/A board config
     memset(&ctx->da, 0, sizeof(ctx->da));
-    
+
     // Initialize D/A channel assignments
     ctx->daChannel.Motor = 0;
     ctx->daChannel.MotorCruch = 1;
@@ -124,7 +127,8 @@ void InitContext(DigitShowContext* ctx)
     // Note: CString TextString, CTime, CTimeSpan are default-constructed by C++ runtime
 
     // Initialize calibration factors (default: linear y = x)
-    for (int i = 0; i < 64; i++) {
+    for (int i = 0; i < 64; i++)
+    {
         ctx->Vout[i] = 0.0f;
         ctx->Phyout[i] = 0.0;
         ctx->CalParam[i] = 0.0;
@@ -134,14 +138,16 @@ void InitContext(DigitShowContext* ctx)
     }
 
     // Initialize D/A output
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; i++)
+    {
         ctx->DAVout[i] = 0.0f;
         ctx->cal.DA_a[i] = 0.0;
         ctx->cal.DA_b[i] = 0.0;
     }
 
     // Initialize specimen data
-    for (int j = 0; j < 4; j++) {
+    for (int j = 0; j < 4; j++)
+    {
         ctx->specimen.Diameter[j] = 50.0;
         ctx->specimen.Width[j] = 0.0;
         ctx->specimen.Depth[j] = 0.0;
@@ -159,11 +165,13 @@ void InitContext(DigitShowContext* ctx)
     ctx->specimen.RodWeight = 0.0;
 
     // Initialize control data
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; i++)
+    {
         ctx->control[i].p = 0.0;
         ctx->control[i].q = 0.0;
         ctx->control[i].u = 0.0;
-        for (int j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++)
+        {
             ctx->control[i].flag[j] = false;
             ctx->control[i].time[j] = 0;
             ctx->control[i].sigma[j] = 0.0;
@@ -184,9 +192,11 @@ void InitContext(DigitShowContext* ctx)
 
     // Initialize control file data
     ctx->controlFile.CurrentNum = 0;
-    for (int i = 0; i < 128; i++) {
+    for (int i = 0; i < 128; i++)
+    {
         ctx->controlFile.Num[i] = 0;
-        for (int j = 0; j < 10; j++) {
+        for (int j = 0; j < 10; j++)
+        {
             ctx->controlFile.Para[i][j] = 0.0;
         }
     }

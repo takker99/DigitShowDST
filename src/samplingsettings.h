@@ -23,25 +23,28 @@
 
 class CSamplingSettings : public CDialog
 {
-public:
-    CSamplingSettings(CWnd* pParent = NULL);
+  public:
+    CSamplingSettings(CWnd *pParent = NULL);
 
-    enum { IDD = IDD_SamplingSettings };
+    enum
+    {
+        IDD = IDD_SamplingSettings
+    };
 
-    long    m_TimeInterval1;
-    long    m_TimeInterval2;
-    long    m_TimeInterval3;
+    long m_TimeInterval1;
+    long m_TimeInterval2;
+    long m_TimeInterval3;
     CString m_AllocatedMemory;
-    int     m_AvSmplNum;
-    int     m_Channels;
-    int     m_EventSamplingTimes;
+    int m_AvSmplNum;
+    int m_Channels;
+    int m_EventSamplingTimes;
     CString m_MemoryType;
-    float   m_SamplingClock;
-    int     m_SavingTime;
-    long    m_TotalSamplingTimes;
+    float m_SamplingClock;
+    int m_SavingTime;
+    long m_TotalSamplingTimes;
 
-protected:
-    virtual void DoDataExchange(CDataExchange* pDX);
+  protected:
+    virtual void DoDataExchange(CDataExchange *pDX);
     virtual void OnOK();
     virtual BOOL OnInitDialog();
 

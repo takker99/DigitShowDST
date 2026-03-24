@@ -23,10 +23,13 @@
 
 class CSpecimen : public CDialog
 {
-public:
-    CSpecimen(CWnd* pParent = NULL);
+  public:
+    CSpecimen(CWnd *pParent = NULL);
 
-    enum { IDD = IDD_SpecimenData };
+    enum
+    {
+        IDD = IDD_SpecimenData
+    };
 
     double m_Area0;
     double m_Area1;
@@ -70,8 +73,8 @@ public:
     double m_VLDT2_2;
     double m_VLDT2_3;
 
-protected:
-    virtual void DoDataExchange(CDataExchange* pDX);
+  protected:
+    virtual void DoDataExchange(CDataExchange *pDX);
 
     void Reflesh();
 

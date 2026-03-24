@@ -16,14 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "stdafx.h"
+
 // DigitShowBasic.cpp : アプリケーション用クラスの機能定義を行います。
 
-#include "stdafx.h"
 #include "DigitShowBasic.h"
 
-#include "MainFrm.h"
 #include "DigitShowBasicDoc.h"
 #include "DigitShowBasicView.h"
+#include "MainFrm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -35,14 +36,14 @@ static char THIS_FILE[] = __FILE__;
 // CDigitShowBasicApp
 
 BEGIN_MESSAGE_MAP(CDigitShowBasicApp, CWinApp)
-    //{{AFX_MSG_MAP(CDigitShowBasicApp)
-    ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
-        // メモ - ClassWizard はこの位置にマッピング用のマクロを追加または削除します。
-        //        この位置に生成されるコードを編集しないでください。
-    //}}AFX_MSG_MAP
-    // 標準のファイル基本ドキュメント コマンド
-    ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
-    ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
+//{{AFX_MSG_MAP(CDigitShowBasicApp)
+ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
+// メモ - ClassWizard はこの位置にマッピング用のマクロを追加または削除します。
+//        この位置に生成されるコードを編集しないでください。
+//}}AFX_MSG_MAP
+// 標準のファイル基本ドキュメント コマンド
+ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
+ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -52,14 +53,12 @@ CDigitShowBasicApp::CDigitShowBasicApp()
 {
 
     // ここに InitInstance 中の重要な初期化処理をすべて記述してください。
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // 唯一の CDigitShowBasicApp オブジェクト
 
 CDigitShowBasicApp theApp;
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CDigitShowBasicApp クラスの初期化
@@ -75,16 +74,15 @@ BOOL CDigitShowBasicApp::InitInstance()
 
 #if _MSC_VER <= 1200 // MFC 6.0 or earlier
 
-    #ifdef _AFXDLL
-        Enable3dControls();
-        // 共有 DLL の中で MFC を使用する場合にはここを呼び出してください。
-    #else
-        Enable3dControlsStatic();
-        // MFC と静的にリンクしている場合にはここを呼び出してください。
-    #endif
-
+#ifdef _AFXDLL
+    Enable3dControls();
+    // 共有 DLL の中で MFC を使用する場合にはここを呼び出してください。
+#else
+    Enable3dControlsStatic();
+    // MFC と静的にリンクしている場合にはここを呼び出してください。
 #endif
 
+#endif
 
     // 設定が保存される下のレジストリ キーを変更します。
 
@@ -97,12 +95,10 @@ BOOL CDigitShowBasicApp::InitInstance()
     // アプリケーション用のドキュメント テンプレートを登録します。ドキュメント テンプレート
     //  はドキュメント、フレーム ウィンドウとビューを結合するために機能します。
 
-    CSingleDocTemplate* pDocTemplate;
-    pDocTemplate = new CSingleDocTemplate(
-        IDR_MAINFRAME,
-        RUNTIME_CLASS(CDigitShowBasicDoc),
-        RUNTIME_CLASS(CMainFrame),       // メイン SDI フレーム ウィンドウ
-        RUNTIME_CLASS(CDigitShowBasicView));
+    CSingleDocTemplate *pDocTemplate;
+    pDocTemplate = new CSingleDocTemplate(IDR_MAINFRAME, RUNTIME_CLASS(CDigitShowBasicDoc),
+                                          RUNTIME_CLASS(CMainFrame), // メイン SDI フレーム ウィンドウ
+                                          RUNTIME_CLASS(CDigitShowBasicView));
     AddDocTemplate(pDocTemplate);
 
     // DDE、file open など標準のシェル コマンドのコマンドラインを解析します。
@@ -120,31 +116,33 @@ BOOL CDigitShowBasicApp::InitInstance()
     return TRUE;
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 // アプリケーションのバージョン情報で使われる CAboutDlg ダイアログ
 
 class CAboutDlg : public CDialog
 {
-public:
+  public:
     CAboutDlg();
 
-// ダイアログ データ
+    // ダイアログ データ
     //{{AFX_DATA(CAboutDlg)
-    enum { IDD = IDD_ABOUTBOX };
+    enum
+    {
+        IDD = IDD_ABOUTBOX
+    };
     //}}AFX_DATA
 
     // ClassWizard 仮想関数のオーバーライドを生成します。
     //{{AFX_VIRTUAL(CAboutDlg)
-    protected:
-    virtual void DoDataExchange(CDataExchange* pDX);
+  protected:
+    virtual void DoDataExchange(CDataExchange *pDX);
     // DDX/DDV のサポート
     //}}AFX_VIRTUAL
 
-// インプリメンテーション
-protected:
+    // インプリメンテーション
+  protected:
     //{{AFX_MSG(CAboutDlg)
-        // メッセージ ハンドラはありません。
+    // メッセージ ハンドラはありません。
     //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 };
@@ -155,7 +153,7 @@ CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
     //}}AFX_DATA_INIT
 }
 
-void CAboutDlg::DoDataExchange(CDataExchange* pDX)
+void CAboutDlg::DoDataExchange(CDataExchange *pDX)
 {
     CDialog::DoDataExchange(pDX);
     //{{AFX_DATA_MAP(CAboutDlg)
@@ -163,9 +161,9 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
-    //{{AFX_MSG_MAP(CAboutDlg)
-        // メッセージ ハンドラはありません。
-    //}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CAboutDlg)
+// メッセージ ハンドラはありません。
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 // ダイアログを実行するためのアプリケーション コマンド

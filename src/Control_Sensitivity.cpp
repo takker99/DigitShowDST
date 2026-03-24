@@ -17,8 +17,9 @@
  */
 
 #include "stdafx.h"
-#include "DigitShowBasic.h"
+
 #include "Control_Sensitivity.h"
+#include "DigitShowBasic.h"
 #include "DigitShowBasicDoc.h"
 #include "DigitShowContext.h"
 
@@ -28,16 +29,15 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-CControl_Sensitivity::CControl_Sensitivity(CWnd* pParent)
-    : CDialog(CControl_Sensitivity::IDD, pParent)
+CControl_Sensitivity::CControl_Sensitivity(CWnd *pParent) : CDialog(CControl_Sensitivity::IDD, pParent)
 {
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     m_ERR_StressA = ctx->errTol.StressA;
     m_ERR_StressCom = ctx->errTol.StressCom;
     m_ERR_StressExt = ctx->errTol.StressExt;
 }
 
-void CControl_Sensitivity::DoDataExchange(CDataExchange* pDX)
+void CControl_Sensitivity::DoDataExchange(CDataExchange *pDX)
 {
     CDialog::DoDataExchange(pDX);
     DDX_Text(pDX, IDC_EDIT_ERR_StressA, m_ERR_StressA);
@@ -53,7 +53,7 @@ END_MESSAGE_MAP()
 void CControl_Sensitivity::OnOK()
 {
     UpdateData(TRUE);
-    DigitShowContext* ctx = GetContext();
+    DigitShowContext *ctx = GetContext();
     ctx->errTol.StressA = m_ERR_StressA;
     ctx->errTol.StressCom = m_ERR_StressCom;
     ctx->errTol.StressExt = m_ERR_StressExt;

@@ -25,11 +25,14 @@
 
 class CDA_Vout : public CDialog
 {
-public:
-    CDA_Vout(CWnd* pParent = NULL);
-    CDigitShowBasicDoc* pDoc;
+  public:
+    CDA_Vout(CWnd *pParent = NULL);
+    CDigitShowBasicDoc *pDoc;
 
-    enum { IDD = IDD_DA_Vout };
+    enum
+    {
+        IDD = IDD_DA_Vout
+    };
 
     float m_DAVout01;
     float m_DAVout02;
@@ -48,8 +51,8 @@ public:
     float m_DAVout15;
     float m_DAVout16;
 
-protected:
-    virtual void DoDataExchange(CDataExchange* pDX);
+  protected:
+    virtual void DoDataExchange(CDataExchange *pDX);
 
     afx_msg void OnBUTTONDAVout();
     afx_msg void OnBUTTONReflesh();

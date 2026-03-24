@@ -23,17 +23,20 @@
 
 class CControl_Sensitivity : public CDialog
 {
-public:
-    CControl_Sensitivity(CWnd* pParent = NULL);
+  public:
+    CControl_Sensitivity(CWnd *pParent = NULL);
 
-    enum { IDD = IDD_Control_Sensitivity };
+    enum
+    {
+        IDD = IDD_Control_Sensitivity
+    };
 
     double m_ERR_StressA;
     double m_ERR_StressCom;
     double m_ERR_StressExt;
 
-protected:
-    virtual void DoDataExchange(CDataExchange* pDX);
+  protected:
+    virtual void DoDataExchange(CDataExchange *pDX);
     virtual void OnOK();
 
     DECLARE_MESSAGE_MAP()

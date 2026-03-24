@@ -26,7 +26,8 @@
 /**
  * Specimen data structure
  */
-struct SpecimenData {
+struct SpecimenData
+{
     double Diameter[4];
     double Width[4];
     double Depth[4];
@@ -46,9 +47,10 @@ struct SpecimenData {
 /**
  * Control data structure
  */
-struct ControlData {
-    bool   flag[3];
-    int    time[3];
+struct ControlData
+{
+    bool flag[3];
+    int time[3];
     double p;
     double q;
     double u;
@@ -63,46 +65,49 @@ struct ControlData {
     double strainAmp[3];
     double K0;
     double MotorSpeed;
-    int    Motor;
-    int    MotorCruch;
+    int Motor;
+    int MotorCruch;
 };
 
 /**
  * A/D Board configuration
  */
-struct AdBoardConfig {
-    short  Id[2];
-    short  Channels[2];
-    short  Range[2];
-    float  RangeMax[2];
-    float  RangeMin[2];
-    short  Resolution[2];
-    short  InputMethod[2];
-    short  MemoryType[2];
-    float  SamplingClock[2];
-    long   SamplingTimes[2];
-    float  ScanClock[2];
-    long   Data0[262144];
-    long   Data1[262144];
+struct AdBoardConfig
+{
+    short Id[2];
+    short Channels[2];
+    short Range[2];
+    float RangeMax[2];
+    float RangeMin[2];
+    short Resolution[2];
+    short InputMethod[2];
+    short MemoryType[2];
+    float SamplingClock[2];
+    long SamplingTimes[2];
+    float ScanClock[2];
+    long Data0[262144];
+    long Data1[262144];
 };
 
 /**
  * D/A Board configuration
  */
-struct DaBoardConfig {
-    short  Id[1];
-    short  Channels[1];
-    short  Range[1];
-    float  RangeMax[1];
-    float  RangeMin[1];
-    short  Resolution[1];
-    long   Data[8];
+struct DaBoardConfig
+{
+    short Id[1];
+    short Channels[1];
+    short Range[1];
+    float RangeMax[1];
+    float RangeMin[1];
+    short Resolution[1];
+    long Data[8];
 };
 
 /**
  * Calibration data
  */
-struct CalibrationData {
+struct CalibrationData
+{
     double a[64];
     double b[64];
     double c[64];
@@ -113,7 +118,8 @@ struct CalibrationData {
 /**
  * Physical values
  */
-struct PhysicalValues {
+struct PhysicalValues
+{
     double sa;
     // axial stress
     double e_sa;
@@ -147,16 +153,18 @@ struct PhysicalValues {
 /**
  * Control file data
  */
-struct ControlFileData {
-    int    CurrentNum;
-    int    Num[128];
+struct ControlFileData
+{
+    int CurrentNum;
+    int Num[128];
     double Para[128][10];
 };
 
 /**
  * Time settings
  */
-struct TimeSettings {
+struct TimeSettings
+{
     unsigned int Interval1;
     // Time interval (ms) to display output data
     unsigned int Interval2;
@@ -168,7 +176,8 @@ struct TimeSettings {
 /**
  * D/A Channel assignments
  */
-struct DaChannelAssign {
+struct DaChannelAssign
+{
     int Motor;
     int MotorCruch;
     int MotorSpeed;
@@ -178,19 +187,21 @@ struct DaChannelAssign {
 /**
  * Sampling settings
  */
-struct SamplingSettings {
+struct SamplingSettings
+{
     float SavingClock;
-    int   SavingTime;
-    long  TotalSamplingTimes;
-    long  CurrentSamplingTimes;
+    int SavingTime;
+    long TotalSamplingTimes;
+    long CurrentSamplingTimes;
     float AllocatedMemory;
-    int   AvSmplNum;
+    int AvSmplNum;
 };
 
 /**
  * Error tolerance settings
  */
-struct ErrorTolerance {
+struct ErrorTolerance
+{
     double StressCom;
     // Compression stress tolerance (kPa)
     double StressExt;
@@ -203,7 +214,8 @@ struct ErrorTolerance {
  * Main application context structure
  * Singleton pattern for global state management
  */
-struct DigitShowContext {
+struct DigitShowContext
+{
     // Board configuration
     int NumAD;
     int NumDA;
@@ -217,12 +229,12 @@ struct DigitShowContext {
     CalibrationData cal;
 
     // Measurement data
-    float  Vout[64];
-    float  Vtmp;
+    float Vout[64];
+    float Vtmp;
     double Phyout[64];
     double Ptmp;
     double CalParam[64];
-    float  DAVout[8];
+    float DAVout[8];
 
     // Physical values
     PhysicalValues phys;
@@ -237,12 +249,12 @@ struct DigitShowContext {
     ErrorTolerance errTol;
 
     // Control state
-    int  ControlID;
-    int  NumCyclic;
+    int ControlID;
+    int NumCyclic;
     double TotalStepTime;
 
     // Amplifier calibration
-    int  AmpID;
+    int AmpID;
 
     // System flags
     bool FlagSetBoard;
@@ -257,25 +269,25 @@ struct DigitShowContext {
     CTime NowTime;
     CTimeSpan SpanTime;
     CString SNowTime;
-    long   SequentTime1;
+    long SequentTime1;
     double SequentTime2;
     double CtrlStepTime;
 
     // Memory management
-    PVOID  pSmplData0;
-    PVOID  pSmplData1;
+    PVOID pSmplData0;
+    PVOID pSmplData1;
     HANDLE hHeap0;
     HANDLE hHeap1;
 
     // File handles
-    FILE* FileSaveData0;
-    FILE* FileSaveData1;
-    FILE* FileSaveData2;
+    FILE *FileSaveData0;
+    FILE *FileSaveData1;
+    FILE *FileSaveData2;
 
     // Error handling
-    long    Ret;
-    long    Ret2;
-    char    ErrorString[256];
+    long Ret;
+    long Ret2;
+    char ErrorString[256];
     CString TextString;
 
     // Event handling
@@ -285,12 +297,12 @@ struct DigitShowContext {
 /**
  * Get the global context instance (singleton)
  */
-DigitShowContext* GetContext();
+DigitShowContext *GetContext();
 
 /**
  * Initialize the context with default values
  */
-void InitContext(DigitShowContext* ctx);
+void InitContext(DigitShowContext *ctx);
 
 // Legacy type aliases for backward compatibility
 typedef SpecimenData Specimen;

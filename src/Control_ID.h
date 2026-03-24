@@ -23,12 +23,15 @@
 
 class CControl_ID : public CDialog
 {
-public:
-    CControl_ID(CWnd* pParent = NULL);
+  public:
+    CControl_ID(CWnd *pParent = NULL);
 
-    enum { IDD = IDD_Control_ID };
+    enum
+    {
+        IDD = IDD_Control_ID
+    };
 
-    int    m_Control_ID;
+    int m_Control_ID;
     double m_esigma0;
     double m_esigma1;
     double m_esigma2;
@@ -38,12 +41,12 @@ public:
     double m_esigmaRate0;
     double m_esigmaRate1;
     double m_esigmaRate2;
-    int    m_flag0;
-    int    m_flag1;
-    int    m_flag2;
+    int m_flag0;
+    int m_flag1;
+    int m_flag2;
     double m_K0;
-    int    m_Motor;
-    int    m_MotorCruch;
+    int m_Motor;
+    int m_MotorCruch;
     double m_MotorSpeed;
     double m_p;
     double m_sigma0;
@@ -64,19 +67,19 @@ public:
     double m_strainRate0;
     double m_strainRate1;
     double m_strainRate2;
-    int    m_time0;
-    int    m_time1;
-    int    m_time2;
+    int m_time0;
+    int m_time1;
+    int m_time2;
     double m_u;
     double m_q;
 
-protected:
-    virtual void DoDataExchange(CDataExchange* pDX);
+  protected:
+    virtual void DoDataExchange(CDataExchange *pDX);
 
-private:
+  private:
     int i;
 
-protected:
+  protected:
     afx_msg void OnBUTTONLoad();
     afx_msg void OnBUTTONUpdate();
     afx_msg void OnBUTTONLoadfromfile();
