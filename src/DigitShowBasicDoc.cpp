@@ -107,7 +107,7 @@ void CDigitShowBasicDoc::OpenBoard()
         // OPEN A/D BOARDS.
         if (ctx->NumAD > 0)
         {
-char ad0[] = "AIO000";
+            char ad0[] = "AIO000";
             ctx->Ret = AioInit(ad0, &ctx->ad.Id[0]);
             if (ctx->Ret != 0)
             {
@@ -130,7 +130,7 @@ char ad0[] = "AIO000";
         }
         if (ctx->NumAD > 1)
         {
-char ad1[] = "AIO001";
+            char ad1[] = "AIO001";
             ctx->Ret = AioInit(ad1, &ctx->ad.Id[1]);
             if (ctx->Ret != 0)
             {
@@ -154,7 +154,7 @@ char ad1[] = "AIO001";
         // OPEN D/A BOARDS.
         if (ctx->NumDA > 0)
         {
-char da0[] = "AIO001";
+            char da0[] = "AIO001";
             ctx->Ret = AioInit(da0, &ctx->da.Id[0]);
             if (ctx->Ret != 0)
             {

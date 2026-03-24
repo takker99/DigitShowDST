@@ -59,7 +59,7 @@ END_MESSAGE_MAP()
 // CDigitShowBasicView クラスの構築/消滅
 
 CDigitShowBasicView::CDigitShowBasicView()
-: CFormView(CDigitShowBasicView::IDD), m_Vout00(_T("")), m_Vout01(_T("")), m_Vout02(_T("")), m_Vout03(_T("")),
+    : CFormView(CDigitShowBasicView::IDD), m_Vout00(_T("")), m_Vout01(_T("")), m_Vout02(_T("")), m_Vout03(_T("")),
       m_Vout04(_T("")), m_Vout05(_T("")), m_Vout06(_T("")), m_Vout07(_T("")), m_Vout08(_T("")), m_Vout09(_T("")),
       m_Vout10(_T("")), m_Vout11(_T("")), m_Vout12(_T("")), m_Vout13(_T("")), m_Vout14(_T("")), m_Vout15(_T("")),
       m_Vout16(_T("")), m_Vout17(_T("")), m_Vout18(_T("")), m_Vout19(_T("")), m_Vout20(_T("")), m_Vout21(_T("")),
@@ -79,13 +79,13 @@ CDigitShowBasicView::CDigitShowBasicView()
 {
     DigitShowContext *ctx = GetContext();
     //{{AFX_DATA_INIT(CDigitShowBasicView)
-    
+
     m_SamplingTime = ctx->timeSettings.Interval3;
-    
+
     //}}AFX_DATA_INIT
 
     ctx->FlagCtrl = FALSE;
-    }
+}
 
 CDigitShowBasicView::~CDigitShowBasicView()
 {
