@@ -35,6 +35,7 @@ class CDigitShowBasicDoc : public CDocument
 
   public:
     void Creep2();
+    void ZeroAllDaOutputsOnShutdown();
     void SaveToFile2();
     void Allocate_Memory();
     void LinearEffectiveStressPath();

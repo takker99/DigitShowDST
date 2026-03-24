@@ -89,6 +89,13 @@ CDigitShowBasicView::CDigitShowBasicView()
 
 CDigitShowBasicView::~CDigitShowBasicView()
 {
+    DigitShowContext *ctx = GetContext();
+
+    KillTimer(1);
+    KillTimer(2);
+    KillTimer(3);
+    ctx->FlagCtrl = FALSE;
+
     CDigitShowBasicDoc *pDoc = (CDigitShowBasicDoc *)GetDocument();
     pDoc->CloseBoard();
 }
