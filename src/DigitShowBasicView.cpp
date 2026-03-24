@@ -389,8 +389,11 @@ void CDigitShowBasicView::OnTimer(UINT_PTR nIDEvent)
             pDoc->Control_DA();
         if (ctx->FlagSaveData == TRUE && ctx->FlagFIFO == FALSE)
         {
+            _ftime_s(&NowTime2);
+            const double currentSequentTime =
+                double(NowTime2.time - StartTime2.time) + double((NowTime2.millitm - StartTime2.millitm) / 1000.0);
             bool shouldSave = false;
-            if (ctx->SequentTime2 - LastPeriodicSaveTimeSec >= 60.0)
+            if (currentSequentTime - LastPeriodicSaveTimeSec >= 60.0)
             {
                 shouldSave = true;
             }
@@ -400,9 +403,7 @@ void CDigitShowBasicView::OnTimer(UINT_PTR nIDEvent)
             }
             if (shouldSave)
             {
-                _ftime_s(&NowTime2);
-                ctx->SequentTime2 =
-                    double(NowTime2.time - StartTime2.time) + double((NowTime2.millitm - StartTime2.millitm) / 1000.0);
+                ctx->SequentTime2 = currentSequentTime;
                 if (ctx->FlagSetBoard)
                     pDoc->AD_INPUT();
                 pDoc->Cal_Physical();
