@@ -45,7 +45,7 @@ bld/
 *.ilk
 *.exp
 *.pch
-*.pch+* 
+*.pch+*
 *.res
 *.rsp
 *.tlog
@@ -102,3 +102,6 @@ _ReSharper*/
 # VS Code (optional)
 .vscode/
 _codeql_detected_source_root
+
+vcpkg_installed/
+.env
