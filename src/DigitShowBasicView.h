@@ -63,8 +63,8 @@ class CDigitShowBasicView : public CFormView
 
   public:
     CDigitShowBasicDoc *GetDocument();
-    struct _timeb StartTime2, NowTime2;
-    struct _timeb StepTime0, StepTime1;
+    struct _timeb StartTime2{}, NowTime2{};
+    struct _timeb StepTime0{}, StepTime1{};
     CBrush *m_pEditBrush;
     CBrush *m_pStaticBrush;
     CBrush *m_pDlgBrush;

@@ -16,12 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
+#include "CAIO.H"
+#include "DataConvert.h"
 #include "DigitShowBasic.h"
 #include "DigitShowBasicDoc.h"
-#include "caio.h"
-#include "dataconvert.h"
 
 #include "math.h"
 #include "time.h"
@@ -95,11 +95,11 @@ void CDigitShowBasicDoc::Dump(CDumpContext &dc) const
 void CDigitShowBasicDoc::OpenBoard()
 {
     DigitShowContext *ctx = GetContext();
-    int i;
+    int i = 0;
 
     if (ctx->FlagSetBoard)
     {
-        AfxMessageBox("Initialization has been already accomplished", MB_ICONSTOP | MB_OK);
+        AfxMessageBox(_T("Initialization has been already accomplished"), MB_ICONSTOP | MB_OK);
         return;
     }
     else
@@ -107,11 +107,12 @@ void CDigitShowBasicDoc::OpenBoard()
         // OPEN A/D BOARDS.
         if (ctx->NumAD > 0)
         {
-            ctx->Ret = AioInit("AIO000", &ctx->ad.Id[0]);
+char ad0[] = "AIO000";
+            ctx->Ret = AioInit(ad0, &ctx->ad.Id[0]);
             if (ctx->Ret != 0)
             {
                 ctx->Ret2 = AioGetErrorString(ctx->Ret, ctx->ErrorString);
-                ctx->TextString.Format("AioInit = %d : %s", ctx->Ret, ctx->ErrorString);
+                ctx->TextString.Format(_T("AioInit = %d : %S"), ctx->Ret, ctx->ErrorString);
                 AfxMessageBox(ctx->TextString, MB_ICONSTOP | MB_OK);
                 return;
             }
@@ -121,7 +122,7 @@ void CDigitShowBasicDoc::OpenBoard()
                 if (ctx->Ret != 0)
                 {
                     ctx->Ret2 = AioGetErrorString(ctx->Ret, ctx->ErrorString);
-                    ctx->TextString.Format("AioResetDevice = %d : %s", ctx->Ret, ctx->ErrorString);
+                    ctx->TextString.Format(_T("AioResetDevice = %d : %S"), ctx->Ret, ctx->ErrorString);
                     AfxMessageBox(ctx->TextString, MB_ICONSTOP | MB_OK);
                     return;
                 }
@@ -129,11 +130,12 @@ void CDigitShowBasicDoc::OpenBoard()
         }
         if (ctx->NumAD > 1)
         {
-            ctx->Ret = AioInit("AIO001", &ctx->ad.Id[1]);
+char ad1[] = "AIO001";
+            ctx->Ret = AioInit(ad1, &ctx->ad.Id[1]);
             if (ctx->Ret != 0)
             {
                 ctx->Ret2 = AioGetErrorString(ctx->Ret, ctx->ErrorString);
-                ctx->TextString.Format("AioInit = %d : %s", ctx->Ret, ctx->ErrorString);
+                ctx->TextString.Format(_T("AioInit = %d : %S"), ctx->Ret, ctx->ErrorString);
                 AfxMessageBox(ctx->TextString, MB_ICONSTOP | MB_OK);
                 return;
             }
@@ -143,7 +145,7 @@ void CDigitShowBasicDoc::OpenBoard()
                 if (ctx->Ret != 0)
                 {
                     ctx->Ret2 = AioGetErrorString(ctx->Ret, ctx->ErrorString);
-                    ctx->TextString.Format("AioResetDevice = %d : %s", ctx->Ret, ctx->ErrorString);
+                    ctx->TextString.Format(_T("AioResetDevice = %d : %S"), ctx->Ret, ctx->ErrorString);
                     AfxMessageBox(ctx->TextString, MB_ICONSTOP | MB_OK);
                     return;
                 }
@@ -152,11 +154,12 @@ void CDigitShowBasicDoc::OpenBoard()
         // OPEN D/A BOARDS.
         if (ctx->NumDA > 0)
         {
-            ctx->Ret = AioInit("AIO001", &ctx->da.Id[0]);
+char da0[] = "AIO001";
+            ctx->Ret = AioInit(da0, &ctx->da.Id[0]);
             if (ctx->Ret != 0)
             {
                 ctx->Ret2 = AioGetErrorString(ctx->Ret, ctx->ErrorString);
-                ctx->TextString.Format("AioInit = %d : %s", ctx->Ret, ctx->ErrorString);
+                ctx->TextString.Format(_T("AioInit = %d : %S"), ctx->Ret, ctx->ErrorString);
                 AfxMessageBox(ctx->TextString, MB_ICONSTOP | MB_OK);
                 return;
             }
@@ -166,7 +169,7 @@ void CDigitShowBasicDoc::OpenBoard()
                 if (ctx->Ret != 0)
                 {
                     ctx->Ret2 = AioGetErrorString(ctx->Ret, ctx->ErrorString);
-                    ctx->TextString.Format("AioResetDevice = %d : %s", ctx->Ret, ctx->ErrorString);
+                    ctx->TextString.Format(_T("AioResetDevice = %d : %S"), ctx->Ret, ctx->ErrorString);
                     AfxMessageBox(ctx->TextString, MB_ICONSTOP | MB_OK);
                     return;
                 }
@@ -233,7 +236,7 @@ void CDigitShowBasicDoc::CloseBoard()
 void CDigitShowBasicDoc::AD_INPUT()
 {
     DigitShowContext *ctx = GetContext();
-    int i, j, k;
+    int i = 0, j = 0, k = 0;
     k = 0;
     if (ctx->NumAD > 0)
     {
@@ -271,7 +274,7 @@ void CDigitShowBasicDoc::AD_INPUT()
 void CDigitShowBasicDoc::DA_OUTPUT()
 {
     DigitShowContext *ctx = GetContext();
-    int i, j, k;
+    int i = 0, j = 0, k = 0;
     k = 0;
     for (i = 0; i < ctx->NumDA; i++)
     {
@@ -293,7 +296,7 @@ void CDigitShowBasicDoc::DA_OUTPUT()
 void CDigitShowBasicDoc::Cal_Physical()
 {
     DigitShowContext *ctx = GetContext();
-    int i;
+    int i = 0;
     for (i = 0; i < 64; i++)
     {
         ctx->Phyout[i] = ctx->cal.a[i] * ctx->Vout[i] * ctx->Vout[i] + ctx->cal.b[i] * ctx->Vout[i] + ctx->cal.c[i];

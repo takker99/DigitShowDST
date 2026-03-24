@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
 #include "CalibrationAmp.h"
 #include "CalibrationFactor.h"
@@ -28,90 +28,22 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-CCalibrationFactor::CCalibrationFactor(CWnd *pParent /*=NULL*/) : CDialog(CCalibrationFactor::IDD, pParent)
+CCalibrationFactor::CCalibrationFactor(CWnd *pParent /*=NULL*/)
+    : CDialog(CCalibrationFactor::IDD, pParent), m_CFP00(_T("")), m_CFP01(_T("")), m_CFP02(_T("")), m_CFP03(_T("")),
+      m_CFP04(_T("")), m_CFP05(_T("")), m_CFP06(_T("")), m_CFP07(_T("")), m_CFP08(_T("")), m_CFP09(_T("")),
+      m_CFP10(_T("")), m_CFP11(_T("")), m_CFP12(_T("")), m_CFP13(_T("")), m_CFP14(_T("")), m_CFP15(_T("")),
+      m_CFA00(0.0), m_CFB00(0.0), m_CFC00(0.0), m_CFA01(0.0), m_CFB01(0.0), m_CFC01(0.0), m_CFA02(0.0), m_CFB02(0.0),
+      m_CFC02(0.0), m_CFA03(0.0), m_CFB03(0.0), m_CFC03(0.0), m_CFA04(0.0), m_CFB04(0.0), m_CFC04(0.0), m_CFA05(0.0),
+      m_CFB05(0.0), m_CFC05(0.0), m_CFA06(0.0), m_CFB06(0.0), m_CFC06(0.0), m_CFA07(0.0), m_CFB07(0.0), m_CFC07(0.0),
+      m_CFA08(0.0), m_CFB08(0.0), m_CFC08(0.0), m_CFA09(0.0), m_CFB09(0.0), m_CFC09(0.0), m_CFA10(0.0), m_CFB10(0.0),
+      m_CFC10(0.0), m_CFA11(0.0), m_CFB11(0.0), m_CFC11(0.0), m_CFA12(0.0), m_CFB12(0.0), m_CFC12(0.0), m_CFA13(0.0),
+      m_CFB13(0.0), m_CFC13(0.0), m_CFA14(0.0), m_CFB14(0.0), m_CFC14(0.0), m_CFA15(0.0), m_CFB15(0.0), m_CFC15(0.0),
+      m_Channels(_T("")), m_C00(_T("")), m_C01(_T("")), m_C02(_T("")), m_C03(_T("")), m_C04(_T("")), m_C05(_T("")),
+      m_C06(_T("")), m_C07(_T("")), m_C08(_T("")), m_C09(_T("")), m_C10(_T("")), m_C11(_T("")), m_C12(_T("")),
+      m_C13(_T("")), m_C14(_T("")), m_C15(_T(""))
 {
     //{{AFX_DATA_INIT(CCalibrationFactor)
-    m_CFP00 = _T("");
-    m_CFP01 = _T("");
-    m_CFP02 = _T("");
-    m_CFP03 = _T("");
-    m_CFP04 = _T("");
-    m_CFP05 = _T("");
-    m_CFP06 = _T("");
-    m_CFP07 = _T("");
-    m_CFP08 = _T("");
-    m_CFP09 = _T("");
-    m_CFP10 = _T("");
-    m_CFP11 = _T("");
-    m_CFP12 = _T("");
-    m_CFP13 = _T("");
-    m_CFP14 = _T("");
-    m_CFP15 = _T("");
-    m_CFA00 = 0.0;
-    m_CFB00 = 0.0;
-    m_CFC00 = 0.0;
-    m_CFA01 = 0.0;
-    m_CFB01 = 0.0;
-    m_CFC01 = 0.0;
-    m_CFA02 = 0.0;
-    m_CFB02 = 0.0;
-    m_CFC02 = 0.0;
-    m_CFA03 = 0.0;
-    m_CFB03 = 0.0;
-    m_CFC03 = 0.0;
-    m_CFA04 = 0.0;
-    m_CFB04 = 0.0;
-    m_CFC04 = 0.0;
-    m_CFA05 = 0.0;
-    m_CFB05 = 0.0;
-    m_CFC05 = 0.0;
-    m_CFA06 = 0.0;
-    m_CFB06 = 0.0;
-    m_CFC06 = 0.0;
-    m_CFA07 = 0.0;
-    m_CFB07 = 0.0;
-    m_CFC07 = 0.0;
-    m_CFA08 = 0.0;
-    m_CFB08 = 0.0;
-    m_CFC08 = 0.0;
-    m_CFA09 = 0.0;
-    m_CFB09 = 0.0;
-    m_CFC09 = 0.0;
-    m_CFA10 = 0.0;
-    m_CFB10 = 0.0;
-    m_CFC10 = 0.0;
-    m_CFA11 = 0.0;
-    m_CFB11 = 0.0;
-    m_CFC11 = 0.0;
-    m_CFA12 = 0.0;
-    m_CFB12 = 0.0;
-    m_CFC12 = 0.0;
-    m_CFA13 = 0.0;
-    m_CFB13 = 0.0;
-    m_CFC13 = 0.0;
-    m_CFA14 = 0.0;
-    m_CFB14 = 0.0;
-    m_CFC14 = 0.0;
-    m_CFA15 = 0.0;
-    m_CFB15 = 0.0;
-    m_CFC15 = 0.0;
-    m_Channels = _T("");
-    m_C00 = _T("");
-    m_C01 = _T("");
-    m_C02 = _T("");
-    m_C03 = _T("");
-    m_C04 = _T("");
-    m_C05 = _T("");
-    m_C06 = _T("");
-    m_C07 = _T("");
-    m_C08 = _T("");
-    m_C09 = _T("");
-    m_C10 = _T("");
-    m_C11 = _T("");
-    m_C12 = _T("");
-    m_C13 = _T("");
-    m_C14 = _T("");
-    m_C15 = _T("");
+
     //}}AFX_DATA_INIT
 }
 
@@ -718,7 +650,7 @@ void CCalibrationFactor::OnBUTTONZero15()
 void CCalibrationFactor::OnBUTTONAmp00()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult;
+    int nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 0;
     if (m_Channels == "CH16-CH31")
@@ -737,7 +669,7 @@ void CCalibrationFactor::OnBUTTONAmp00()
 void CCalibrationFactor::OnBUTTONAmp01()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult;
+    int nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 1;
     if (m_Channels == "CH16-CH31")
@@ -756,7 +688,7 @@ void CCalibrationFactor::OnBUTTONAmp01()
 void CCalibrationFactor::OnBUTTONAmp02()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult;
+    int nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 2;
     if (m_Channels == "CH16-CH31")
@@ -775,7 +707,7 @@ void CCalibrationFactor::OnBUTTONAmp02()
 void CCalibrationFactor::OnBUTTONAmp03()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult;
+    int nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 3;
     if (m_Channels == "CH16-CH31")
@@ -794,7 +726,7 @@ void CCalibrationFactor::OnBUTTONAmp03()
 void CCalibrationFactor::OnBUTTONAmp04()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult;
+    int nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 4;
     if (m_Channels == "CH16-CH31")
@@ -813,7 +745,7 @@ void CCalibrationFactor::OnBUTTONAmp04()
 void CCalibrationFactor::OnBUTTONAmp05()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult;
+    int nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 5;
     if (m_Channels == "CH16-CH31")
@@ -832,7 +764,7 @@ void CCalibrationFactor::OnBUTTONAmp05()
 void CCalibrationFactor::OnBUTTONAmp06()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult;
+    int nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 6;
     if (m_Channels == "CH16-CH31")
@@ -851,7 +783,7 @@ void CCalibrationFactor::OnBUTTONAmp06()
 void CCalibrationFactor::OnBUTTONAmp07()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult;
+    int nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 7;
     if (m_Channels == "CH16-CH31")
@@ -870,7 +802,7 @@ void CCalibrationFactor::OnBUTTONAmp07()
 void CCalibrationFactor::OnBUTTONAmp08()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult;
+    int nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 8;
     if (m_Channels == "CH16-CH31")
@@ -889,7 +821,7 @@ void CCalibrationFactor::OnBUTTONAmp08()
 void CCalibrationFactor::OnBUTTONAmp09()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult;
+    int nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 9;
     if (m_Channels == "CH16-CH31")
@@ -908,7 +840,7 @@ void CCalibrationFactor::OnBUTTONAmp09()
 void CCalibrationFactor::OnBUTTONAmp10()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult;
+    int nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 10;
     if (m_Channels == "CH16-CH31")
@@ -927,7 +859,7 @@ void CCalibrationFactor::OnBUTTONAmp10()
 void CCalibrationFactor::OnBUTTONAmp11()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult;
+    int nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 11;
     if (m_Channels == "CH16-CH31")
@@ -946,7 +878,7 @@ void CCalibrationFactor::OnBUTTONAmp11()
 void CCalibrationFactor::OnBUTTONAmp12()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult;
+    int nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 12;
     if (m_Channels == "CH16-CH31")
@@ -965,7 +897,7 @@ void CCalibrationFactor::OnBUTTONAmp12()
 void CCalibrationFactor::OnBUTTONAmp13()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult;
+    int nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 13;
     if (m_Channels == "CH16-CH31")
@@ -984,7 +916,7 @@ void CCalibrationFactor::OnBUTTONAmp13()
 void CCalibrationFactor::OnBUTTONAmp14()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult;
+    int nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 14;
     if (m_Channels == "CH16-CH31")
@@ -1003,7 +935,7 @@ void CCalibrationFactor::OnBUTTONAmp14()
 void CCalibrationFactor::OnBUTTONAmp15()
 {
     DigitShowContext *ctx = GetContext();
-    int nResult;
+    int nResult = 0;
     if (m_Channels == "CH0-CH15")
         ctx->AmpID = 15;
     if (m_Channels == "CH16-CH31")
@@ -1022,10 +954,10 @@ void CCalibrationFactor::OnBUTTONAmp15()
 void CCalibrationFactor::OnBUTTONCFSave()
 {
     DigitShowContext *ctx = GetContext();
-    int i;
+    int i = 0;
     CString pFileName;
-    FILE *FileCalData;
-    errno_t err;
+    FILE *FileCalData = nullptr;
+    errno_t err = 0;
 
     CFileDialog CalSaveFile_dlg(FALSE, NULL, "*.cal", OFN_CREATEPROMPT | OFN_OVERWRITEPROMPT,
                                 "Calibration Files(*.cal)|*.cal| All Files(*.*)|*.*| |", NULL);
@@ -1048,10 +980,10 @@ void CCalibrationFactor::OnBUTTONCFSave()
 void CCalibrationFactor::OnBUTTONCFLoadFile()
 {
     DigitShowContext *ctx = GetContext();
-    int i, j;
+    int i = 0, j = 0;
     CString pFileName;
-    FILE *FileCalData;
-    errno_t err;
+    FILE *FileCalData = nullptr;
+    errno_t err = 0;
 
     CFileDialog CalLoadFile_dlg(TRUE, NULL, "*.cal", OFN_FILEMUSTEXIST | OFN_HIDEREADONLY,
                                 "Calibration Files(*.cal)|*.cal| All Files(*.*)|*.*| |", NULL);

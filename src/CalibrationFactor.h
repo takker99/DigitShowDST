@@ -27,7 +27,7 @@ class CCalibrationFactor : public CDialog
 {
   public:
     CCalibrationFactor(CWnd *pParent = NULL);
-    CDigitShowBasicDoc *pDoc;
+    CDigitShowBasicDoc *pDoc{};
 
     void CF_Load();
 

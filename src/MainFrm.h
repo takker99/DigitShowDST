@@ -39,7 +39,7 @@ class CMainFrame : public CFrameWnd
 #endif
 
   private:
-    int nResult;
+    INT_PTR nResult{};
 
   protected:
     afx_msg void OnBoardSettings();
