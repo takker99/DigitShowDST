@@ -31,6 +31,12 @@
     <VcpkgRoot>$(SolutionDir)vcpkg\</VcpkgRoot>
     <VcpkgEnableManifest>true</VcpkgEnableManifest>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <VcpkgConfiguration>Debug</VcpkgConfiguration>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <VcpkgConfiguration>Release</VcpkgConfiguration>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <Import Project="$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.targets" Condition="Exists('$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.targets')" />
   <ImportGroup Label="ExtensionSettings">
@@ -43,6 +49,8 @@
     <ClCompile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>SPDLOG_USE_STD_FORMAT%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <WarningLevel>Level4</WarningLevel>
     </ClCompile>
     <Link>
@@ -120,6 +128,7 @@
     <ClInclude Include="DigitShowBasic.h" />
     <ClInclude Include="DigitShowBasicDoc.h" />
     <ClInclude Include="DigitShowBasicView.h" />
+    <ClInclude Include="Logging.hpp" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="samplingsettings.h" />

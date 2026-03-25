@@ -21,7 +21,6 @@
 #include "DigitShowBasic.h"
 #include "DigitShowBasicDoc.h"
 
-#include "BoardSettings.h"
 #include "CalibrationFactor.h"
 #include "Control_CLoading.h"
 #include "Control_Consolidation.h"
@@ -35,9 +34,12 @@
 #include "DA_Pout.h"
 #include "DA_Vout.h"
 #include "MainFrm.h"
-#include "SamplingSettings.h"
 #include "Specimen.h"
 #include "TransAdjustment.h"
+#include "boardsettings.h"
+#include "samplingsettings.h"
+
+#include <spdlog/spdlog.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -122,6 +124,7 @@ void CMainFrame::Dump(CDumpContext &dc) const
 
 void CMainFrame::OnBoardSettings()
 {
+    spdlog::info("Menu: Board Settings opened");
 
     CBoardSettings BoardSettings;
     nResult = BoardSettings.DoModal();
@@ -130,6 +133,7 @@ void CMainFrame::OnBoardSettings()
 
 void CMainFrame::OnSamplingSettings()
 {
+    spdlog::info("Menu: Sampling Settings opened");
 
     CSamplingSettings SamplingSettings;
     nResult = SamplingSettings.DoModal();
@@ -141,14 +145,17 @@ void CMainFrame::OnCalibrationFactor()
     DigitShowContext *ctx = GetContext();
     if (ctx->FlagSetBoard == FALSE)
     {
+        spdlog::warn("Menu: Calibration Factor opened before board initialization");
         AfxMessageBox("BoardSettings has not been accomplished !", MB_ICONEXCLAMATION | MB_OK);
     }
+    spdlog::info("Menu: Calibration Factor opened");
     CCalibrationFactor CalibrationFactor;
     nResult = CalibrationFactor.DoModal();
 }
 
 void CMainFrame::OnSpecimenData()
 {
+    spdlog::info("Menu: Specimen Data opened");
 
     CSpecimen Specimen;
     nResult = Specimen.DoModal();
@@ -156,6 +163,7 @@ void CMainFrame::OnSpecimenData()
 
 void CMainFrame::OnTransAdjustment()
 {
+    spdlog::info("Menu: Trans Adjustment opened");
 
     CTransAdjustment TransAdjustment;
     nResult = TransAdjustment.DoModal();
@@ -163,6 +171,7 @@ void CMainFrame::OnTransAdjustment()
 
 void CMainFrame::OnDAChannel()
 {
+    spdlog::info("Menu: D/A Channel opened");
 
     CDA_Channel DA_Channel;
     nResult = DA_Channel.DoModal();
@@ -172,8 +181,10 @@ void CMainFrame::OnDAVout()
     DigitShowContext *ctx = GetContext();
     if (ctx->FlagSetBoard == FALSE)
     {
+        spdlog::warn("Menu: D/A Vout opened before board initialization");
         AfxMessageBox("BoardSettings has not been accomplished !", MB_ICONEXCLAMATION | MB_OK);
     }
+    spdlog::info("Menu: D/A Vout opened");
     CDA_Vout DA_Vout;
     nResult = DA_Vout.DoModal();
 }
@@ -183,14 +194,17 @@ void CMainFrame::OnDAPout()
     DigitShowContext *ctx = GetContext();
     if (ctx->FlagSetBoard == FALSE)
     {
+        spdlog::warn("Menu: D/A Pout opened before board initialization");
         AfxMessageBox("BoardSettings has not been accomplished !", MB_ICONEXCLAMATION | MB_OK);
     }
+    spdlog::info("Menu: D/A Pout opened");
     CDA_Pout DA_Pout;
     nResult = DA_Pout.DoModal();
 }
 
 void CMainFrame::OnControlSensitivity()
 {
+    spdlog::info("Menu: Control Sensitivity opened");
 
     CControl_Sensitivity Control_Sensitivity;
     nResult = Control_Sensitivity.DoModal();
@@ -198,6 +212,7 @@ void CMainFrame::OnControlSensitivity()
 
 void CMainFrame::OnControlID()
 {
+    spdlog::info("Menu: Control ID opened");
 
     CControl_ID Control_ID;
     nResult = Control_ID.DoModal();
@@ -205,6 +220,7 @@ void CMainFrame::OnControlID()
 
 void CMainFrame::OnControlPreConsolidation()
 {
+    spdlog::info("Menu: Control PreConsolidation opened");
 
     CControl_PreConsolidation Control_PreConsolidation;
     nResult = Control_PreConsolidation.DoModal();
@@ -212,6 +228,7 @@ void CMainFrame::OnControlPreConsolidation()
 
 void CMainFrame::OnControlConsolidation()
 {
+    spdlog::info("Menu: Control Consolidation opened");
 
     CControl_Consolidation Control_Consolidation;
     nResult = Control_Consolidation.DoModal();
@@ -219,6 +236,7 @@ void CMainFrame::OnControlConsolidation()
 
 void CMainFrame::OnControlMLoading()
 {
+    spdlog::info("Menu: Control MLoading opened");
 
     CControl_MLoading Control_MLoading;
     nResult = Control_MLoading.DoModal();
@@ -226,6 +244,7 @@ void CMainFrame::OnControlMLoading()
 
 void CMainFrame::OnControlCLoading()
 {
+    spdlog::info("Menu: Control CLoading opened");
 
     CControl_CLoading Control_CLoading;
     nResult = Control_CLoading.DoModal();
@@ -233,6 +252,7 @@ void CMainFrame::OnControlCLoading()
 
 void CMainFrame::OnControlLinearStressPath()
 {
+    spdlog::info("Menu: Control Linear Stress Path opened");
 
     CControl_LinearStressPath Control_LinearStressPath;
     nResult = Control_LinearStressPath.DoModal();
@@ -240,6 +260,7 @@ void CMainFrame::OnControlLinearStressPath()
 
 void CMainFrame::OnControlFile()
 {
+    spdlog::info("Menu: Control File opened");
 
     CControl_File Control_File;
     nResult = Control_File.DoModal();
