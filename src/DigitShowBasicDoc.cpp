@@ -524,7 +524,7 @@ void CDigitShowBasicDoc::Control_DA()
     }
     break;
     case 5: {
-                ctx->runCyclicLoadingControl();
+        ctx->runCyclicLoadingControl();
         DA_OUTPUT();
     }
     break;
@@ -571,7 +571,7 @@ void CDigitShowBasicDoc::Control_DA()
         {
             switch (ctx->controlFile.Num[ctx->controlFile.CurrentNum])
             {
-                case 0:
+            case 0:
                 ctx->setMotorBrake(true);
                 ctx->setMotorSpeed(0.0);
                 break;

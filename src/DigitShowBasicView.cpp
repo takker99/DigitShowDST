@@ -29,11 +29,28 @@
 #include "CAIO.H"
 #include "SamplingSettings.h"
 
+#include <share.h>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+namespace
+{
+errno_t OpenSharedWritableFile(FILE **fp, LPCSTR filePath)
+{
+    if (fp == nullptr || filePath == nullptr)
+        return EINVAL;
+
+    *fp = _fsopen(filePath, "w", _SH_DENYNO);
+    if (*fp == nullptr)
+        return errno != 0 ? errno : EACCES;
+
+    return 0;
+}
+} // namespace
 
 IMPLEMENT_DYNCREATE(CDigitShowBasicView, CFormView)
 
@@ -75,8 +92,8 @@ CDigitShowBasicView::CDigitShowBasicView()
       m_Para06(_T("")), m_Para07(_T("")), m_Para08(_T("")), m_Para09(_T("")), m_Para10(_T("")), m_Para11(_T("")),
       m_Para12(_T("")), m_Para13(_T("")), m_Para14(_T("")), m_Para15(_T("")), m_Ctrl_ID(0), m_NowTime(_T("")),
       m_SeqTime(0), m_FileName(_T("")), LastFlushTimeSec(0.0), LastFlushedControlNum(0),
-      m_pEditBrush(new CBrush(RGB(255, 255, 255))),
-      m_pStaticBrush(new CBrush(RGB(0, 128, 128))), m_pDlgBrush(new CBrush(RGB(0, 128, 128)))
+      m_pEditBrush(new CBrush(RGB(255, 255, 255))), m_pStaticBrush(new CBrush(RGB(0, 128, 128))),
+      m_pDlgBrush(new CBrush(RGB(0, 128, 128)))
 {
     DigitShowContext *ctx = GetContext();
     //{{AFX_DATA_INIT(CDigitShowBasicView)
@@ -368,25 +385,6 @@ void CDigitShowBasicView::OnTimer(UINT_PTR nIDEvent)
             ctx->SpanTime = ctx->NowTime - ctx->StartTime;
             ctx->SequentTime1 = (long)ctx->SpanTime.GetTotalSeconds();
         }
-        if (ctx->FlagSetBoard)
-            pDoc->AD_INPUT();
-        pDoc->Cal_Physical();
-        pDoc->Cal_Param();
-        ShowData();
-    }
-    break;
-    case 2: {
-        _ftime_s(&StepTime1);
-        if (ctx->FlagCtrl == FALSE)
-        {
-            StepTime0 = StepTime1;
-            ctx->FlagCtrl = TRUE;
-        }
-        ctx->CtrlStepTime =
-            double(StepTime1.time - StepTime0.time) + double((StepTime1.millitm - StepTime0.millitm) / 1000.0);
-        StepTime0 = StepTime1;
-        if (ctx->FlagSetBoard)
-            pDoc->Control_DA();
         if (ctx->FlagSaveData == TRUE && ctx->FlagFIFO == FALSE)
         {
             _ftime_s(&NowTime2);
@@ -408,6 +406,25 @@ void CDigitShowBasicView::OnTimer(UINT_PTR nIDEvent)
                 LastFlushedControlNum = ctx->controlFile.CurrentNum;
             }
         }
+        if (ctx->FlagSetBoard)
+            pDoc->AD_INPUT();
+        pDoc->Cal_Physical();
+        pDoc->Cal_Param();
+        ShowData();
+    }
+    break;
+    case 2: {
+        _ftime_s(&StepTime1);
+        if (ctx->FlagCtrl == FALSE)
+        {
+            StepTime0 = StepTime1;
+            ctx->FlagCtrl = TRUE;
+        }
+        ctx->CtrlStepTime =
+            double(StepTime1.time - StepTime0.time) + double((StepTime1.millitm - StepTime0.millitm) / 1000.0);
+        StepTime0 = StepTime1;
+        if (ctx->FlagSetBoard)
+            pDoc->Control_DA();
     }
     break;
     case 3: {
@@ -601,7 +618,7 @@ void CDigitShowBasicView::OnBUTTONStartSave()
                 pFileName1.Replace(TmpString, ".dat");
                 m_FileName += _T(".dat");
             }
-            if ((err = fopen_s(&ctx->FileSaveData1, (LPCSTR)pFileName1, _T("w"))) == 0)
+            if ((err = OpenSharedWritableFile(&ctx->FileSaveData1, (LPCSTR)pFileName1)) == 0)
             {
                 fprintf(ctx->FileSaveData1, "%s    ", "Time(s)");
                 fprintf(ctx->FileSaveData1, "%s    ", "Load_(N)");
@@ -626,7 +643,7 @@ void CDigitShowBasicView::OnBUTTONStartSave()
             // File for saving the voltage data
             pFileName0 = pFileName1;
             pFileName0.Replace(".dat", ".vlt");
-            if ((err = fopen_s(&ctx->FileSaveData0, (LPCSTR)pFileName0, _T("w"))) == 0)
+            if ((err = OpenSharedWritableFile(&ctx->FileSaveData0, (LPCSTR)pFileName0)) == 0)
             {
                 fprintf(ctx->FileSaveData0, "%s    ", "Time(s)");
                 fprintf(ctx->FileSaveData0, "%s    ", "CH00_(V)");
@@ -651,7 +668,7 @@ void CDigitShowBasicView::OnBUTTONStartSave()
             // File for saving the parameter data
             pFileName2 = pFileName1;
             pFileName2.Replace(".dat", ".out");
-            if ((err = fopen_s(&ctx->FileSaveData2, (LPCSTR)pFileName2, _T("w"))) == 0)
+            if ((err = OpenSharedWritableFile(&ctx->FileSaveData2, (LPCSTR)pFileName2)) == 0)
             {
                 fprintf(ctx->FileSaveData2, "%s    ", "Time(s)");
                 fprintf(ctx->FileSaveData2, "%s    ", "s(a)_(kPa)");
@@ -818,6 +835,9 @@ void CDigitShowBasicView::OnBUTTONInterceptSave()
     pDoc->Cal_Physical();
     pDoc->Cal_Param();
     pDoc->SaveToFile();
+    pDoc->FlushSaveFiles();
+    LastFlushTimeSec = ctx->SequentTime2;
+    LastFlushedControlNum = ctx->controlFile.CurrentNum;
 }
 
 void CDigitShowBasicView::OnBUTTONFIFOStart()

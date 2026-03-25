@@ -34,12 +34,12 @@ class CDigitShowBasicDoc : public CDocument
     virtual void Serialize(CArchive &ar);
 
   public:
-        void ZeroAllDaOutputsOnShutdown();
+    void ZeroAllDaOutputsOnShutdown();
     void SaveToFile2();
     void Allocate_Memory();
-        void Stop_Control();
+    void Stop_Control();
     void Start_Control();
-        void CloseBoard();
+    void CloseBoard();
     void OpenBoard();
     void SaveToFile();
     void FlushSaveFiles();
