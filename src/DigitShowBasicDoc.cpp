@@ -389,6 +389,8 @@ void CDigitShowBasicDoc::Cal_Param()
 void CDigitShowBasicDoc::SaveToFile()
 {
     DigitShowContext *ctx = GetContext();
+    if (ctx->FileSaveData0 == nullptr || ctx->FileSaveData1 == nullptr || ctx->FileSaveData2 == nullptr)
+        return;
     // Save Voltage and Physical Data
     int i = 0, j = 0, k = 0;
 
@@ -413,6 +415,16 @@ void CDigitShowBasicDoc::SaveToFile()
         fprintf(ctx->FileSaveData2, "%lf    ", ctx->CalParam[i]);
     }
     fprintf(ctx->FileSaveData2, "\n");
+}
+
+void CDigitShowBasicDoc::FlushSaveFiles()
+{
+    DigitShowContext *ctx = GetContext();
+    if (ctx->FileSaveData0 == nullptr || ctx->FileSaveData1 == nullptr || ctx->FileSaveData2 == nullptr)
+        return;
+    fflush(ctx->FileSaveData0);
+    fflush(ctx->FileSaveData1);
+    fflush(ctx->FileSaveData2);
 }
 
 void CDigitShowBasicDoc::SaveToFile2()
@@ -512,7 +524,7 @@ void CDigitShowBasicDoc::Control_DA()
     }
     break;
     case 5: {
-                ctx->runCyclicLoadingControl();
+        ctx->runCyclicLoadingControl();
         DA_OUTPUT();
     }
     break;
@@ -559,7 +571,7 @@ void CDigitShowBasicDoc::Control_DA()
         {
             switch (ctx->controlFile.Num[ctx->controlFile.CurrentNum])
             {
-                case 0:
+            case 0:
                 ctx->setMotorBrake(true);
                 ctx->setMotorSpeed(0.0);
                 break;
