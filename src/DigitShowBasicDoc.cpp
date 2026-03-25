@@ -22,6 +22,7 @@
 #include "DataConvert.h"
 #include "DigitShowBasic.h"
 #include "DigitShowBasicDoc.h"
+#include <spdlog/spdlog.h>
 
 #include "math.h"
 #include "time.h"
@@ -97,8 +98,11 @@ void CDigitShowBasicDoc::OpenBoard()
     DigitShowContext *ctx = GetContext();
     int i = 0;
 
+    spdlog::info("OpenBoard requested (NumAD={}, NumDA={})", ctx->NumAD, ctx->NumDA);
+
     if (ctx->FlagSetBoard)
     {
+        spdlog::warn("OpenBoard skipped: board has already been initialized");
         AfxMessageBox(_T("Initialization has been already accomplished"), MB_ICONSTOP | MB_OK);
         return;
     }
@@ -111,6 +115,7 @@ void CDigitShowBasicDoc::OpenBoard()
             ctx->Ret = AioInit(ad0, &ctx->ad.Id[0]);
             if (ctx->Ret != 0)
             {
+                spdlog::error("AioInit failed for A/D board 0: ret={}", ctx->Ret);
                 ctx->Ret2 = AioGetErrorString(ctx->Ret, ctx->ErrorString);
                 ctx->TextString.Format(_T("AioInit = %d : %S"), ctx->Ret, ctx->ErrorString);
                 AfxMessageBox(ctx->TextString, MB_ICONSTOP | MB_OK);
@@ -121,6 +126,7 @@ void CDigitShowBasicDoc::OpenBoard()
                 ctx->Ret = AioResetDevice(ctx->ad.Id[0]);
                 if (ctx->Ret != 0)
                 {
+                    spdlog::error("AioResetDevice failed for A/D board 0: ret={}", ctx->Ret);
                     ctx->Ret2 = AioGetErrorString(ctx->Ret, ctx->ErrorString);
                     ctx->TextString.Format(_T("AioResetDevice = %d : %S"), ctx->Ret, ctx->ErrorString);
                     AfxMessageBox(ctx->TextString, MB_ICONSTOP | MB_OK);
@@ -134,6 +140,7 @@ void CDigitShowBasicDoc::OpenBoard()
             ctx->Ret = AioInit(ad1, &ctx->ad.Id[1]);
             if (ctx->Ret != 0)
             {
+                spdlog::error("AioInit failed for A/D board 1: ret={}", ctx->Ret);
                 ctx->Ret2 = AioGetErrorString(ctx->Ret, ctx->ErrorString);
                 ctx->TextString.Format(_T("AioInit = %d : %S"), ctx->Ret, ctx->ErrorString);
                 AfxMessageBox(ctx->TextString, MB_ICONSTOP | MB_OK);
@@ -144,6 +151,7 @@ void CDigitShowBasicDoc::OpenBoard()
                 ctx->Ret = AioResetDevice(ctx->ad.Id[1]);
                 if (ctx->Ret != 0)
                 {
+                    spdlog::error("AioResetDevice failed for A/D board 1: ret={}", ctx->Ret);
                     ctx->Ret2 = AioGetErrorString(ctx->Ret, ctx->ErrorString);
                     ctx->TextString.Format(_T("AioResetDevice = %d : %S"), ctx->Ret, ctx->ErrorString);
                     AfxMessageBox(ctx->TextString, MB_ICONSTOP | MB_OK);
@@ -158,6 +166,7 @@ void CDigitShowBasicDoc::OpenBoard()
             ctx->Ret = AioInit(da0, &ctx->da.Id[0]);
             if (ctx->Ret != 0)
             {
+                spdlog::error("AioInit failed for D/A board 0: ret={}", ctx->Ret);
                 ctx->Ret2 = AioGetErrorString(ctx->Ret, ctx->ErrorString);
                 ctx->TextString.Format(_T("AioInit = %d : %S"), ctx->Ret, ctx->ErrorString);
                 AfxMessageBox(ctx->TextString, MB_ICONSTOP | MB_OK);
@@ -168,6 +177,7 @@ void CDigitShowBasicDoc::OpenBoard()
                 ctx->Ret = AioResetDevice(ctx->da.Id[0]);
                 if (ctx->Ret != 0)
                 {
+                    spdlog::error("AioResetDevice failed for D/A board 0: ret={}", ctx->Ret);
                     ctx->Ret2 = AioGetErrorString(ctx->Ret, ctx->ErrorString);
                     ctx->TextString.Format(_T("AioResetDevice = %d : %S"), ctx->Ret, ctx->ErrorString);
                     AfxMessageBox(ctx->TextString, MB_ICONSTOP | MB_OK);
@@ -213,6 +223,7 @@ void CDigitShowBasicDoc::OpenBoard()
             ctx->Ret = GetRangeValue(ctx->da.Range[i], &ctx->da.RangeMax[i], &ctx->da.RangeMin[i]);
         }
         ctx->FlagSetBoard = TRUE;
+        spdlog::info("OpenBoard completed successfully (AdMaxChannels={})", ctx->AdMaxChannels);
     }
     return;
 }
@@ -223,6 +234,7 @@ void CDigitShowBasicDoc::CloseBoard()
     // Close A/D and D/A board to end the application
     if (ctx->FlagSetBoard == TRUE)
     {
+        spdlog::info("CloseBoard started");
         // Ensure all D/A outputs are driven to 0V before releasing the D/A board.
         ZeroAllDaOutputsOnShutdown();
 
@@ -235,6 +247,11 @@ void CDigitShowBasicDoc::CloseBoard()
 
         ctx->FlagSetBoard = FALSE;
         ctx->FlagCtrl = FALSE;
+        spdlog::info("CloseBoard completed");
+    }
+    else
+    {
+        spdlog::debug("CloseBoard skipped: board is not initialized");
     }
 }
 
@@ -243,7 +260,10 @@ void CDigitShowBasicDoc::ZeroAllDaOutputsOnShutdown()
     DigitShowContext *ctx = GetContext();
 
     if (ctx->FlagSetBoard == FALSE || ctx->NumDA <= 0)
+    {
+        spdlog::debug("ZeroAllDaOutputsOnShutdown skipped (FlagSetBoard={}, NumDA={})", ctx->FlagSetBoard, ctx->NumDA);
         return;
+    }
 
     for (int i = 0; i < 8; i++)
     {
@@ -254,8 +274,13 @@ void CDigitShowBasicDoc::ZeroAllDaOutputsOnShutdown()
 
     if (ctx->Ret != 0)
     {
+        spdlog::error("AioMultiAo failed during shutdown: ret={}", ctx->Ret);
         ctx->Ret2 = AioGetErrorString(ctx->Ret, ctx->ErrorString);
         ctx->TextString.Format(_T("AioMultiAo (shutdown) = %d : %S"), ctx->Ret, ctx->ErrorString);
+    }
+    else
+    {
+        spdlog::debug("All D/A outputs were set to 0V for shutdown");
     }
 }
 
@@ -610,6 +635,7 @@ void CDigitShowBasicDoc::Start_Control()
 void CDigitShowBasicDoc::Stop_Control()
 {
     DigitShowContext *ctx = GetContext();
+    spdlog::info("Stop_Control requested");
     ctx->setMotorSpeed(0.0);
     // Motor Speed->0
     DA_OUTPUT();

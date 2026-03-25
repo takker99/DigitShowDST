@@ -27,9 +27,10 @@
 #include <math.h>
 
 #include "CAIO.H"
-#include "SamplingSettings.h"
+#include "samplingsettings.h"
 
 #include <share.h>
+#include <spdlog/spdlog.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -109,6 +110,8 @@ CDigitShowBasicView::~CDigitShowBasicView()
 {
     DigitShowContext *ctx = GetContext();
 
+    spdlog::info("DigitShowBasicView destructor started");
+
     KillTimer(1);
     KillTimer(2);
     KillTimer(3);
@@ -116,6 +119,7 @@ CDigitShowBasicView::~CDigitShowBasicView()
 
     CDigitShowBasicDoc *pDoc = (CDigitShowBasicDoc *)GetDocument();
     pDoc->CloseBoard();
+    spdlog::info("DigitShowBasicView destructor completed");
 }
 
 void CDigitShowBasicView::DoDataExchange(CDataExchange *pDX)
@@ -297,6 +301,7 @@ void CDigitShowBasicView::OnInitialUpdate()
     m_Combo2->InsertString(-1, "10.0 min");
     m_Combo2->SetWindowText("1.0 s");
     CDigitShowBasicDoc *pDoc = (CDigitShowBasicDoc *)GetDocument();
+    spdlog::info("View initial update started");
     pDoc->OpenBoard();
     if (ctx->FlagSetBoard)
     {
@@ -335,6 +340,11 @@ void CDigitShowBasicView::OnInitialUpdate()
             Ret = AioStartAi(ctx->ad.Id[0]);
         if (ctx->NumAD > 1)
             Ret = AioStartAi(ctx->ad.Id[1]);
+        spdlog::info("A/D acquisition initialized for live display");
+    }
+    else
+    {
+        spdlog::warn("A/D acquisition was not started because board initialization failed");
     }
     SetTimer(1, ctx->timeSettings.Interval1, NULL);
 }
@@ -545,6 +555,7 @@ void CDigitShowBasicView::OnBUTTONCtrlOn()
     CDigitShowBasicDoc *pDoc = (CDigitShowBasicDoc *)GetDocument();
     if (ctx->FlagSetBoard)
     {
+        spdlog::info("Control started (ControlID={})", ctx->ControlID);
         SetTimer(2, ctx->timeSettings.Interval2, NULL);
         CButton *myBTN1 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_CtrlOn));
         CButton *myBTN2 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_CtrlOff));
@@ -560,6 +571,10 @@ void CDigitShowBasicView::OnBUTTONCtrlOn()
             LastFlushedControlNum = ctx->controlFile.CurrentNum;
         }
         pDoc->Start_Control();
+    }
+    else
+    {
+        spdlog::warn("Control start requested before board initialization");
     }
 }
 
@@ -584,6 +599,7 @@ void CDigitShowBasicView::OnBUTTONCtrlOff()
     myBTN1->EnableWindow(TRUE);
     myBTN2->EnableWindow(FALSE);
     pDoc->Stop_Control();
+    spdlog::info("Control stopped");
 }
 
 void CDigitShowBasicView::OnBUTTONStartSave()
@@ -597,6 +613,7 @@ void CDigitShowBasicView::OnBUTTONStartSave()
 
     if (ctx->FlagFIFO == FALSE)
     {
+        spdlog::info("StartSave requested in non-FIFO mode");
         CString pFileName0, pFileName1, pFileName2;
         CFileDialog SaveFile_dlg(FALSE, NULL, "*.dat", OFN_CREATEPROMPT | OFN_OVERWRITEPROMPT,
                                  "Data Files(*.dat)|*.dat| All Files(*.*)|*.*| |", NULL);
@@ -639,6 +656,10 @@ void CDigitShowBasicView::OnBUTTONStartSave()
                 fprintf(ctx->FileSaveData1, "%s    ", "CH15_(V)");
                 fprintf(ctx->FileSaveData1, "\n");
             }
+            else
+            {
+                spdlog::error("Failed to open physical data file: {} (errno={})", (LPCSTR)pFileName1, err);
+            }
 
             // File for saving the voltage data
             pFileName0 = pFileName1;
@@ -664,6 +685,10 @@ void CDigitShowBasicView::OnBUTTONStartSave()
                 fprintf(ctx->FileSaveData0, "%s    ", "CH15_(V)");
                 fprintf(ctx->FileSaveData0, "\n");
             }
+            else
+            {
+                spdlog::error("Failed to open voltage data file: {} (errno={})", (LPCSTR)pFileName0, err);
+            }
 
             // File for saving the parameter data
             pFileName2 = pFileName1;
@@ -688,6 +713,10 @@ void CDigitShowBasicView::OnBUTTONStartSave()
                 fprintf(ctx->FileSaveData2, "%s    ", "Cont_No__");
                 fprintf(ctx->FileSaveData2, "%s    ", "Step_time(s)");
                 fprintf(ctx->FileSaveData2, "\n");
+            }
+            else
+            {
+                spdlog::error("Failed to open parameter data file: {} (errno={})", (LPCSTR)pFileName2, err);
             }
             // Timer starts
             SetTimer(3, ctx->timeSettings.Interval3, NULL);
@@ -720,10 +749,12 @@ void CDigitShowBasicView::OnBUTTONStartSave()
             pDoc->FlushSaveFiles();
             LastFlushTimeSec = ctx->SequentTime2;
             LastFlushedControlNum = ctx->controlFile.CurrentNum;
+            spdlog::info("Periodic save started for {}", (LPCSTR)m_FileName);
         }
     }
     if (ctx->FlagSetBoard == TRUE && ctx->FlagFIFO == TRUE)
     {
+        spdlog::info("StartSave requested in FIFO mode");
         ctx->NowTime = ctx->NowTime.GetCurrentTime();
         ctx->StartTime = ctx->NowTime;
         ctx->SpanTime = ctx->NowTime - ctx->StartTime;
@@ -768,6 +799,7 @@ void CDigitShowBasicView::OnBUTTONStopSave()
 
     if (ctx->FlagSaveData == TRUE && ctx->FlagFIFO == FALSE)
     {
+        spdlog::info("StopSave requested in non-FIFO mode");
         KillTimer(3);
         _ftime_s(&NowTime2);
         ctx->SequentTime2 =
@@ -791,9 +823,11 @@ void CDigitShowBasicView::OnBUTTONStopSave()
         myBTN4->EnableWindow(TRUE);
         myBTN5->EnableWindow(FALSE);
         ctx->FlagSaveData = FALSE;
+        spdlog::info("Periodic save stopped");
     }
     if (ctx->FlagSaveData == TRUE && ctx->FlagFIFO == TRUE)
     {
+        spdlog::info("StopSave requested in FIFO mode");
         ctx->FlagSaveData = FALSE;
         if (ctx->NumAD > 0)
             Ret = AioStopAi(ctx->ad.Id[0]);
@@ -819,6 +853,7 @@ void CDigitShowBasicView::OnBUTTONStopSave()
         myBTN4->EnableWindow(FALSE);
         myBTN5->EnableWindow(TRUE);
         myBTN6->EnableWindow(TRUE);
+        spdlog::info("FIFO capture stopped");
     }
 }
 
@@ -838,6 +873,7 @@ void CDigitShowBasicView::OnBUTTONInterceptSave()
     pDoc->FlushSaveFiles();
     LastFlushTimeSec = ctx->SequentTime2;
     LastFlushedControlNum = ctx->controlFile.CurrentNum;
+    spdlog::debug("Intercept save completed at t={}s", ctx->SequentTime2);
 }
 
 void CDigitShowBasicView::OnBUTTONFIFOStart()
@@ -845,12 +881,12 @@ void CDigitShowBasicView::OnBUTTONFIFOStart()
     DigitShowContext *ctx = GetContext();
     long Ret = 0;
     INT_PTR nResult = 0;
-    CDigitShowBasicDoc *pDoc = (CDigitShowBasicDoc *)GetDocument();
     CButton *myBTN1 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStart));
     CButton *myBTN2 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStop));
 
     if (ctx->FlagSetBoard == TRUE)
     {
+        spdlog::info("FIFO mode start requested");
         if (ctx->NumAD > 0)
             Ret = AioStopAi(ctx->ad.Id[0]);
         if (ctx->NumAD > 1)
@@ -882,6 +918,7 @@ void CDigitShowBasicView::OnBUTTONFIFOStart()
             ctx->FlagFIFO = TRUE;
             myBTN1->EnableWindow(FALSE);
             myBTN2->EnableWindow(TRUE);
+            spdlog::info("FIFO mode enabled (SavingClock={} us)", ctx->sampling.SavingClock);
         }
         if (ctx->NumAD > 0)
             Ret = AioStartAi(ctx->ad.Id[0]);
@@ -890,6 +927,7 @@ void CDigitShowBasicView::OnBUTTONFIFOStart()
     }
     else
     {
+        spdlog::warn("FIFO start requested before board initialization");
         AfxMessageBox("Board Setting has not been accomplished yet.", MB_OK | MB_ICONSTOP, 0);
     }
 }
@@ -898,7 +936,6 @@ void CDigitShowBasicView::OnBUTTONFIFOStop()
 {
     DigitShowContext *ctx = GetContext();
     long Ret = 0;
-    CDigitShowBasicDoc *pDoc = (CDigitShowBasicDoc *)GetDocument();
     CButton *myBTN1 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStart));
     CButton *myBTN2 = static_cast<CButton *>(GetDlgItem(IDC_BUTTON_FIFOStop));
     if (ctx->NumAD > 0)
@@ -906,6 +943,7 @@ void CDigitShowBasicView::OnBUTTONFIFOStop()
     if (ctx->NumAD > 1)
         Ret = AioStopAi(ctx->ad.Id[1]);
     ctx->FlagFIFO = FALSE;
+    spdlog::info("FIFO mode stop requested");
     myBTN1->EnableWindow(TRUE);
     myBTN2->EnableWindow(FALSE);
     if (ctx->NumAD > 0)
@@ -953,6 +991,7 @@ void CDigitShowBasicView::OnBUTTONWriteData()
                              "Data Files(*.dat)|*.dat| All Files(*.*)|*.*| |", NULL);
     if (SaveFile_dlg.DoModal() == IDOK)
     {
+        spdlog::info("WriteData requested from FIFO buffer");
         // File for saving the physical data
         pFileName1 = SaveFile_dlg.GetPathName();
         m_FileName = SaveFile_dlg.GetFileTitle();
@@ -990,6 +1029,10 @@ void CDigitShowBasicView::OnBUTTONWriteData()
             fprintf(ctx->FileSaveData1, "%s    ", "CH15_(V)");
             fprintf(ctx->FileSaveData1, "\n");
         }
+        else
+        {
+            spdlog::error("Failed to open physical data output file: {} (errno={})", (LPCSTR)pFileName1, err);
+        }
 
         // File for saving the voltage data
         pFileName0 = pFileName1;
@@ -1015,11 +1058,16 @@ void CDigitShowBasicView::OnBUTTONWriteData()
             fprintf(ctx->FileSaveData0, "%s    ", "CH15_(V)");
             fprintf(ctx->FileSaveData0, "\n");
         }
+        else
+        {
+            spdlog::error("Failed to open voltage data output file: {} (errno={})", (LPCSTR)pFileName0, err);
+        }
         pDoc->SaveToFile2();
         fclose(ctx->FileSaveData0);
         fclose(ctx->FileSaveData1);
         pDoc->Allocate_Memory();
         myBTN1->EnableWindow(FALSE);
+        spdlog::info("WriteData completed for {}", (LPCSTR)m_FileName);
     }
     if (ctx->NumAD > 0)
     {
@@ -1121,6 +1169,7 @@ LRESULT CDigitShowBasicView::DefWindowProc(UINT message, WPARAM wParam, LPARAM l
         }
         return TRUE;
     case AIOM_AIE_OFERR:
+        spdlog::error("A/D FIFO overflow event occurred (FlagFIFO={})", ctx->FlagFIFO);
         if (ctx->FlagFIFO)
         {
             AfxMessageBox("FIFO sttoped by the over flow int the memory of A/D board.", MB_OK | MB_ICONSTOP, 0);
@@ -1141,12 +1190,15 @@ LRESULT CDigitShowBasicView::DefWindowProc(UINT message, WPARAM wParam, LPARAM l
         }
         return TRUE;
     case AIOM_AIE_SCERR:
+        spdlog::error("A/D sampling clock error event occurred");
         AfxMessageBox("FIFO sttoped by sampling error.", MB_OK | MB_ICONSTOP, 0);
         return TRUE;
     case AIOM_AIE_ADERR:
+        spdlog::error("A/D conversion error event occurred");
         AfxMessageBox("FIFO sttoped by the error in A/D convert.", MB_OK | MB_ICONSTOP, 0);
         return TRUE;
     case AIOM_AIE_END:
+        spdlog::info("A/D FIFO reached end event");
         AfxMessageBox("FIFO sttoped to reach the end.", MB_OK | MB_ICONSTOP, 0);
         return TRUE;
     }
@@ -1160,6 +1212,7 @@ void CDigitShowBasicView::OnBUTTONSetCtrlID()
     CComboBox *m_Combo1 = static_cast<CComboBox *>(GetDlgItem(IDC_COMBO_Control_ID));
     m_Combo1->GetWindowText(tmp);
     ctx->ControlID = atoi(tmp);
+    spdlog::info("ControlID updated to {}", ctx->ControlID);
 }
 
 void CDigitShowBasicView::OnBUTTONSetTimeInterval()
@@ -1205,4 +1258,5 @@ void CDigitShowBasicView::OnBUTTONSetTimeInterval()
         KillTimer(3);
         SetTimer(3, ctx->timeSettings.Interval3, NULL);
     }
+    spdlog::info("Save interval updated to {} ms", ctx->timeSettings.Interval3);
 }

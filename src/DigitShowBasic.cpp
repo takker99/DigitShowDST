@@ -24,6 +24,7 @@
 
 #include "DigitShowBasicDoc.h"
 #include "DigitShowBasicView.h"
+#include "Logging.hpp"
 #include "MainFrm.h"
 
 #ifdef _DEBUG
@@ -65,7 +66,11 @@ CDigitShowBasicApp theApp;
 
 BOOL CDigitShowBasicApp::InitInstance()
 {
+    logging::initialize();
+    spdlog::info("DigitShowBasic application starting");
+
     AfxEnableControlContainer();
+    spdlog::debug("MFC initialization started");
 
     // 標準的な初期化処理
     // もしこれらの機能を使用せず、実行ファイルのサイズを小さく
@@ -91,6 +96,7 @@ BOOL CDigitShowBasicApp::InitInstance()
 
     LoadStdProfileSettings();
     // 標準の INI ファイルのオプションをロードします (MRU を含む)
+    spdlog::debug("Profile settings loaded");
 
     // アプリケーション用のドキュメント テンプレートを登録します。ドキュメント テンプレート
     //  はドキュメント、フレーム ウィンドウとビューを結合するために機能します。
@@ -100,6 +106,7 @@ BOOL CDigitShowBasicApp::InitInstance()
                                           RUNTIME_CLASS(CMainFrame), // メイン SDI フレーム ウィンドウ
                                           RUNTIME_CLASS(CDigitShowBasicView));
     AddDocTemplate(pDocTemplate);
+    spdlog::debug("Document template registered");
 
     // DDE、file open など標準のシェル コマンドのコマンドラインを解析します。
     CCommandLineInfo cmdInfo;
@@ -107,13 +114,24 @@ BOOL CDigitShowBasicApp::InitInstance()
 
     // コマンドラインでディスパッチ コマンドを指定します。
     if (!ProcessShellCommand(cmdInfo))
+    {
+        spdlog::error("ProcessShellCommand failed");
         return FALSE;
+    }
 
     // メイン ウィンドウが初期化されたので、表示と更新を行います。
     m_pMainWnd->ShowWindow(SW_SHOW);
     m_pMainWnd->UpdateWindow();
+    spdlog::info("Main window initialized");
 
     return TRUE;
+}
+
+int CDigitShowBasicApp::ExitInstance()
+{
+    spdlog::info("DigitShowBasic application shutting down");
+    spdlog::shutdown();
+    return CWinApp::ExitInstance();
 }
 
 /////////////////////////////////////////////////////////////////////////////
